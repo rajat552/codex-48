@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { User } from './userModel.js';
 import { Workspace } from '../workspaces/workspaceModel.js';
 import { WorkspaceMember } from '../workspaces/workspaceMemberModel.js';
+import { BrandRule } from '../rules/brandRuleModel.js';
 import { env } from '../../config/env.js';
 import {
   ValidationError,
@@ -149,9 +150,23 @@ export class AuthService {
     user.lastLoginAt = new Date();
     await user.save();
 
-    // Fetch workspaces where user is active member
-    const memberships = await WorkspaceMember.find({ userId: user._id, status: 'active' })
+    // Fetch workspaces where user is active member and ensure workspace is populated
+    const rawMemberships = await WorkspaceMember.find({ userId: user._id, status: 'active' })
       .populate('workspaceId');
+
+    const memberships = await Promise.all(
+      rawMemberships.map(async m => {
+        let ws = m.workspaceId;
+        if (!ws || !ws.name) {
+          ws = await Workspace.findById(ws?._id || ws);
+        }
+        return {
+          workspace: ws || { _id: m.workspaceId, name: 'Brand Workspace' },
+          roles: m.roles,
+          status: m.status
+        };
+      })
+    );
 
     const accessToken = this.generateAccessToken(user);
     const refreshToken = this.generateRefreshToken(user);
