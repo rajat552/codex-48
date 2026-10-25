@@ -11,16 +11,24 @@ export class WorkspaceController {
         status: 'active'
       }).populate('workspaceId');
 
-      const workspaces = memberships
-        .filter(m => m.workspaceId)
-        .map(m => ({
-          workspace: m.workspaceId,
-          roles: m.roles,
-          status: m.status
-        }));
+      const workspaces = await Promise.all(
+        memberships.map(async m => {
+          let ws = m.workspaceId;
+          if (ws && typeof ws === 'object' && ws.name) {
+            return { workspace: ws, roles: m.roles, status: m.status };
+          }
+          // If not populated by driver/mock, resolve from Workspace collection
+          const wsDoc = await Workspace.findById(ws?._id || ws);
+          return {
+            workspace: wsDoc || { _id: ws, name: 'Default Workspace' },
+            roles: m.roles,
+            status: m.status
+          };
+        })
+      );
 
       return res.status(200).json({
-        data: workspaces,
+        data: workspaces.filter(w => w.workspace),
         meta: { requestId: req.requestId }
       });
     } catch (err) {
