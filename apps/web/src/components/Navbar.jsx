@@ -60,18 +60,25 @@ export function Navbar({ user, workspaces, currentWorkspace, onSelectWorkspace, 
             <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs">
               <span className="text-slate-500">Workspace:</span>
               <select
-                value={currentWorkspace?.workspace?._id || ''}
+                value={typeof currentWorkspace?.workspace === 'object' ? (currentWorkspace.workspace._id || currentWorkspace.workspace.id) : (currentWorkspace?.workspace || '')}
                 onChange={e => {
-                  const ws = workspaces.find(w => w.workspace._id === e.target.value);
+                  const ws = workspaces.find(w => {
+                    const id = typeof w.workspace === 'object' ? (w.workspace._id || w.workspace.id) : w.workspace;
+                    return id === e.target.value;
+                  });
                   if (ws) onSelectWorkspace(ws);
                 }}
                 className="bg-transparent text-slate-200 font-semibold focus:outline-none cursor-pointer"
               >
-                {workspaces.map(w => (
-                  <option key={w.workspace._id} value={w.workspace._id} className="bg-slate-900 text-slate-200">
-                    {w.workspace.name}
-                  </option>
-                ))}
+                {workspaces.map(w => {
+                  const id = typeof w.workspace === 'object' ? (w.workspace._id || w.workspace.id) : w.workspace;
+                  const name = typeof w.workspace === 'object' ? (w.workspace.name || 'Workspace') : 'Workspace';
+                  return (
+                    <option key={id} value={id} className="bg-slate-900 text-slate-200">
+                      {name}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
