@@ -77,7 +77,8 @@ export function App() {
     return <AuthPage onAuthSuccess={handleAuthSuccess} />;
   }
 
-  const workspaceId = currentWorkspace?.workspace?._id;
+  const rawWs = currentWorkspace?.workspace;
+  const workspaceId = typeof rawWs === 'object' ? (rawWs?._id || rawWs?.id) : (rawWs || null);
   const userRoles = currentWorkspace?.roles || ['CREATOR'];
 
   return (
