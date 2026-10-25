@@ -1,0 +1,27 @@
+{
+  "name": "cohesora-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cohesora — Evidence-Led Brand Governance Platform",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "start": "npm run start --workspace=apps/api",
+    "start:worker": "npm run start:worker --workspace=apps/api",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev": "node scripts/start-dev.js",
+    "test": "npm run test --workspace=apps/api",
+    "test:benchmark": "npm run test:benchmark --workspace=apps/api",
+    "build": "npm run build --workspace=apps/web"
+  },
+  "keywords": [
+    "brand-governance",
+    "evidence-first",
+    "compliance",
+    "ai-audit"
+  ],
+  "author": "BroCode",
+  "license": "UNLICENSED"
+}
