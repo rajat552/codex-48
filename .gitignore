@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Private uploads and storage
+private-uploads/
+uploads/
+*.log
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Blueprint source file (explicitly must not be committed per user instructions)
+workflows.md
