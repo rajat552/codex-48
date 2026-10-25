@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { createModelProxy } from '../../config/modelProxy.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -40,4 +41,5 @@ userSchema.methods.toSafeObject = function () {
   return obj;
 };
 
-export const User = mongoose.model('User', userSchema);
+const RawUser = mongoose.model('User', userSchema);
+export const User = createModelProxy('User', RawUser);

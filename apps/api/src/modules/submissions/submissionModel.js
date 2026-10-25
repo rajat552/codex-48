@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { createModelProxy } from '../../config/modelProxy.js';
 
 const findingSchema = new mongoose.Schema(
   {
@@ -215,4 +216,5 @@ submissionSchema.index({ workspaceId: 1, submissionGroupId: 1, revisionNumber: 1
 submissionSchema.index({ workspaceId: 1, status: 1, submittedAt: -1 });
 submissionSchema.index({ workspaceId: 1, creatorId: 1, createdAt: -1 });
 
-export const Submission = mongoose.model('Submission', submissionSchema);
+const RawSubmission = mongoose.model('Submission', submissionSchema);
+export const Submission = createModelProxy('Submission', RawSubmission);

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { createModelProxy } from '../../config/modelProxy.js';
 
 const auditEventSchema = new mongoose.Schema(
   {
@@ -9,7 +10,7 @@ const auditEventSchema = new mongoose.Schema(
       index: true
     },
     actorId: {
-      type: mongoose.Schema.Types.Mixed, // ObjectId for user or string 'SYSTEM'
+      type: mongoose.Schema.Types.Mixed,
       required: true,
       index: true
     },
@@ -61,4 +62,5 @@ const auditEventSchema = new mongoose.Schema(
 auditEventSchema.index({ workspaceId: 1, entityType: 1, entityId: 1, timestamp: 1 });
 auditEventSchema.index({ workspaceId: 1, action: 1, timestamp: -1 });
 
-export const AuditEvent = mongoose.model('AuditEvent', auditEventSchema);
+const RawAuditEvent = mongoose.model('AuditEvent', auditEventSchema);
+export const AuditEvent = createModelProxy('AuditEvent', RawAuditEvent);

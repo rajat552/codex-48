@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { createModelProxy } from '../../config/modelProxy.js';
 
 const workspaceSchema = new mongoose.Schema(
   {
@@ -36,4 +37,5 @@ const workspaceSchema = new mongoose.Schema(
   }
 );
 
-export const Workspace = mongoose.model('Workspace', workspaceSchema);
+const RawWorkspace = mongoose.model('Workspace', workspaceSchema);
+export const Workspace = createModelProxy('Workspace', RawWorkspace);

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { createModelProxy } from '../../config/modelProxy.js';
 
 const processingJobSchema = new mongoose.Schema(
   {
@@ -70,4 +71,5 @@ const processingJobSchema = new mongoose.Schema(
 processingJobSchema.index({ status: 1, availableAt: 1, createdAt: 1 });
 processingJobSchema.index({ workspaceId: 1, submissionId: 1, createdAt: -1 });
 
-export const ProcessingJob = mongoose.model('ProcessingJob', processingJobSchema);
+const RawProcessingJob = mongoose.model('ProcessingJob', processingJobSchema);
+export const ProcessingJob = createModelProxy('ProcessingJob', RawProcessingJob);

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { createModelProxy } from '../../config/modelProxy.js';
 
 const brandRuleSchema = new mongoose.Schema(
   {
@@ -117,8 +118,8 @@ const brandRuleSchema = new mongoose.Schema(
   }
 );
 
-// Indexes specified in workflows.md Section E2
 brandRuleSchema.index({ workspaceId: 1, ruleId: 1, ruleVersion: 1 }, { unique: true });
 brandRuleSchema.index({ workspaceId: 1, status: 1, approvalStatus: 1, effectiveFrom: 1, expiresAt: 1 });
 
-export const BrandRule = mongoose.model('BrandRule', brandRuleSchema);
+const RawBrandRule = mongoose.model('BrandRule', brandRuleSchema);
+export const BrandRule = createModelProxy('BrandRule', RawBrandRule);

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { createModelProxy } from '../../config/modelProxy.js';
 
 const workspaceMemberSchema = new mongoose.Schema(
   {
@@ -32,7 +33,7 @@ const workspaceMemberSchema = new mongoose.Schema(
   }
 );
 
-// Compound unique index for tenant membership
 workspaceMemberSchema.index({ workspaceId: 1, userId: 1 }, { unique: true });
 
-export const WorkspaceMember = mongoose.model('WorkspaceMember', workspaceMemberSchema);
+const RawWorkspaceMember = mongoose.model('WorkspaceMember', workspaceMemberSchema);
+export const WorkspaceMember = createModelProxy('WorkspaceMember', RawWorkspaceMember);
