@@ -206,30 +206,30 @@ export function RulesPage({ workspace, userRoles }) {
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Layers className="w-6 h-6 text-indigo-400" />
+          <h1 className="text-2xl font-black uppercase tracking-tight text-[#0B1E36] flex items-center gap-2">
+            <Layers className="w-6 h-6 text-[#0055D4]" />
             Brand Knowledge Registry
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-600 font-mono mt-1">
             Approved brand guidelines, time-bound promotional conditions, and source provenance
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           {isAdmin && (
             <>
               <button
                 onClick={handleSeedBaselineRules}
-                className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs text-indigo-300 border border-slate-700 flex items-center gap-2 transition-colors font-medium"
+                className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-xs font-mono font-bold text-[#0B1E36] border-2 border-[#F59E0B] flex items-center gap-2 transition-all shadow-sm cursor-pointer"
               >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
                 Seed Baseline Demo Rules (PR-104, Terminology, WCAG)
               </button>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="btn-primary px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 shadow-lg shadow-indigo-500/20"
+                className="px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1E36] border-2 border-[#0B1E36] shadow-[3px_3px_0px_#0B1E36] flex items-center gap-2 transition-all cursor-pointer"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 stroke-[3]" />
                 Add Brand Rule
               </button>
             </>
@@ -238,15 +238,15 @@ export function RulesPage({ workspace, userRoles }) {
       </div>
 
       {/* Filter toolbar */}
-      <div className="glass-panel p-4 mb-6 flex flex-wrap items-center gap-4 text-xs">
-        <div className="flex items-center gap-2 text-slate-400 font-medium">
+      <div className="bg-white border-2 border-slate-300 rounded-xl p-4 mb-6 flex flex-wrap items-center gap-4 text-xs shadow-sm font-mono">
+        <div className="flex items-center gap-2 text-slate-600 font-bold uppercase">
           <Filter className="w-3.5 h-3.5" />
           Filter:
         </div>
         <select
           value={filterCategory}
           onChange={e => setFilterCategory(e.target.value)}
-          className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200"
+          className="bg-white border-2 border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 font-bold focus:border-[#0055D4] cursor-pointer"
         >
           <option value="">All Categories</option>
           <option value="promotional_condition">Promotional Condition</option>
@@ -259,7 +259,7 @@ export function RulesPage({ workspace, userRoles }) {
         <select
           value={filterStatus}
           onChange={e => setFilterStatus(e.target.value)}
-          className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-200"
+          className="bg-white border-2 border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-900 font-bold focus:border-[#0055D4] cursor-pointer"
         >
           <option value="">All Statuses</option>
           <option value="active">Active Only</option>
@@ -270,65 +270,65 @@ export function RulesPage({ workspace, userRoles }) {
 
         <button
           onClick={loadRules}
-          className="ml-auto text-slate-400 hover:text-white flex items-center gap-1.5 text-xs font-medium"
+          className="ml-auto text-slate-600 hover:text-[#0B1E36] flex items-center gap-1.5 text-xs font-bold font-mono cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#F59E0B]' : ''}`} />
           Refresh
         </button>
       </div>
 
       {/* Rules list */}
       {loading ? (
-        <div className="p-12 text-center text-slate-500 text-sm">Loading brand rules registry...</div>
+        <div className="p-12 text-center text-slate-600 font-mono text-sm bg-white border-2 border-slate-300 rounded-xl">Loading brand rules registry...</div>
       ) : rules.length === 0 ? (
-        <div className="glass-panel p-12 text-center">
-          <Layers className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-          <h3 className="text-sm font-semibold text-slate-300">No brand rules configured yet</h3>
-          <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+        <div className="bg-white border-2 border-[#0B1E36] rounded-2xl p-12 text-center shadow-[4px_4px_0px_#0B1E36]">
+          <Layers className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+          <h3 className="text-base font-black text-[#0B1E36] uppercase">No brand rules configured yet</h3>
+          <p className="text-xs text-slate-600 font-mono mt-1 max-w-sm mx-auto">
             Click "Seed Baseline Demo Rules" above to instantly populate PR-104 and brand guidelines.
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {rules.map(rule => (
-            <div key={rule._id} className="glass-panel p-5 relative overflow-hidden transition-all hover:border-slate-700">
+            <div key={rule._id} className="bg-white border-2 border-slate-300 hover:border-[#0B1E36] rounded-xl p-5 shadow-sm hover:shadow-[4px_4px_0px_#0B1E36] transition-all relative overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                <div className="flex items-center gap-2.5">
-                  <span className="mono text-sm font-bold text-indigo-400">{rule.ruleId}</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <span className="font-mono text-sm font-black text-[#0055D4]">{rule.ruleId}</span>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300">
                     v{rule.ruleVersion}
                   </span>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                    rule.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' :
-                    rule.status === 'draft' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30' :
-                    'bg-slate-800 text-slate-500'
+                  <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded border-2 ${
+                    rule.status === 'active' ? 'bg-emerald-50 text-emerald-800 border-emerald-500' :
+                    rule.status === 'draft' ? 'bg-amber-50 text-amber-800 border-amber-500' :
+                    'bg-slate-100 text-slate-600 border-slate-300'
                   }`}>
                     {rule.status}
                   </span>
-                  <span className="text-xs text-slate-500 capitalize">
+                  <span className="text-xs font-mono text-slate-500 capitalize">
                     {rule.category.replace('_', ' ')}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-slate-500">
-                    Source: <span className="text-slate-400 font-mono">{rule.sourceId} ({rule.sourceVersion})</span>
+                  <span className="text-[11px] text-slate-500 font-mono">
+                    Source: <span className="text-slate-800 font-bold">{rule.sourceId} ({rule.sourceVersion})</span>
                   </span>
                 </div>
               </div>
 
-              <p className="text-sm text-slate-200 mt-2 font-medium">
+              <p className="text-sm text-slate-900 mt-2 font-medium">
                 {rule.ruleText}
               </p>
 
               {/* Scope & Action bar */}
-              <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
+              <div className="mt-4 pt-3 border-t-2 border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-600">
                 <div className="flex items-center gap-3">
                   {rule.scope?.channels?.length > 0 && (
-                    <span>Channels: <span className="text-slate-300 font-medium">{rule.scope.channels.join(', ')}</span></span>
+                    <span>Channels: <span className="text-[#0B1E36] font-bold">{rule.scope.channels.join(', ')}</span></span>
                   )}
                   {rule.scope?.campaignIds?.length > 0 && (
-                    <span>Campaign: <span className="text-slate-300 font-medium">{rule.scope.campaignIds.join(', ')}</span></span>
+                    <span>Campaign: <span className="text-[#0B1E36] font-bold">{rule.scope.campaignIds.join(', ')}</span></span>
                   )}
                 </div>
 
@@ -337,7 +337,7 @@ export function RulesPage({ workspace, userRoles }) {
                     {rule.approvalStatus !== 'approved' && (
                       <button
                         onClick={() => handleApprove(rule.ruleId, rule.ruleVersion)}
-                        className="px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 font-medium text-xs transition-colors"
+                        className="px-2.5 py-1 rounded-lg bg-blue-50 text-[#0055D4] hover:bg-blue-100 border border-blue-300 font-mono font-bold text-xs transition cursor-pointer"
                       >
                         Approve Rule
                       </button>
@@ -345,7 +345,7 @@ export function RulesPage({ workspace, userRoles }) {
                     {rule.approvalStatus === 'approved' && rule.status !== 'active' && (
                       <button
                         onClick={() => handleActivate(rule.ruleId, rule.ruleVersion)}
-                        className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 font-medium text-xs transition-colors"
+                        className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300 font-mono font-bold text-xs transition cursor-pointer"
                       >
                         Activate Rule
                       </button>
@@ -360,29 +360,29 @@ export function RulesPage({ workspace, userRoles }) {
 
       {/* Add New Rule Modal with LIVE Conflict Detector */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-xl w-full glass-panel p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-bold text-white mb-4">Add Versioned Brand Rule</h2>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="max-w-xl w-full bg-white border-2 border-[#0B1E36] rounded-2xl p-6 shadow-[6px_6px_0px_#0B1E36] relative max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-black text-[#0B1E36] uppercase mb-4">Add Versioned Brand Rule</h2>
 
             <form onSubmit={handleCreateRule} className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Rule ID (Logical Key)</label>
+                  <label className="block text-[#0B1E36] font-mono font-bold uppercase mb-1">Rule ID (Logical Key)</label>
                   <input
                     type="text"
                     required
                     value={ruleId}
                     onChange={e => setRuleId(e.target.value.toUpperCase())}
                     placeholder="e.g. PR-104 or TERM-02"
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-white font-mono"
+                    className="w-full bg-white border-2 border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-[#0055D4]"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Category</label>
+                  <label className="block text-[#0B1E36] font-mono font-bold uppercase mb-1">Category</label>
                   <select
                     value={category}
                     onChange={e => setCategory(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-white"
+                    className="w-full bg-white border-2 border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-[#0055D4] cursor-pointer"
                   >
                     <option value="promotional_condition">Promotional Condition</option>
                     <option value="terminology">Terminology</option>
@@ -394,84 +394,84 @@ export function RulesPage({ workspace, userRoles }) {
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Rule Text</label>
+                <label className="block text-[#0B1E36] font-mono font-bold uppercase mb-1">Rule Text</label>
                 <textarea
                   required
                   rows={2}
                   value={ruleText}
                   onChange={e => setRuleText(e.target.value)}
                   placeholder="Exact statement of the policy or condition..."
-                  className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-white"
+                  className="w-full bg-white border-2 border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-[#0055D4]"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Rule Config (JSON)</label>
+                <label className="block text-[#0B1E36] font-mono font-bold uppercase mb-1">Rule Config (JSON)</label>
                 <textarea
                   rows={3}
                   value={ruleConfigStr}
                   onChange={e => setRuleConfigStr(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-white font-mono"
+                  className="w-full bg-white border-2 border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-[#0055D4]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Source ID</label>
+                  <label className="block text-[#0B1E36] font-mono font-bold uppercase mb-1">Source ID</label>
                   <input
                     type="text"
                     required
                     value={sourceId}
                     onChange={e => setSourceId(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-white font-mono"
+                    className="w-full bg-white border-2 border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-[#0055D4]"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Source Version</label>
+                  <label className="block text-[#0B1E36] font-mono font-bold uppercase mb-1">Source Version</label>
                   <input
                     type="text"
                     required
                     value={sourceVersion}
                     onChange={e => setSourceVersion(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-white font-mono"
+                    className="w-full bg-white border-2 border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-[#0055D4]"
                   />
                 </div>
               </div>
 
               {/* Automated Rule Conflict Detector UI (Named Improvement 2) */}
-              <div className="p-3.5 rounded-lg bg-slate-900/90 border border-indigo-500/20">
+              <div className="p-3.5 rounded-xl bg-slate-50 border-2 border-slate-300">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-slate-200 flex items-center gap-1.5">
-                    <ShieldAlert className="w-4 h-4 text-indigo-400" />
+                  <span className="font-bold text-[#0B1E36] font-mono uppercase flex items-center gap-1.5">
+                    <ShieldAlert className="w-4 h-4 text-amber-500" />
                     Automated Rule Conflict Detector
                   </span>
                   <button
                     type="button"
                     onClick={handleCheckConflicts}
                     disabled={checkingConflict || !ruleId || !ruleText}
-                    className="px-2.5 py-1 rounded bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 font-semibold transition-colors disabled:opacity-50"
+                    className="px-2.5 py-1 rounded-lg bg-[#0B1E36] hover:bg-[#152B4A] text-white font-mono font-bold text-xs transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
                   >
                     {checkingConflict ? 'Scanning...' : 'Scan for Conflicts'}
                   </button>
                 </div>
 
                 {conflictResult && (
-                  <div className="mt-2 text-xs">
+                  <div className="mt-2 text-xs font-mono">
                     {conflictResult.hasConflicts ? (
-                      <div className="p-2.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-300">
+                      <div className="p-2.5 rounded-xl bg-red-50 border-2 border-red-500 text-red-900">
                         <div className="font-bold flex items-center gap-1 mb-1">
-                          <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+                          <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
                           Conflict Warning: {conflictResult.conflictCount} conflict(s) detected!
                         </div>
                         {conflictResult.conflicts.map((c, i) => (
-                          <div key={i} className="text-[11px] mt-1 pl-4 border-l border-rose-500/40">
+                          <div key={i} className="text-[11px] mt-1 pl-3 border-l-2 border-red-500">
                             <strong>{c.conflictType}</strong>: {c.overlapReason}
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="p-2.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <div className="p-2.5 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-emerald-900 flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                         No conflicting active rules found. Candidate rule is clean for registration.
                       </div>
                     )}
@@ -479,17 +479,17 @@ export function RulesPage({ workspace, userRoles }) {
                 )}
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t-2 border-slate-200">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded text-slate-400 hover:text-white"
+                  className="px-4 py-2 rounded-xl text-xs font-mono font-bold text-slate-700 hover:bg-slate-100 border-2 border-slate-300 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="btn-primary px-5 py-2 rounded font-semibold"
+                  className="px-5 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1E36] border-2 border-[#0B1E36] shadow-[3px_3px_0px_#0B1E36] cursor-pointer"
                 >
                   Create Rule Draft
                 </button>
