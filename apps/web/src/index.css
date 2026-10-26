@@ -6,24 +6,26 @@
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  --bg-primary: #070b14;
-  --bg-card: rgba(15, 23, 42, 0.75);
-  --bg-card-hover: rgba(30, 41, 59, 0.85);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-focus: rgba(99, 102, 241, 0.5);
+  --bg-primary: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --border-subtle: #e2e8f0;
+  --border-card: #0b1e36;
+  --border-focus: #0055d4;
 
-  --accent-primary: #6366f1;
-  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-  --accent-glow: 0 0 25px rgba(99, 102, 241, 0.35);
+  --accent-primary: #f59e0b;
+  --accent-navy: #0b1e36;
+  --accent-blue: #0055d4;
+  --accent-amber: #b45309;
 
-  --status-conflict: #f43f5e;
-  --status-conflict-bg: rgba(244, 63, 94, 0.12);
-  --status-verify: #8b5cf6;
-  --status-verify-bg: rgba(139, 92, 246, 0.12);
+  --status-conflict: #ef4444;
+  --status-conflict-bg: #fef2f2;
+  --status-verify: #0055d4;
+  --status-verify-bg: #eff6ff;
   --status-advisory: #f59e0b;
-  --status-advisory-bg: rgba(245, 158, 11, 0.12);
+  --status-advisory-bg: #fffbeb;
   --status-approved: #10b981;
-  --status-approved-bg: rgba(16, 185, 129, 0.12);
+  --status-approved-bg: #ecfdf5;
 }
 
 * {
@@ -32,25 +34,28 @@
 
 body {
   background-color: var(--bg-primary);
-  color: #f1f5f9;
+  color: #0f172a;
   font-family: var(--font-sans);
   min-height: 100vh;
   line-height: 1.6;
+  /* MLH Developer Signature Graph Paper Grid */
   background-image: 
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.6) 0px, transparent 100%);
+    linear-gradient(to right, rgba(11, 30, 54, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 30, 54, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
   background-attachment: fixed;
 }
 
 /* Ensure clean, high-contrast readable inputs */
 input, textarea, select {
   font-family: inherit;
-  color: #f8fafc;
+  color: #0f172a;
+  background-color: #ffffff;
 }
 
 input::placeholder, textarea::placeholder {
   color: #64748b;
+  font-family: var(--font-mono);
 }
 
 /* Custom scrollbars */
@@ -59,25 +64,58 @@ input::placeholder, textarea::placeholder {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: #cbd5e1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: #94a3b8;
 }
 
-/* Glassmorphism utility */
-.glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
+/* MLH Theme Panels and Cards */
+.mlh-panel, .glass-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px 0 rgba(11, 30, 54, 0.04);
 }
 
-.glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.14);
+.mlh-panel:hover, .glass-panel:hover {
+  border-color: #cbd5e1;
+}
+
+.mlh-card {
+  background: #ffffff;
+  border: 2px solid #0b1e36;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px #0b1e36;
+  transition: all 0.15s ease-in-out;
+}
+
+.mlh-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 6px 6px 0px #0b1e36;
+}
+
+.mlh-btn-primary {
+  background-color: #f59e0b;
+  color: #0b1e36;
+  font-weight: 700;
+  border: 2px solid #0b1e36;
+  box-shadow: 3px 3px 0px #0b1e36;
+  border-radius: 10px;
+  transition: all 0.12s ease-in-out;
+}
+
+.mlh-btn-primary:hover {
+  background-color: #d97706;
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0px #0b1e36;
+}
+
+.mlh-btn-primary:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
 }
