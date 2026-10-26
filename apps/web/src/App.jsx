@@ -66,9 +66,9 @@ export function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-400 gap-3">
-        <RefreshCw className="w-8 h-8 animate-spin text-indigo-400" />
-        <span className="text-sm font-semibold tracking-wide">Initializing Cohesora Governance Platform...</span>
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center text-slate-700 gap-3">
+        <RefreshCw className="w-8 h-8 animate-spin text-[#F59E0B]" />
+        <span className="text-sm font-bold font-mono tracking-wide text-[#0B1E36]">Initializing Cohesora Governance Platform...</span>
       </div>
     );
   }
@@ -82,7 +82,7 @@ export function App() {
   const userRoles = currentWorkspace?.roles || ['CREATOR'];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500/30 selection:text-indigo-200">
+    <div className="min-h-screen bg-transparent text-slate-900 flex flex-col selection:bg-[#F59E0B]/30 selection:text-[#0B1E36]">
       <Navbar
         user={user}
         workspaces={workspaces}
@@ -95,9 +95,9 @@ export function App() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {!workspaceId ? (
-          <div className="p-12 text-center bg-slate-900 border border-slate-800 rounded-3xl space-y-3">
-            <h3 className="text-lg font-bold text-slate-200">No workspace available</h3>
-            <p className="text-xs text-slate-400">Please sign in with an account associated with an active workspace.</p>
+          <div className="p-12 text-center bg-white border-2 border-[#0B1E36] rounded-2xl shadow-[4px_4px_0px_#0B1E36] space-y-3">
+            <h3 className="text-lg font-black text-[#0B1E36]">No workspace available</h3>
+            <p className="text-xs text-slate-600 font-mono">Please sign in with an account associated with an active workspace.</p>
           </div>
         ) : (
           <>
