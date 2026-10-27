@@ -26,6 +26,8 @@ export function App() {
     } catch (e) {}
   };
 
+  const [initSlow, setInitSlow] = useState(false);
+
   // Restore session
   const initAuth = async () => {
     const token = localStorage.getItem('cohesora_token');
@@ -34,8 +36,13 @@ export function App() {
       return;
     }
 
+    // Set 5-second timeout so cold-starts or network delays don't lock the UI
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Auth restore timed out')), 5000)
+    );
+
     try {
-      const me = await api.auth.me();
+      const me = await Promise.race([api.auth.me(), timeoutPromise]);
       setUser(me);
       let wsList = await api.workspaces.list();
       if (!wsList || wsList.length === 0) {
@@ -57,7 +64,7 @@ export function App() {
         prefetchWorkspaceData(wsId);
       }
     } catch (err) {
-      console.warn('Session expired or invalid', err);
+      console.warn('Session expired or unreachable backend', err);
       ApiClient.setToken(null);
       setUser(null);
     } finally {
@@ -66,7 +73,11 @@ export function App() {
   };
 
   useEffect(() => {
-    initAuth();
+    const slowTimer = setTimeout(() => {
+      setInitSlow(true);
+    }, 2500);
+    initAuth().finally(() => clearTimeout(slowTimer));
+    return () => clearTimeout(slowTimer);
   }, []);
 
   const handleAuthSuccess = async ({ token, user }) => {
@@ -126,9 +137,29 @@ export function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center text-slate-700 gap-3">
-        <RefreshCw className="w-8 h-8 animate-spin text-[#F59E0B]" />
-        <span className="text-sm font-bold font-mono tracking-wide text-[#0B1E36]">Initializing Cohesora Governance Platform...</span>
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center text-slate-700 gap-4 p-6 text-center">
+        <RefreshCw className="w-9 h-9 animate-spin text-[#F59E0B]" />
+        <div>
+          <span className="text-sm font-bold font-mono tracking-wide text-[#0B1E36] block">
+            Initializing Cohesora Governance Platform...
+          </span>
+          {initSlow && (
+            <p className="text-xs text-slate-500 font-mono mt-2 max-w-sm mx-auto">
+              Waking up cloud backend (Render free-tier cold starts can take 20–30s on first load)...
+            </p>
+          )}
+        </div>
+        {initSlow && (
+          <button
+            onClick={() => {
+              ApiClient.setToken(null);
+              setLoading(false);
+            }}
+            className="mt-1 px-4 py-2 text-xs font-mono font-bold text-[#0B1E36] bg-white border-2 border-[#0B1E36] shadow-[2px_2px_0px_#0B1E36] rounded-xl hover:bg-slate-50 transition cursor-pointer"
+          >
+            Skip to Sign In / Demo &rarr;
+          </button>
+        )}
       </div>
     );
   }
