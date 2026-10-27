@@ -46,5 +46,6 @@ submissionRouter.post(
 );
 
 submissionRouter.get('/:submissionId/diff', SubmissionController.getDiff);
+submissionRouter.get('/:submissionId/revisions/diff', SubmissionController.getDiff);
 submissionRouter.get('/:submissionId/file', SubmissionController.streamFile);
 submissionRouter.get('/:submissionId/audit-events', SubmissionController.getAuditEvents);
