@@ -113,7 +113,7 @@ export function InsightsPage({ workspaceId }) {
       </div>
 
       {/* Top Metric Cards - Matching MLH Stats Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" data-tour="insights-metric-cards">
         <div className="bg-white border-2 border-slate-300 hover:border-[#0B1E36] rounded-xl p-5 shadow-sm hover:shadow-[3px_3px_0px_#0B1E36] transition-all space-y-1">
           <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500">Total Creatives</span>
           <div className="text-3xl font-black text-[#0B1E36]">{totalSubmissions}</div>
