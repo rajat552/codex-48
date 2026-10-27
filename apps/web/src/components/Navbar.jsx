@@ -137,42 +137,26 @@ export function Navbar({
 
   return (
     <header className="border-b-2 border-slate-200 bg-white/95 backdrop-blur sticky top-0 z-50 shadow-sm w-full">
-      <div className="w-full max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-6 min-h-[64px] sm:min-h-[68px] py-1.5 flex items-center justify-between gap-1.5 sm:gap-3 flex-nowrap whitespace-nowrap">
+      <div className="w-full max-w-[1440px] mx-auto px-3 sm:px-4 lg:px-6 h-16 flex items-center justify-between gap-2 lg:gap-4 flex-nowrap whitespace-nowrap">
         {/* Left Section: Brand & Navigation */}
-        <div className="flex items-center gap-2 lg:gap-4 flex-shrink-0">
-          <div className="flex flex-col justify-center items-start flex-shrink-0">
-            <div
-              className="flex items-center gap-2 cursor-pointer select-none flex-shrink-0"
-              onClick={() => setActiveTab('submissions')}
-              data-tour="brand-header"
-              title="Cohesora — Brand Governance"
-            >
-              <div className="w-8 h-8 rounded-xl bg-[#0B1E36] border-2 border-[#0B1E36] flex items-center justify-center shadow-[2px_2px_0px_#F59E0B] flex-shrink-0">
-                <ShieldCheck className="w-4 h-4 text-[#F59E0B]" />
-              </div>
-              <div className="flex items-center">
-                <span className="text-lg sm:text-xl font-black tracking-tight text-[#0B1E36] leading-none">
-                  Cohesora
-                </span>
-                <span className="hidden 2xl:inline-block ml-2 text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 flex-shrink-0">
-                  Evidence-First
-                </span>
-              </div>
+        <div className="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+          <div
+            className="flex items-center gap-2 cursor-pointer select-none flex-shrink-0"
+            onClick={() => setActiveTab('submissions')}
+            data-tour="brand-header"
+            title="Cohesora — Brand Governance"
+          >
+            <div className="w-8 h-8 rounded-xl bg-[#0B1E36] border-2 border-[#0B1E36] flex items-center justify-center shadow-[2px_2px_0px_#F59E0B] flex-shrink-0">
+              <ShieldCheck className="w-4 h-4 text-[#F59E0B]" />
             </div>
-
-            {/* Tour Button - Positioned cleanly right below Cohesora */}
-            {onStartTour && (
-              <button
-                type="button"
-                onClick={onStartTour}
-                data-tour="btn-product-tour"
-                className="mt-1 ml-0.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-50 hover:bg-amber-100 text-[#0B1E36] border border-[#F59E0B] shadow-[1.5px_1.5px_0px_#0B1E36] active:translate-x-[0.5px] active:translate-y-[0.5px] active:shadow-none transition-all cursor-pointer"
-                title="Launch Interactive 10-Step Product Tour"
-              >
-                <Compass className="w-3 h-3 text-amber-600 animate-pulse" />
-                <span>Tour</span>
-              </button>
-            )}
+            <div className="flex items-center">
+              <span className="text-xl font-black tracking-tight text-[#0B1E36]">
+                Cohesora
+              </span>
+              <span className="hidden 2xl:inline-block ml-2 text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 flex-shrink-0">
+                Evidence-First
+              </span>
+            </div>
           </div>
 
           {/* Navigation links */}
@@ -186,7 +170,7 @@ export function Navbar({
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     data-tour={`nav-${tab.id}`}
-                    className={`flex items-center gap-1.5 px-2 lg:px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all flex-shrink-0 cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all flex-shrink-0 cursor-pointer ${
                       isActive
                         ? 'bg-[#0B1E36] text-white border-2 border-[#0B1E36] shadow-[2px_2px_0px_#F59E0B]'
                         : 'text-slate-700 hover:text-[#0055D4] hover:bg-slate-100 border-2 border-transparent'
@@ -202,9 +186,23 @@ export function Navbar({
           )}
         </div>
 
-        {/* Right Section: Workspace Dropdown, Role Dropdown, User Profile & Logout */}
+        {/* Right Section: Tour, Workspace Dropdown, Role Dropdown, User Profile & Logout */}
         {user ? (
           <div className="flex items-center gap-2 lg:gap-3 flex-shrink-0">
+            {/* Tour Button - Positioned just left of Workspace */}
+            {onStartTour && (
+              <button
+                type="button"
+                onClick={onStartTour}
+                data-tour="btn-product-tour"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider bg-amber-50 hover:bg-amber-100 text-[#0B1E36] border-2 border-[#F59E0B] shadow-[2px_2px_0px_#0B1E36] active:translate-x-[0.5px] active:translate-y-[0.5px] active:shadow-none transition-all cursor-pointer flex-shrink-0"
+                title="Launch Interactive 10-Step Product Tour"
+              >
+                <Compass className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+                <span>Tour</span>
+              </button>
+            )}
+
             {/* 1. Workspace Dropdown (First only show "Workspace", click to view/switch) */}
             <div className="relative flex-shrink-0" ref={workspaceDropdownRef}>
               <button
