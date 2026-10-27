@@ -125,7 +125,8 @@ export class ReviewOrchestrator {
     // 6. Update Submission status & processing metadata
     const completedAt = new Date();
     submission.findings = validatedFindings;
-    submission.processing = {
+    const finalVisualMetrics = visualMetrics || submission.processing?.visualMetrics;
+    const processingData = {
       reviewRunId,
       modelId: aiResult?.modelId || 'none',
       ruleEngineVersion: '1.0.0',
@@ -135,9 +136,12 @@ export class ReviewOrchestrator {
         startedAt,
         completedAt
       },
-      errorCodes,
-      visualMetrics: visualMetrics || submission.processing?.visualMetrics
+      errorCodes
     };
+    if (finalVisualMetrics && typeof finalVisualMetrics === 'object' && Object.keys(finalVisualMetrics).length > 0) {
+      processingData.visualMetrics = finalVisualMetrics;
+    }
+    submission.processing = processingData;
 
     // Safe Failure Semantics (Section G5 & Non-negotiable principle 7)
     // If OCR failed or an AI call was attempted and failed, mark INCOMPLETE
