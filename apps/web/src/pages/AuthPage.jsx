@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, ArrowRight, Sparkles, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Sparkles, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { api, ApiClient } from '../api/client.js';
 
 export function AuthPage({ onAuthSuccess, onAuthenticated }) {
@@ -7,6 +7,7 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [workspaceName, setWorkspaceName] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -89,7 +90,23 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
         {error && (
           <div className="mb-6 p-3.5 rounded-xl bg-red-50 border-2 border-red-500 flex items-start gap-2.5 text-xs text-red-900 font-mono">
             <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
-            <span className="leading-relaxed">{error}</span>
+            <div className="flex-1 leading-relaxed">
+              <div>{error}</div>
+              {error.includes('already exists') && isRegister && (
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsRegister(false);
+                      setError(null);
+                    }}
+                    className="inline-flex items-center gap-1 font-bold text-[#0055D4] underline hover:text-[#0B1E36] cursor-pointer"
+                  >
+                    Switch to Sign In &rarr;
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -123,14 +140,29 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
 
           <div>
             <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#0B1E36] mb-1.5">Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="Minimum 8 characters"
-              className="w-full bg-white border-2 border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0055D4] focus:ring-1 focus:ring-[#0055D4] font-mono transition"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="Minimum 8 characters"
+                className="w-full bg-white border-2 border-slate-300 rounded-xl px-4 py-2.5 pr-11 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0055D4] focus:ring-1 focus:ring-[#0055D4] font-mono transition"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-[#0B1E36] transition cursor-pointer rounded-lg hover:bg-slate-100"
+                title={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4 text-slate-600" />
+                ) : (
+                  <Eye className="w-4 h-4 text-slate-600" />
+                )}
+              </button>
+            </div>
           </div>
 
           {isRegister && (
