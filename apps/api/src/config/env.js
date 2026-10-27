@@ -21,7 +21,7 @@ export const env = {
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-minimum-32-chars-long-cohesora',
   JWT_ISSUER: process.env.JWT_ISSUER || 'cohesora-api',
   JWT_AUDIENCE: process.env.JWT_AUDIENCE || 'cohesora-web',
-  ACCESS_TOKEN_TTL_MINUTES: parseInt(process.env.ACCESS_TOKEN_TTL_MINUTES || '15', 10),
+  ACCESS_TOKEN_TTL_MINUTES: parseInt(process.env.ACCESS_TOKEN_TTL_MINUTES || '1440', 10),
   REFRESH_TOKEN_TTL_DAYS: parseInt(process.env.REFRESH_TOKEN_TTL_DAYS || '7', 10),
 
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
