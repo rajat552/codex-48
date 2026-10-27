@@ -206,7 +206,7 @@ export function RulesPage({ workspace, userRoles }) {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8" data-tour="rules-registry-container">
         <div>
           <h1 className="text-2xl font-black uppercase tracking-tight text-[#0B1E36] flex items-center gap-2">
             <Layers className="w-6 h-6 text-[#0055D4]" />
@@ -229,6 +229,7 @@ export function RulesPage({ workspace, userRoles }) {
               </button>
               <button
                 onClick={() => setShowAddModal(true)}
+                data-tour="btn-add-rule"
                 className="px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1E36] border-2 border-[#0B1E36] shadow-[3px_3px_0px_#0B1E36] flex items-center gap-2 transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4 stroke-[3]" />
@@ -291,7 +292,7 @@ export function RulesPage({ workspace, userRoles }) {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-4" data-tour="rules-cards-list">
           {rules.map(rule => (
             <div key={rule._id} className="bg-white border-2 border-slate-300 hover:border-[#0B1E36] rounded-xl p-5 shadow-sm hover:shadow-[4px_4px_0px_#0B1E36] transition-all relative overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
