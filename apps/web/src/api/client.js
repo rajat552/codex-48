@@ -330,6 +330,8 @@ export class ApiClient {
 
 // Convenient modular object export
 export const api = {
+  setToken: (token, refreshToken) => ApiClient.setToken(token, refreshToken),
+  getToken: () => ApiClient.getToken(),
   auth: {
     register: payload => ApiClient.register(payload),
     login: payload => ApiClient.login(payload),
