@@ -2,6 +2,7 @@
   "name": "cohesora-workspace",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Cohesora — Evidence-Led Brand Governance Platform",
   "workspaces": [
     "apps/*"
