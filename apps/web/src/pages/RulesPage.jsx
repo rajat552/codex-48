@@ -29,7 +29,9 @@ export function RulesPage({ workspace, userRoles }) {
 
   const loadRules = async () => {
     if (!workspace?._id) return;
-    setLoading(true);
+    if (rules.length === 0) {
+      setLoading(true);
+    }
     setError(null);
     try {
       const params = {};
@@ -278,7 +280,7 @@ export function RulesPage({ workspace, userRoles }) {
       </div>
 
       {/* Rules list */}
-      {loading ? (
+      {(loading && rules.length === 0) ? (
         <div className="p-12 text-center text-slate-600 font-mono text-sm bg-white border-2 border-slate-300 rounded-xl">Loading brand rules registry...</div>
       ) : rules.length === 0 ? (
         <div className="bg-white border-2 border-[#0B1E36] rounded-2xl p-12 text-center shadow-[4px_4px_0px_#0B1E36]">
