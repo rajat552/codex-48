@@ -284,7 +284,7 @@ export function RulesPage({ workspace, userRoles }) {
       {(loading && rules.length === 0) ? (
         <div className="p-12 text-center text-slate-600 font-mono text-sm bg-white border-2 border-slate-300 rounded-xl">Loading brand rules registry...</div>
       ) : rules.length === 0 ? (
-        <div className="bg-white border-2 border-[#0B1E36] rounded-2xl p-12 text-center shadow-[4px_4px_0px_#0B1E36]">
+        <div className="bg-white border-2 border-[#0B1E36] rounded-2xl p-12 text-center shadow-[4px_4px_0px_#0B1E36]" data-tour="rules-cards-list">
           <Layers className="w-10 h-10 text-slate-400 mx-auto mb-3" />
           <h3 className="text-base font-black text-[#0B1E36] uppercase">No brand rules configured yet</h3>
           <p className="text-xs text-slate-600 font-mono mt-1 max-w-sm mx-auto">
