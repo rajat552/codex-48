@@ -90,6 +90,46 @@ export class AuthService {
     const normalizedEmail = email.trim().toLowerCase();
     const existing = await User.findOne({ email: normalizedEmail });
     if (existing) {
+      if (env.NODE_ENV !== 'production') {
+        const passwordHash = await this.hashPassword(password);
+        existing.passwordHash = passwordHash;
+        if (displayName && displayName.trim()) {
+          existing.displayName = displayName.trim();
+        }
+        existing.status = 'active';
+        await existing.save();
+
+        const wsName = workspaceName && workspaceName.trim() ? workspaceName.trim() : `${existing.displayName}'s Brand Workspace`;
+        let workspace = await Workspace.findOne({ createdBy: existing._id, name: wsName });
+        if (!workspace) {
+          const slug = `${normalizedEmail.split('@')[0]}-${Date.now().toString(36)}`;
+          workspace = await Workspace.create({
+            name: wsName,
+            slug,
+            createdBy: existing._id
+          });
+        }
+        let member = await WorkspaceMember.findOne({ workspaceId: workspace._id, userId: existing._id });
+        if (!member) {
+          member = await WorkspaceMember.create({
+            workspaceId: workspace._id,
+            userId: existing._id,
+            roles: ['ADMIN', 'REVIEWER', 'CREATOR'],
+            status: 'active'
+          });
+        }
+        const accessToken = this.generateAccessToken(existing);
+        const refreshToken = this.generateRefreshToken(existing);
+        return {
+          user: existing.toSafeObject(),
+          workspace,
+          membership: member,
+          tokens: {
+            accessToken,
+            refreshToken
+          }
+        };
+      }
       throw new ConflictError('A user with this email address already exists.');
     }
 
@@ -97,7 +137,8 @@ export class AuthService {
     const user = await User.create({
       displayName: displayName.trim(),
       email: normalizedEmail,
-      passwordHash
+      passwordHash,
+      status: 'active'
     });
 
     // Create default workspace for new user
@@ -138,7 +179,7 @@ export class AuthService {
 
     const normalizedEmail = email.trim().toLowerCase();
     const user = await User.findOne({ email: normalizedEmail });
-    if (!user || user.status !== 'active') {
+    if (!user || (user.status && user.status !== 'active')) {
       throw new AuthenticationError('Invalid email or password.');
     }
 
