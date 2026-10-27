@@ -19,7 +19,9 @@ export function InsightsPage({ workspaceId }) {
   const [error, setError] = useState(null);
 
   const fetchInsights = async () => {
-    setLoading(true);
+    if (!insights) {
+      setLoading(true);
+    }
     setError(null);
     try {
       const data = await api.insights.get(workspaceId);
@@ -37,7 +39,7 @@ export function InsightsPage({ workspaceId }) {
     }
   }, [workspaceId]);
 
-  if (loading) {
+  if (loading && !insights) {
     return (
       <div className="p-16 text-center text-slate-600 bg-white rounded-2xl border-2 border-slate-300 shadow-sm">
         <RefreshCw className="w-8 h-8 animate-spin mx-auto text-[#F59E0B] mb-3" />
