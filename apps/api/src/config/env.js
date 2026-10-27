@@ -5,8 +5,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env from project root or apps/api
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+// Load .env from project root, apps/api, or current working directory
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config(); // fallback
 
 export const env = {
