@@ -207,7 +207,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
           {error}
         </div>
       ) : filteredSubmissions.length === 0 ? (
-        <div className="p-16 text-center bg-white border-2 border-[#0B1E36] rounded-2xl shadow-[4px_4px_0px_#0B1E36] space-y-3" data-tour="review-checks-area">
+        <div className="p-16 text-center bg-white border-2 border-[#0B1E36] rounded-2xl shadow-[4px_4px_0px_#0B1E36] space-y-3" data-tour="review-checks-area" data-tour-alias="submissions-list-area">
           <FileText className="w-12 h-12 text-slate-400 mx-auto" />
           <h3 className="text-base font-black text-[#0B1E36] uppercase">No submissions found</h3>
           <p className="text-xs text-slate-600 font-mono max-w-sm mx-auto">
@@ -224,7 +224,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3.5" data-tour="review-checks-area" data-tour-alias="submissions-list">
+        <div className="grid grid-cols-1 gap-3.5" data-tour="review-checks-area" data-tour-alias="submissions-list-area">
           {filteredSubmissions.map((sub, idx) => {
             const currentRev = sub.currentRevision || {};
             const findings = currentRev.findings || [];
