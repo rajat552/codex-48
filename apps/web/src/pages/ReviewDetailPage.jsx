@@ -122,6 +122,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
     setActionLoading(true);
     try {
       await api.submissions.createRevision(workspaceId, submissionId, {
+        text: revisionModal.copyText,
         copyText: revisionModal.copyText,
         revisionNotes: revisionModal.notes || 'Revised copy based on review findings'
       });
