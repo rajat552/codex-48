@@ -12,10 +12,10 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const notifySuccess = (token, user, membership) => {
-    ApiClient.setToken(token);
+  const notifySuccess = (token, user, membership, refreshToken = null) => {
+    ApiClient.setToken(token, refreshToken);
     if (onAuthSuccess) {
-      onAuthSuccess({ token, user, membership });
+      onAuthSuccess({ token, user, membership, refreshToken });
     } else if (onAuthenticated) {
       onAuthenticated(user, membership ? [membership] : [], membership);
     }
@@ -35,12 +35,14 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
           workspaceName: workspaceName || `${displayName}'s Workspace`
         });
         const token = result.tokens?.accessToken || result.token;
-        notifySuccess(token, result.user, result.membership);
+        const refreshToken = result.tokens?.refreshToken;
+        notifySuccess(token, result.user, result.membership, refreshToken);
       } else {
         const result = await api.auth.login({ email, password });
         const token = result.tokens?.accessToken || result.token;
+        const refreshToken = result.tokens?.refreshToken;
         const activeWs = result.memberships?.[0] || null;
-        notifySuccess(token, result.user, activeWs);
+        notifySuccess(token, result.user, activeWs, refreshToken);
       }
     } catch (err) {
       setError(err.message || 'Authentication failed. Please verify credentials.');
@@ -62,7 +64,8 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
         workspaceName: 'Acme Global Brand Governance'
       });
       const token = result.tokens?.accessToken || result.token;
-      notifySuccess(token, result.user, result.membership);
+      const refreshToken = result.tokens?.refreshToken;
+      notifySuccess(token, result.user, result.membership, refreshToken);
     } catch (err) {
       setError(err.message || 'Demo initialization failed');
     } finally {
