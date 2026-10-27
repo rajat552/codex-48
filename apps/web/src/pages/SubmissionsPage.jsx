@@ -41,7 +41,9 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
   const [submitting, setSubmitting] = useState(false);
 
   const fetchSubmissions = async () => {
-    setLoading(true);
+    if (submissions.length === 0) {
+      setLoading(true);
+    }
     setError(null);
     try {
       const data = await api.submissions.list(workspaceId);
@@ -193,7 +195,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
       </div>
 
       {/* Submissions List */}
-      {loading ? (
+      {(loading && submissions.length === 0) ? (
         <div className="p-16 text-center text-slate-600 bg-white rounded-2xl border-2 border-slate-300 shadow-sm">
           <RefreshCw className="w-8 h-8 animate-spin mx-auto text-[#F59E0B] mb-3" />
           <p className="text-sm font-mono font-bold text-[#0B1E36]">Loading workspace submissions...</p>
