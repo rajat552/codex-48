@@ -1,4 +1,25 @@
-const API_BASE = (import.meta.env.VITE_API_URL || '/api/v1').replace(/\/+$/, '');
+function sanitizeApiBase(raw) {
+  if (!raw) return '/api/v1';
+  let val = raw.trim();
+  // If multiple http(s) exist due to accidental duplicate paste, take the last one
+  const parts = val.split(/(?=https?:\/\/)/);
+  if (parts.length > 0) {
+    val = parts[parts.length - 1];
+  }
+  val = val.replace(/\/+$/, '');
+  if (val.startsWith('http')) {
+    try {
+      const url = new URL(val);
+      if (!url.pathname.includes('/api/v1')) {
+        url.pathname = (url.pathname.replace(/\/+$/, '') + '/api/v1').replace('//', '/');
+      }
+      return url.origin + url.pathname.replace(/\/+$/, '');
+    } catch (e) {}
+  }
+  return val || '/api/v1';
+}
+
+const API_BASE = sanitizeApiBase(import.meta.env.VITE_API_URL);
 
 export class ApiClient {
   static getToken() {
