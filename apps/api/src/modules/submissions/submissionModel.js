@@ -169,11 +169,8 @@ const submissionSchema = new mongoose.Schema(
       },
       errorCodes: { type: [String], default: [] },
       visualMetrics: {
-        contrastRatio: { type: Number },
-        paletteDeltaE: { type: Number },
-        textColor: { type: String },
-        bgColor: { type: String },
-        ocrConfidence: { type: Number }
+        type: mongoose.Schema.Types.Mixed,
+        default: null
       }
     },
     status: {
