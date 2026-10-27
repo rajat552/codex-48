@@ -22,7 +22,8 @@ export class SubmissionService {
     file = null,
     campaignId = null,
     channel = 'general',
-    altText = null
+    altText = null,
+    title = null
   }) {
     if (!['TEXT', 'PNG', 'JPG', 'PDF_BRIEF', 'DOCX_BRIEF'].includes(contentType)) {
       throw new ValidationError(`Unsupported contentType: ${contentType}`);
@@ -60,6 +61,7 @@ export class SubmissionService {
       submissionGroupId,
       parentSubmissionId: null,
       creatorId,
+      title: title || originalFilename || (campaignId ? `${campaignId} Creative` : 'Creative Submission'),
       contentType,
       contentRef,
       originalFilename,
@@ -154,6 +156,7 @@ export class SubmissionService {
       submissionGroupId: parent.submissionGroupId,
       parentSubmissionId: parent._id,
       creatorId,
+      title: parent.title || parent.originalFilename || (parent.campaignId ? `${parent.campaignId} Creative` : 'Creative Revision'),
       contentType: parent.contentType,
       contentRef,
       originalFilename,
@@ -301,9 +304,26 @@ export class SubmissionService {
     if (filters.channel) query.channel = filters.channel;
     if (filters.creatorId) query.creatorId = filters.creatorId;
 
-    return await Submission.find(query)
+    const list = await Submission.find(query)
       .sort({ createdAt: -1 })
       .populate('creatorId', 'displayName email');
+
+    return list.map(sub => {
+      const obj = sub.toObject ? sub.toObject() : { ...sub };
+      if (!obj.title) {
+        obj.title = obj.originalFilename || (obj.campaignId ? `${obj.campaignId} Creative` : `Creative #${String(obj._id).slice(-4)}`);
+      }
+      if (!obj.currentRevision) {
+        obj.currentRevision = {
+          revisionNumber: obj.revisionNumber || 1,
+          copyText: obj.extractedText || obj.text || '',
+          findings: obj.findings || [],
+          visualMetrics: obj.processing?.visualMetrics || null,
+          ruleSnapshot: obj.ruleVersionSnapshot || []
+        };
+      }
+      return obj;
+    });
   }
 
   static async getSubmission(workspaceId, submissionId) {
@@ -331,14 +351,19 @@ export class SubmissionService {
     }).sort({ revisionNumber: 1 });
 
     const submissionObj = submission.toObject ? submission.toObject() : { ...submission };
+    const latestRev = (allRevs && allRevs.length > 0) ? allRevs[allRevs.length - 1] : submission;
 
     submissionObj.currentRevision = {
+      _id: submission._id,
       revisionNumber: submission.revisionNumber || 1,
       copyText: submission.extractedText || submission.text || '',
       findings: submission.findings || [],
       visualMetrics: submission.processing?.visualMetrics || null,
       ruleSnapshot: submission.ruleVersionSnapshot || []
     };
+
+    submissionObj.latestRevisionNumber = latestRev ? latestRev.revisionNumber : submission.revisionNumber;
+    submissionObj.totalRevisions = allRevs ? allRevs.length : 1;
 
     submissionObj.revisions = (allRevs && allRevs.length > 0)
       ? allRevs.map(r => ({
@@ -354,7 +379,7 @@ export class SubmissionService {
       : [submissionObj.currentRevision];
 
     if (!submissionObj.title) {
-      submissionObj.title = submission.title || submission.campaignId || `Submission #${submission._id.toString().slice(-4)}`;
+      submissionObj.title = submission.title || submission.originalFilename || (submission.campaignId ? `${submission.campaignId} Creative` : `Creative #${String(submission._id).slice(-4)}`);
     }
 
     return submissionObj;
