@@ -83,11 +83,15 @@ export function errorHandler(err, req, res, next) {
   if (err.name === 'ValidationError') {
     statusCode = 400;
     code = 'VALIDATION_ERROR';
-    message = 'Validation failed.';
-    details = Object.keys(err.errors || {}).map(k => ({
-      field: k,
-      issue: err.errors[k].message
-    }));
+    if (err.errors && Object.keys(err.errors).length > 0) {
+      details = Object.keys(err.errors).map(k => ({
+        field: k,
+        issue: err.errors[k].message
+      }));
+      message = details.map(d => `${d.issue}`).join(', ') || 'Validation failed.';
+    } else {
+      message = err.message || 'Validation failed.';
+    }
   } else if (err.code === 11000) {
     statusCode = 409;
     code = 'CONFLICT';
