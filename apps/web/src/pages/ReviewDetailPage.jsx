@@ -205,7 +205,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
     <div className="space-y-6">
       {/* Top Banner Navigation & Summary */}
       <div className="bg-white border-2 border-[#0B1E36] rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4 shadow-[4px_4px_0px_#0B1E36]">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4" data-tour="review-checks-area">
           <button
             onClick={onBack}
             className="p-2 rounded-xl bg-white text-slate-700 hover:text-[#0B1E36] border-2 border-slate-300 hover:border-[#0B1E36] transition cursor-pointer"
@@ -236,7 +236,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap" data-tour="corrections-actions">
           <button
             onClick={async () => {
               setActionLoading(true);
@@ -314,7 +314,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b-2 border-slate-200">
+      <div className="flex items-center gap-2 border-b-2 border-slate-200" data-tour="findings-evidence-panel">
         {[
           { id: 'findings', label: `Findings & Review (${findings.length})`, icon: ShieldAlert },
           { id: 'revisions', label: `Revision History (${revisionsList.length})`, icon: History },
