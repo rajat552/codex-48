@@ -8,7 +8,7 @@ import { NotFoundError } from '../../middleware/errorHandler.js';
 export class SubmissionController {
   static async create(req, res, next) {
     try {
-      const { contentType, campaignId, channel } = req.body;
+      const { contentType, campaignId, channel, title } = req.body;
       const text = req.body.text || req.body.copyText || '';
       const altText = req.body.altText || req.body.assetAltText || null;
       const file = req.file || null;
@@ -30,6 +30,7 @@ export class SubmissionController {
       const submission = await SubmissionService.createSubmission({
         workspaceId: req.workspace._id,
         creatorId: req.user.userId,
+        title: title || null,
         contentType: resolvedContentType,
         text,
         file,
