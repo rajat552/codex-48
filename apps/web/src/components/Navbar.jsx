@@ -14,7 +14,8 @@ import {
   Users,
   Menu,
   X,
-  Building2
+  Building2,
+  Compass
 } from 'lucide-react';
 
 export function Navbar({
@@ -26,7 +27,8 @@ export function Navbar({
   activeTab,
   setActiveTab,
   activeRole = 'ALL',
-  onSelectRole
+  onSelectRole,
+  onStartTour
 }) {
   const currentRoles = currentWorkspace?.roles || ['CREATOR'];
   const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false);
@@ -141,6 +143,7 @@ export function Navbar({
           <div
             className="flex items-center gap-2 cursor-pointer select-none flex-shrink-0"
             onClick={() => setActiveTab('submissions')}
+            data-tour="brand-header"
           >
             <div className="w-9 h-9 rounded-xl bg-[#0B1E36] border-2 border-[#0B1E36] flex items-center justify-center shadow-[2px_2px_0px_#F59E0B] flex-shrink-0">
               <ShieldCheck className="w-5 h-5 text-[#F59E0B]" />
@@ -165,6 +168,7 @@ export function Navbar({
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
+                    data-tour={`nav-${tab.id}`}
                     className={`flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all flex-shrink-0 cursor-pointer ${
                       isActive
                         ? 'bg-[#0B1E36] text-white border-2 border-[#0B1E36] shadow-[2px_2px_0px_#F59E0B]'
@@ -187,6 +191,7 @@ export function Navbar({
             <div className="relative flex-shrink-0" ref={workspaceDropdownRef}>
               <button
                 type="button"
+                data-tour="workspace-selector"
                 onClick={() => {
                   setWorkspaceDropdownOpen((prev) => !prev);
                   setRoleDropdownOpen(false);
@@ -279,6 +284,7 @@ export function Navbar({
             <div className="relative flex-shrink-0" ref={roleDropdownRef}>
               <button
                 type="button"
+                data-tour="role-selector"
                 onClick={() => {
                   setRoleDropdownOpen((prev) => !prev);
                   setWorkspaceDropdownOpen(false);
@@ -401,6 +407,20 @@ export function Navbar({
                 </div>
               )}
             </div>
+
+            {/* Product Tour Trigger */}
+            {onStartTour && (
+              <button
+                type="button"
+                onClick={onStartTour}
+                className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider bg-amber-50 hover:bg-amber-100 text-[#0B1E36] border-2 border-[#F59E0B] shadow-[2px_2px_0px_#0B1E36] transition cursor-pointer flex-shrink-0"
+                title="Launch Interactive 10-Step Product Tour"
+                data-tour="btn-product-tour"
+              >
+                <Compass className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+                <span className="hidden sm:inline">Tour</span>
+              </button>
+            )}
 
             {/* 3. User Avatar & Display */}
             <div className="flex items-center gap-2 pl-1 border-l border-slate-200 flex-shrink-0">
