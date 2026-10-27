@@ -137,6 +137,15 @@ const submissionSchema = new mongoose.Schema(
       default: 'general',
       index: true
     },
+    title: {
+      type: String,
+      default: null,
+      index: true
+    },
+    revisionNotes: {
+      type: String,
+      default: ''
+    },
     revisionNumber: {
       type: Number,
       required: true,
