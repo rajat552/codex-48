@@ -127,9 +127,9 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
     if (statusFilter !== 'ALL' && sub.status !== statusFilter) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      const matchTitle = sub.title?.toLowerCase().includes(q);
+      const matchTitle = (sub.title || sub.originalFilename || sub.campaignId || '').toLowerCase().includes(q);
       const matchCampaign = sub.campaignId?.toLowerCase().includes(q);
-      const matchCopy = sub.currentRevision?.copyText?.toLowerCase().includes(q);
+      const matchCopy = (sub.extractedText || sub.text || sub.copyText || sub.currentRevision?.copyText || '').toLowerCase().includes(q);
       if (!matchTitle && !matchCampaign && !matchCopy) return false;
     }
     return true;
@@ -246,7 +246,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
                 <div className="space-y-1.5 flex-1 min-w-0">
                   <div className="flex items-center gap-3 flex-wrap">
                     <h3 className="text-base font-black text-[#0B1E36] group-hover:text-[#0055D4] transition truncate">
-                      {sub.title}
+                      {sub.title || sub.originalFilename || (sub.campaignId ? `${sub.campaignId} Creative` : `Creative #${String(sub._id || '').slice(-4)}`)}
                     </h3>
                     <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300">
                       Campaign: {sub.campaignId}
@@ -268,13 +268,16 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
                         </button>
                       );
                     })()}
-                    <span className="text-[10px] font-mono font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-300">
-                      Rev {currentRev.revisionNumber || 1}
+                    <span
+                      className="text-[10px] font-mono font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-300"
+                      title={`Revision: Rev ${sub.revisionNumber || currentRev.revisionNumber || 1}`}
+                    >
+                      Rev {sub.revisionNumber || currentRev.revisionNumber || 1}
                     </span>
                   </div>
 
                   <p className="text-xs text-slate-600 line-clamp-1 font-mono">
-                    "{currentRev.copyText || 'No text snippet'}"
+                    "{sub.extractedText || sub.text || sub.copyText || currentRev.copyText || 'No text snippet'}"
                   </p>
 
                   <div className="flex items-center gap-4 text-[11px] text-slate-500 font-mono pt-1">
