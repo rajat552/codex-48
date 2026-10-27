@@ -104,8 +104,9 @@ export function errorHandler(err, req, res, next) {
     }
   }
 
-  // Log error
-  logger.error(message, {
+  // Log error (use warn for client 4xx errors, error for server 500 errors)
+  const logFn = statusCode >= 500 ? logger.error.bind(logger) : logger.warn.bind(logger);
+  logFn(message, {
     requestId,
     code,
     statusCode,
