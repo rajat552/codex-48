@@ -133,7 +133,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4" data-tour="submissions-overview">
         <div>
           <h1 className="text-2xl font-black uppercase tracking-tight text-[#0B1E36] flex items-center gap-3">
             <FileText className="w-7 h-7 text-[#0055D4]" />
@@ -147,6 +147,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
         <div className="flex items-center gap-3 flex-wrap">
           <button
             onClick={() => setShowJudgeModal(true)}
+            data-tour="btn-judge-demo"
             className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white hover:bg-amber-50/60 text-[#0B1E36] font-mono font-bold text-xs uppercase tracking-wider border-2 border-[#0B1E36] shadow-[3px_3px_0px_#F59E0B] hover:translate-x-[1px] hover:translate-y-[1px] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer"
             title="1-Click Judge Showcase: Run proposal test scenarios"
           >
@@ -156,6 +157,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
 
           <button
             onClick={() => setShowCreateModal(true)}
+            data-tour="btn-new-submission"
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1E36] font-mono font-bold text-xs uppercase tracking-wider border-2 border-[#0B1E36] shadow-[3px_3px_0px_#0B1E36] hover:translate-x-[1px] hover:translate-y-[1px] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
@@ -165,7 +167,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-white border-2 border-slate-300 rounded-2xl p-4 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-white border-2 border-slate-300 rounded-2xl p-4 shadow-sm" data-tour="filter-toolbar">
         <div className="flex items-center gap-2 flex-wrap">
           {['ALL', 'PENDING_REVIEW', 'IN_REVIEW', 'CHANGES_REQUESTED', 'APPROVED', 'REJECTED'].map(status => (
             <button
@@ -205,7 +207,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
           {error}
         </div>
       ) : filteredSubmissions.length === 0 ? (
-        <div className="p-16 text-center bg-white border-2 border-[#0B1E36] rounded-2xl shadow-[4px_4px_0px_#0B1E36] space-y-3">
+        <div className="p-16 text-center bg-white border-2 border-[#0B1E36] rounded-2xl shadow-[4px_4px_0px_#0B1E36] space-y-3" data-tour="review-checks-area">
           <FileText className="w-12 h-12 text-slate-400 mx-auto" />
           <h3 className="text-base font-black text-[#0B1E36] uppercase">No submissions found</h3>
           <p className="text-xs text-slate-600 font-mono max-w-sm mx-auto">
@@ -222,8 +224,8 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3.5">
-          {filteredSubmissions.map(sub => {
+        <div className="grid grid-cols-1 gap-3.5" data-tour="review-checks-area" data-tour-alias="submissions-list">
+          {filteredSubmissions.map((sub, idx) => {
             const currentRev = sub.currentRevision || {};
             const findings = currentRev.findings || [];
             const activeConflicts = findings.filter(
