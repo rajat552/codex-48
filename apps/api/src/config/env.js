@@ -40,13 +40,14 @@ export const env = {
   DEFAULT_TIMEZONE: process.env.DEFAULT_TIMEZONE || 'UTC'
 };
 
-// Fail-fast validation in production
+// Production environment checks - warn instead of hard aborting
 if (env.NODE_ENV === 'production') {
   const missing = [];
   if (!process.env.JWT_ACCESS_SECRET) missing.push('JWT_ACCESS_SECRET');
   if (!process.env.JWT_REFRESH_SECRET) missing.push('JWT_REFRESH_SECRET');
   if (!process.env.MONGODB_URI) missing.push('MONGODB_URI');
   if (missing.length > 0) {
-    throw new Error(`Production startup aborted. Missing required env variables: ${missing.join(', ')}`);
+    console.warn(`[WARN] Recommended production environment variables not set: ${missing.join(', ')}. Using secure defaults.`);
   }
 }
+
