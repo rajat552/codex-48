@@ -53,6 +53,10 @@ export function createApp() {
     });
   });
 
+  // Direct root health probes for hosting platforms (Render, Railway, AWS, Docker)
+  app.use('/health', healthRouter);
+  app.get('/healthz', (req, res) => res.status(200).send('OK'));
+
   // Mount API V1 routes
   const apiV1 = express.Router();
   apiV1.use('/health', healthRouter);
