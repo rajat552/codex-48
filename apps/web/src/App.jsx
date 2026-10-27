@@ -5,6 +5,7 @@ import { SubmissionsPage } from './pages/SubmissionsPage.jsx';
 import { RulesPage } from './pages/RulesPage.jsx';
 import { BriefImportPage } from './pages/BriefImportPage.jsx';
 import { InsightsPage } from './pages/InsightsPage.jsx';
+import { OnboardingTour } from './components/OnboardingTour.jsx';
 import { api } from './api/client.js';
 import { RefreshCw, Building2, Plus } from 'lucide-react';
 
@@ -16,6 +17,7 @@ export function App() {
   const [activeRole, setActiveRole] = useState('ALL');
   const [loading, setLoading] = useState(true);
   const [creatingWs, setCreatingWs] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
 
   const prefetchWorkspaceData = (wsId) => {
     if (!wsId) return;
@@ -79,6 +81,21 @@ export function App() {
     initAuth().finally(() => clearTimeout(slowTimer));
     return () => clearTimeout(slowTimer);
   }, []);
+
+  // Auto-launch onboarding tour for first-time users
+  useEffect(() => {
+    if (user && currentWorkspace) {
+      try {
+        const completed = localStorage.getItem('cohesora_tour_completed');
+        if (!completed) {
+          const tourTimer = setTimeout(() => {
+            setTourOpen(true);
+          }, 800);
+          return () => clearTimeout(tourTimer);
+        }
+      } catch (e) {}
+    }
+  }, [user, currentWorkspace]);
 
   const handleAuthSuccess = async ({ token, user }) => {
     setUser(user);
@@ -192,6 +209,7 @@ export function App() {
         setActiveTab={setActiveTab}
         activeRole={activeRole}
         onSelectRole={setActiveRole}
+        onStartTour={() => setTourOpen(true)}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -244,6 +262,13 @@ export function App() {
           </div>
         )}
       </main>
+
+      <OnboardingTour
+        isOpen={tourOpen}
+        onClose={() => setTourOpen(false)}
+        activeTab={activeTab}
+        onNavigateTab={setActiveTab}
+      />
     </div>
   );
 }
