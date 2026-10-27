@@ -106,14 +106,15 @@ export function Navbar({
     }
   };
 
+  const rawWs = currentWorkspace?.workspace || currentWorkspace;
   const currentWsId =
-    typeof currentWorkspace?.workspace === 'object'
-      ? currentWorkspace.workspace._id || currentWorkspace.workspace.id
-      : currentWorkspace?.workspace || '';
+    typeof rawWs === 'object'
+      ? rawWs?._id || rawWs?.id || ''
+      : rawWs || '';
 
   const currentWsName =
-    typeof currentWorkspace?.workspace === 'object'
-      ? currentWorkspace.workspace.name || 'Workspace'
+    typeof rawWs === 'object'
+      ? rawWs?.name || 'Workspace'
       : 'Workspace';
 
   const userInitials = user?.displayName
