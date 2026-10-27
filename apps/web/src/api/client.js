@@ -322,9 +322,9 @@ export class ApiClient {
   }
 
   // Insights
-  static getInsights(workspaceId, params = {}) {
+  static getInsights(workspaceId, params = {}, options = {}) {
     const q = new URLSearchParams(params).toString();
-    return this.request(`/workspaces/${workspaceId}/insights${q ? `?${q}` : ''}`);
+    return this.request(`/workspaces/${workspaceId}/insights${q ? `?${q}` : ''}`, options);
   }
 }
 
@@ -367,7 +367,7 @@ export const api = {
     convertToRules: (wsId, importId, payload) => ApiClient.convertBriefToRules(wsId, importId, payload)
   },
   insights: {
-    get: (wsId, params) => ApiClient.getInsights(wsId, params)
+    get: (wsId, params, options) => ApiClient.getInsights(wsId, params, options)
   },
   prefetch: (path) => ApiClient.prefetch(path),
   clearCache: () => ApiClient.clearCache()
