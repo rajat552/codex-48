@@ -113,16 +113,24 @@ export class SubmissionController {
   static async recordDecision(req, res, next) {
     try {
       const { submissionId } = req.params;
-      const { action, findingId, reason, comment } = req.body;
+      let { action, status, findingId, reason, comment, comments } = req.body;
+
+      const rawAction = String(action || status || '').toLowerCase();
+      let normalizedAction = rawAction;
+      if (rawAction === 'approved') normalizedAction = 'approve';
+      else if (rawAction === 'rejected') normalizedAction = 'reject';
+      else if (rawAction === 'changes_requested') normalizedAction = 'request_changes';
+
+      const decisionReason = String(reason || comment || comments || '').trim();
 
       const updated = await SubmissionService.recordDecision({
         workspaceId: req.workspace._id,
         actorId: req.user.userId,
         submissionId,
-        action,
+        action: normalizedAction,
         findingId,
-        reason,
-        comment
+        reason: decisionReason,
+        comment: decisionReason
       });
 
       return res.status(200).json({
