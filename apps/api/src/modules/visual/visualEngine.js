@@ -1,7 +1,19 @@
-import sharp from 'sharp';
 import { createWorker } from 'tesseract.js';
 import { calculateContrastRatio, calculateDeltaE2000 } from './colorMath.js';
 import { logger } from '../../config/logger.js';
+
+let sharpModule = null;
+async function getSharp() {
+  if (sharpModule) return sharpModule;
+  try {
+    const mod = await import('sharp');
+    sharpModule = mod.default || mod;
+    return sharpModule;
+  } catch (err) {
+    logger.warn('Sharp module failed to load on this runtime, using fallback metrics', { error: err.message });
+    return null;
+  }
+}
 
 export class VisualEngine {
   /**
@@ -32,14 +44,17 @@ export class VisualEngine {
     let bgColor = '#FFFFFF';
 
     try {
-      const image = sharp(imageBuffer);
-      metadata = await image.metadata();
+      const sharp = await getSharp();
+      if (sharp) {
+        const image = sharp(imageBuffer);
+        metadata = await image.metadata();
 
-      // Sample image corners / edges for background and center for text
-      const stats = await image.stats();
-      const dominant = stats.dominant;
-      if (dominant) {
-        bgColor = `#${((1 << 24) + (dominant.r << 16) + (dominant.g << 8) + dominant.b).toString(16).slice(1).toUpperCase()}`;
+        // Sample image corners / edges for background and center for text
+        const stats = await image.stats();
+        const dominant = stats.dominant;
+        if (dominant) {
+          bgColor = `#${((1 << 24) + (dominant.r << 16) + (dominant.g << 8) + dominant.b).toString(16).slice(1).toUpperCase()}`;
+        }
       }
 
       // Check against visual_palette and accessibility rules in activeRules
