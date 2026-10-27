@@ -27,8 +27,31 @@ export class WorkspaceController {
         })
       );
 
+      let validWorkspaces = workspaces.filter(w => w.workspace);
+      if (validWorkspaces.length === 0) {
+        const userDoc = await User.findById(req.user.userId);
+        const wsName = `${userDoc?.displayName || 'Brand'}'s Workspace`;
+        const slug = `${(userDoc?.email || 'user').split('@')[0]}-${Date.now().toString(36)}`;
+        const wsDoc = await Workspace.create({
+          name: wsName,
+          slug,
+          createdBy: req.user.userId
+        });
+        const member = await WorkspaceMember.create({
+          workspaceId: wsDoc._id,
+          userId: req.user.userId,
+          roles: ['ADMIN', 'REVIEWER', 'CREATOR'],
+          status: 'active'
+        });
+        validWorkspaces = [{
+          workspace: wsDoc,
+          roles: member.roles,
+          status: member.status
+        }];
+      }
+
       return res.status(200).json({
-        data: workspaces.filter(w => w.workspace),
+        data: validWorkspaces,
         meta: { requestId: req.requestId }
       });
     } catch (err) {
