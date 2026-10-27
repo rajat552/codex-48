@@ -8,17 +8,33 @@ import { NotFoundError } from '../../middleware/errorHandler.js';
 export class SubmissionController {
   static async create(req, res, next) {
     try {
-      const { contentType, text, campaignId, channel, altText } = req.body;
+      const { contentType, campaignId, channel } = req.body;
+      const text = req.body.text || req.body.copyText || '';
+      const altText = req.body.altText || req.body.assetAltText || null;
       const file = req.file || null;
+
+      let resolvedContentType = contentType;
+      if (!resolvedContentType) {
+        if (file) {
+          const mime = (file.mimetype || '').toLowerCase();
+          if (mime.includes('png')) resolvedContentType = 'PNG';
+          else if (mime.includes('jpeg') || mime.includes('jpg')) resolvedContentType = 'JPG';
+          else if (mime.includes('pdf')) resolvedContentType = 'PDF_BRIEF';
+          else if (mime.includes('docx') || mime.includes('word')) resolvedContentType = 'DOCX_BRIEF';
+          else resolvedContentType = 'PNG';
+        } else {
+          resolvedContentType = 'TEXT';
+        }
+      }
 
       const submission = await SubmissionService.createSubmission({
         workspaceId: req.workspace._id,
         creatorId: req.user.userId,
-        contentType: contentType || (file ? (file.mimetype.includes('png') ? 'PNG' : 'JPG') : 'TEXT'),
+        contentType: resolvedContentType,
         text,
         file,
-        campaignId,
-        channel,
+        campaignId: campaignId || 'CAMPAIGN-001',
+        channel: channel || 'general',
         altText
       });
 
@@ -72,7 +88,8 @@ export class SubmissionController {
   static async createRevision(req, res, next) {
     try {
       const { submissionId } = req.params;
-      const { text, altText } = req.body;
+      const text = req.body.text || req.body.copyText || '';
+      const altText = req.body.altText || req.body.assetAltText || null;
       const file = req.file || null;
 
       const revision = await SubmissionService.createRevision({
