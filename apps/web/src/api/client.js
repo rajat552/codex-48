@@ -266,14 +266,33 @@ export class ApiClient {
     return this.request(`/workspaces/${workspaceId}/submissions/${submissionId}/review-runs`, { method: 'POST' });
   }
 
-  static getDiff(workspaceId, submissionId, fromRevision, toRevision) {
-    return this.request(`/workspaces/${workspaceId}/submissions/${submissionId}/revisions/diff?fromRevision=${fromRevision}&toRevision=${toRevision}`);
+  static async getDiff(workspaceId, submissionId, fromRevision, toRevision) {
+    try {
+      return await this.request(`/workspaces/${workspaceId}/submissions/${submissionId}/revisions/diff?fromRevision=${fromRevision}&toRevision=${toRevision}`);
+    } catch (err) {
+      if (err.status === 404 || err.message?.includes('not found')) {
+        return await this.request(`/workspaces/${workspaceId}/submissions/${submissionId}/diff?fromRevision=${fromRevision}&toRevision=${toRevision}`);
+      }
+      throw err;
+    }
   }
 
   static submitDecision(workspaceId, submissionId, status, comments) {
+    const raw = String(status || '').toLowerCase();
+    let action = raw;
+    if (raw === 'approved') action = 'approve';
+    else if (raw === 'rejected') action = 'reject';
+    else if (raw === 'changes_requested') action = 'request_changes';
+
     return this.request(`/workspaces/${workspaceId}/submissions/${submissionId}/decisions`, {
       method: 'POST',
-      body: { status, comments }
+      body: {
+        action,
+        status: action,
+        reason: comments,
+        comment: comments,
+        comments
+      }
     });
   }
 
