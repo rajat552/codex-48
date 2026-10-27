@@ -6,7 +6,7 @@ import { RulesPage } from './pages/RulesPage.jsx';
 import { BriefImportPage } from './pages/BriefImportPage.jsx';
 import { InsightsPage } from './pages/InsightsPage.jsx';
 import { OnboardingTour } from './components/OnboardingTour.jsx';
-import { api } from './api/client.js';
+import { api, ApiClient } from './api/client.js';
 import { RefreshCw, Building2, Plus } from 'lucide-react';
 
 export function App() {
