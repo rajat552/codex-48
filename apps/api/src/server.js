@@ -17,7 +17,7 @@ async function bootstrap() {
     worker.start();
 
     // 4. Start HTTP Server
-    const server = app.listen(env.PORT, () => {
+    const server = app.listen(env.PORT, '0.0.0.0', () => {
       logger.info(`Cohesora API server running on port ${env.PORT}`, {
         port: env.PORT,
         env: env.NODE_ENV,
