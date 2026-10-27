@@ -41,6 +41,18 @@ export function createApp() {
   app.use(requestIdMiddleware);
   app.use(apiLimiter);
 
+  // Root health / welcome endpoint (for cloud platform health checks & visitors)
+  app.get('/', (req, res) => {
+    res.status(200).json({
+      name: 'Cohesora Platform API',
+      status: 'online',
+      version: '1.0.0',
+      apiBase: env.API_BASE_PATH,
+      documentation: `${env.API_BASE_PATH}/health/live`,
+      timestamp: new Date().toISOString()
+    });
+  });
+
   // Mount API V1 routes
   const apiV1 = express.Router();
   apiV1.use('/health', healthRouter);
