@@ -1,4 +1,4 @@
-const API_BASE = '/api/v1';
+const API_BASE = (import.meta.env.VITE_API_URL || '/api/v1').replace(/\/+$/, '');
 
 export class ApiClient {
   static getToken() {
@@ -24,9 +24,10 @@ export class ApiClient {
       }
     }
 
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
     let response;
     try {
-      response = await fetch(`${API_BASE}${path}`, {
+      response = await fetch(`${API_BASE}${cleanPath}`, {
         ...options,
         headers
       });
