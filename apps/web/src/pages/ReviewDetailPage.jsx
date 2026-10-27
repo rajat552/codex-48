@@ -170,15 +170,36 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
     );
   }
 
-  const currentRev = submission.currentRevision || {};
-  const findings = currentRev.findings || [];
+  const currentRev = submission.currentRevision || {
+    revisionNumber: submission.revisionNumber || 1,
+    copyText: submission.extractedText || submission.text || submission.copyText || '',
+    findings: submission.findings || [],
+    visualMetrics: submission.processing?.visualMetrics || submission.visualMetrics || null,
+    ruleSnapshot: submission.ruleVersionSnapshot || submission.ruleSnapshot || []
+  };
+
+  const findings = (currentRev.findings && currentRev.findings.length > 0)
+    ? currentRev.findings
+    : (submission.findings || []);
+
   const activeBlockingCount = findings.filter(
-    f => f.classification === 'CONFIRMED_RULE_CONFLICT' && f.status === 'ACTIVE'
+    f => f.classification === 'CONFIRMED_RULE_CONFLICT' && (f.status === 'ACTIVE' || !f.override?.overridden)
   ).length;
 
   const confirmedConflicts = findings.filter(f => f.classification === 'CONFIRMED_RULE_CONFLICT');
   const needsVerification = findings.filter(f => f.classification === 'NEEDS_VERIFICATION');
   const styleAdvisories = findings.filter(f => f.classification === 'ADVISORY_STYLE_VISUAL_CONCERN');
+
+  const revisionsList = (submission.revisions && submission.revisions.length > 0)
+    ? submission.revisions
+    : [{
+        revisionNumber: currentRev.revisionNumber || submission.revisionNumber || 1,
+        createdAt: submission.createdAt || new Date(),
+        copyText: currentRev.copyText || submission.extractedText || '',
+        findings: findings,
+        status: submission.status,
+        revisionNotes: 'Initial revision intake'
+      }];
 
   return (
     <div className="space-y-6">
@@ -193,30 +214,50 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
           </button>
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h2 className="text-xl font-black text-[#0B1E36]">{submission.title}</h2>
+              <h2 className="text-xl font-black text-[#0B1E36]">{submission.title || submission.campaignId || 'Creative Review'}</h2>
               <span className={`text-xs font-mono font-bold uppercase px-2.5 py-0.5 rounded border-2 ${
                 submission.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-800 border-emerald-500' :
                 submission.status === 'REJECTED' ? 'bg-red-50 text-red-700 border-red-500' :
                 submission.status === 'CHANGES_REQUESTED' ? 'bg-amber-50 text-amber-800 border-amber-500' :
                 'bg-blue-50 text-[#0055D4] border-blue-400'
               }`}>
-                {submission.status.replace('_', ' ')}
+                {(submission.status || 'SUBMITTED').replace('_', ' ')}
               </span>
               <span className="text-xs bg-slate-100 text-slate-800 px-2 py-0.5 rounded font-mono font-bold border border-slate-300">
-                Rev {currentRev.revisionNumber || 1}
+                Rev {currentRev.revisionNumber || submission.revisionNumber || 1}
               </span>
             </div>
             <p className="text-xs text-slate-600 font-mono mt-1">
-              Campaign: <span className="text-[#0B1E36] font-bold">{submission.campaignId}</span> &bull; Channel:{' '}
-              <span className="text-[#0B1E36] font-bold">{submission.channel}</span> &bull; Created by:{' '}
-              <span className="text-[#0B1E36] font-bold">{submission.createdBy?.displayName || 'User'}</span>
+              Campaign: <span className="text-[#0B1E36] font-bold">{submission.campaignId || 'General'}</span> &bull; Channel:{' '}
+              <span className="text-[#0B1E36] font-bold">{submission.channel || 'All'}</span> &bull; Created by:{' '}
+              <span className="text-[#0B1E36] font-bold">{submission.creatorId?.displayName || submission.createdBy?.displayName || 'User'}</span>
             </p>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3 flex-wrap">
-          {submission.revisions && submission.revisions.length > 1 && (
+          <button
+            onClick={async () => {
+              setActionLoading(true);
+              try {
+                await api.submissions.triggerReview(workspaceId, submissionId);
+                await loadAll();
+              } catch (err) {
+                alert(err.message || 'Failed to trigger review run');
+              } finally {
+                setActionLoading(false);
+              }
+            }}
+            disabled={actionLoading}
+            className="flex items-center gap-1.5 px-3 py-2 bg-amber-50 hover:bg-amber-100 text-[#0B1E36] border-2 border-[#F59E0B] shadow-[2px_2px_0px_#0B1E36] rounded-xl text-xs font-mono font-bold uppercase transition cursor-pointer disabled:opacity-50"
+            title="Re-run compliance review engine"
+          >
+            <RefreshCw className={`w-4 h-4 text-amber-600 ${actionLoading ? 'animate-spin' : ''}`} />
+            Run Review
+          </button>
+
+          {revisionsList && revisionsList.length > 1 && (
             <button
               onClick={() => setShowDiffView(true)}
               className="flex items-center gap-2 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-[#0055D4] border-2 border-[#0055D4] rounded-xl text-xs font-mono font-bold uppercase transition cursor-pointer"
@@ -276,7 +317,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
       <div className="flex items-center gap-2 border-b-2 border-slate-200">
         {[
           { id: 'findings', label: `Findings & Review (${findings.length})`, icon: ShieldAlert },
-          { id: 'revisions', label: `Revision History (${submission.revisions?.length || 1})`, icon: History },
+          { id: 'revisions', label: `Revision History (${revisionsList.length})`, icon: History },
           { id: 'audit', label: `Audit Log (${auditEvents.length})`, icon: FileCheck }
         ].map(t => {
           const Icon = t.icon;
@@ -444,13 +485,13 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
       {/* Tab: Revision History */}
       {activeTab === 'revisions' && (
         <div className="space-y-4">
-          {submission.revisions?.map((rev, i) => (
+          {revisionsList.map((rev, i) => (
             <div key={i} className="bg-white border-2 border-slate-300 rounded-2xl p-6 space-y-3 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-black text-[#0B1E36]">Revision {rev.revisionNumber}</span>
+                  <span className="text-sm font-black text-[#0B1E36]">Revision {rev.revisionNumber || i + 1}</span>
                   <span className="text-xs font-mono text-slate-500">
-                    {new Date(rev.createdAt).toLocaleString()}
+                    {rev.createdAt ? new Date(rev.createdAt).toLocaleString() : 'Current Active Revision'}
                   </span>
                 </div>
                 <span className="text-xs bg-slate-100 text-slate-800 px-2 py-0.5 rounded font-mono font-bold border border-slate-300">
@@ -458,8 +499,8 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
                 </span>
               </div>
               <p className="text-xs text-slate-600 font-mono italic">Notes: {rev.revisionNotes || 'No notes provided'}</p>
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 font-mono text-xs text-slate-900">
-                {rev.copyText}
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 font-mono text-xs text-slate-900 whitespace-pre-wrap">
+                {rev.copyText || rev.extractedText || 'No text copy provided for this revision.'}
               </div>
             </div>
           ))}
