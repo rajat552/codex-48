@@ -137,9 +137,9 @@ export function Navbar({
 
   return (
     <header className="border-b-2 border-slate-200 bg-white/95 backdrop-blur sticky top-0 z-50 shadow-sm w-full">
-      <div className="w-full max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8 min-h-[64px] sm:min-h-[68px] py-1.5 flex items-center justify-between gap-2 lg:gap-4 flex-nowrap whitespace-nowrap">
+      <div className="w-full max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-6 min-h-[64px] sm:min-h-[68px] py-1.5 flex items-center justify-between gap-1.5 sm:gap-3 flex-nowrap whitespace-nowrap">
         {/* Left Section: Brand & Navigation */}
-        <div className="flex items-center gap-3 lg:gap-5 flex-shrink-0">
+        <div className="flex items-center gap-2 lg:gap-4 flex-shrink-0">
           <div className="flex flex-col justify-center items-start flex-shrink-0">
             <div
               className="flex items-center gap-2 cursor-pointer select-none flex-shrink-0"
@@ -186,14 +186,15 @@ export function Navbar({
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     data-tour={`nav-${tab.id}`}
-                    className={`flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all flex-shrink-0 cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2 lg:px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all flex-shrink-0 cursor-pointer ${
                       isActive
                         ? 'bg-[#0B1E36] text-white border-2 border-[#0B1E36] shadow-[2px_2px_0px_#F59E0B]'
                         : 'text-slate-700 hover:text-[#0055D4] hover:bg-slate-100 border-2 border-transparent'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
-                    <span>{tab.label}</span>
+                    <span className="hidden xl:inline">{tab.label}</span>
+                    <span className="xl:hidden">{tab.shortLabel}</span>
                   </button>
                 );
               })}
@@ -425,19 +426,19 @@ export function Navbar({
               )}
             </div>
 
-            {/* 3. User Avatar & Display (Login Part) */}
-            <div className="flex items-center gap-2 pl-2 border-l-2 border-slate-200 flex-shrink-0">
+            {/* 3. User Avatar, Display & Logout (Unified Login Badge) */}
+            <div className="flex items-center pl-1.5 sm:pl-2 border-l-2 border-slate-200 flex-shrink-0">
               <div
-                className="flex items-center gap-2 bg-slate-50 hover:bg-slate-100/90 border border-slate-200 rounded-xl px-2.5 py-1 transition-colors"
+                className="flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100/90 border-2 border-slate-200 rounded-xl p-1 transition-colors shadow-xs"
                 title={`${user.displayName} (${user.email})`}
               >
                 <div
-                  className="w-7 h-7 rounded-lg bg-[#0B1E36] text-[#F59E0B] font-mono font-bold text-xs flex items-center justify-center border border-[#0B1E36] shadow-xs flex-shrink-0"
+                  className="w-7 h-7 rounded-lg bg-[#0B1E36] text-[#F59E0B] font-mono font-bold text-xs flex items-center justify-center flex-shrink-0"
                 >
                   {userInitials}
                 </div>
 
-                <div className="hidden lg:flex flex-col justify-center text-left max-w-[130px] xl:max-w-[170px] min-w-0">
+                <div className="hidden xl:flex flex-col justify-center text-left max-w-[110px] 2xl:max-w-[150px] min-w-0 px-1">
                   <div className="text-xs font-bold text-[#0B1E36] truncate leading-tight">
                     {user.displayName}
                   </div>
@@ -445,16 +446,18 @@ export function Navbar({
                     {user.email}
                   </div>
                 </div>
-              </div>
 
-              {/* Logout button */}
-              <button
-                onClick={onLogout}
-                title="Sign Out"
-                className="w-8 h-8 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 border-2 border-slate-200 hover:border-red-300 flex items-center justify-center transition-all flex-shrink-0 cursor-pointer shadow-xs active:translate-x-[0.5px] active:translate-y-[0.5px]"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+                <div className="w-[1px] h-4 bg-slate-200 mx-0.5" />
+
+                {/* Integrated Logout button */}
+                <button
+                  onClick={onLogout}
+                  title="Sign Out"
+                  className="w-7 h-7 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
             {/* Mobile menu trigger */}
