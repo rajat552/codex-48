@@ -11,6 +11,7 @@ import {
   ForbiddenError,
   InvalidStateTransitionError
 } from '../../middleware/errorHandler.js';
+import { ReviewOrchestrator } from '../../services/reviewOrchestrator.js';
 
 export class SubmissionService {
   static async createSubmission({
@@ -100,6 +101,12 @@ export class SubmissionService {
       }
     });
 
+    try {
+      await ReviewOrchestrator.executeReview(submission._id);
+    } catch (reviewErr) {
+      console.warn('Initial review execution notice:', reviewErr.message);
+    }
+
     return submission;
   }
 
@@ -185,6 +192,12 @@ export class SubmissionService {
         parentSubmissionId: parent._id.toString()
       }
     });
+
+    try {
+      await ReviewOrchestrator.executeReview(revision._id);
+    } catch (reviewErr) {
+      console.warn('Revision review execution notice:', reviewErr.message);
+    }
 
     return revision;
   }
@@ -294,11 +307,56 @@ export class SubmissionService {
   }
 
   static async getSubmission(workspaceId, submissionId) {
-    const submission = await Submission.findOne({ _id: submissionId, workspaceId })
+    let submission = await Submission.findOne({ _id: submissionId, workspaceId })
       .populate('creatorId', 'displayName email');
     if (!submission) {
       throw new NotFoundError('Submission not found.');
     }
-    return submission;
+
+    // Auto-execute review if findings are not evaluated yet or status is submitted
+    if (submission.status === 'submitted' || (!submission.findings || submission.findings.length === 0)) {
+      try {
+        const reviewed = await ReviewOrchestrator.executeReview(submission._id);
+        if (reviewed) {
+          submission = reviewed;
+        }
+      } catch (err) {
+        console.warn('Auto review execution on getSubmission notice:', err.message);
+      }
+    }
+
+    const allRevs = await Submission.find({
+      submissionGroupId: submission.submissionGroupId,
+      workspaceId
+    }).sort({ revisionNumber: 1 });
+
+    const submissionObj = submission.toObject ? submission.toObject() : { ...submission };
+
+    submissionObj.currentRevision = {
+      revisionNumber: submission.revisionNumber || 1,
+      copyText: submission.extractedText || submission.text || '',
+      findings: submission.findings || [],
+      visualMetrics: submission.processing?.visualMetrics || null,
+      ruleSnapshot: submission.ruleVersionSnapshot || []
+    };
+
+    submissionObj.revisions = (allRevs && allRevs.length > 0)
+      ? allRevs.map(r => ({
+          _id: r._id,
+          revisionNumber: r.revisionNumber || 1,
+          createdAt: r.createdAt,
+          copyText: r.extractedText || r.text || '',
+          findings: r.findings || [],
+          status: r.status,
+          visualMetrics: r.processing?.visualMetrics || null,
+          revisionNotes: r.revisionNotes || `Revision ${r.revisionNumber || 1}`
+        }))
+      : [submissionObj.currentRevision];
+
+    if (!submissionObj.title) {
+      submissionObj.title = submission.title || submission.campaignId || `Submission #${submission._id.toString().slice(-4)}`;
+    }
+
+    return submissionObj;
   }
 }
