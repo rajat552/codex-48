@@ -24,12 +24,17 @@ import { RevisionDiffView } from './RevisionDiffView.jsx';
 import { getChannelInfo } from '../utils/channelUtils.js';
 
 export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack }) {
+  const [activeSubmissionId, setActiveSubmissionId] = useState(submissionId);
   const [submission, setSubmission] = useState(null);
   const [auditEvents, setAuditEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [channelModal, setChannelModal] = useState(null);
+
+  useEffect(() => {
+    setActiveSubmissionId(submissionId);
+  }, [submissionId]);
 
   // View state
   const [activeTab, setActiveTab] = useState('findings'); // 'findings' | 'revisions' | 'audit'
@@ -45,7 +50,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
 
   const fetchSubmission = async () => {
     try {
-      const data = await api.submissions.getById(workspaceId, submissionId);
+      const data = await api.submissions.getById(workspaceId, activeSubmissionId);
       setSubmission(data);
       if (data.currentRevision?.copyText) {
         setRevisionModal(prev => ({ ...prev, copyText: data.currentRevision.copyText }));
@@ -57,7 +62,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
 
   const fetchAudit = async () => {
     try {
-      const events = await api.audit.list(workspaceId, { submissionId });
+      const events = await api.audit.list(workspaceId, { submissionId: activeSubmissionId });
       setAuditEvents(events);
     } catch (err) {
       console.error('Failed to load audit events', err);
@@ -74,8 +79,10 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
   };
 
   useEffect(() => {
-    loadAll();
-  }, [workspaceId, submissionId]);
+    if (activeSubmissionId) {
+      loadAll();
+    }
+  }, [workspaceId, activeSubmissionId]);
 
   // Handle Finding Override
   const handleOverrideSubmit = async () => {
@@ -87,7 +94,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
     try {
       await api.submissions.overrideFinding(
         workspaceId,
-        submissionId,
+        activeSubmissionId,
         overrideModal.findingId,
         overrideModal.reason
       );
@@ -109,7 +116,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
     }
     setActionLoading(true);
     try {
-      await api.submissions.submitDecision(workspaceId, submissionId, type, comment);
+      await api.submissions.submitDecision(workspaceId, activeSubmissionId, type, comment);
       setDecisionModal({ open: false, type: '', comment: '' });
       await loadAll();
     } catch (err) {
@@ -127,13 +134,18 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
     }
     setActionLoading(true);
     try {
-      await api.submissions.createRevision(workspaceId, submissionId, {
+      const res = await api.submissions.createRevision(workspaceId, activeSubmissionId, {
         text: revisionModal.copyText,
         copyText: revisionModal.copyText,
         revisionNotes: revisionModal.notes || 'Revised copy based on review findings'
       });
       setRevisionModal({ open: false, copyText: '', notes: '' });
-      await loadAll();
+      const newId = res?.data?.id || res?.id;
+      if (newId) {
+        setActiveSubmissionId(newId);
+      } else {
+        await loadAll();
+      }
     } catch (err) {
       alert(`Failed to submit revision: ${err.message}`);
     } finally {
@@ -507,25 +519,50 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
       {/* Tab: Revision History */}
       {activeTab === 'revisions' && (
         <div className="space-y-4">
-          {revisionsList.map((rev, i) => (
-            <div key={i} className="bg-white border-2 border-slate-300 rounded-2xl p-6 space-y-3 shadow-sm">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-black text-[#0B1E36]">Revision {rev.revisionNumber || i + 1}</span>
-                  <span className="text-xs font-mono text-slate-500">
-                    {rev.createdAt ? new Date(rev.createdAt).toLocaleString() : 'Current Active Revision'}
-                  </span>
+          {revisionsList.map((rev, i) => {
+            const isCurrent = (rev._id && String(rev._id) === String(activeSubmissionId)) ||
+              (!rev._id && (rev.revisionNumber === (currentRev.revisionNumber || 1)));
+
+            return (
+              <div
+                key={i}
+                className={`bg-white border-2 rounded-2xl p-6 space-y-3 shadow-sm transition-all ${
+                  isCurrent ? 'border-[#0055D4] ring-2 ring-blue-100 shadow-[4px_4px_0px_#0055D4]' : 'border-slate-300'
+                }`}
+              >
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-black text-[#0B1E36]">Revision {rev.revisionNumber || i + 1}</span>
+                    <span className="text-xs font-mono text-slate-500">
+                      {rev.createdAt ? new Date(rev.createdAt).toLocaleString() : 'Revision Timestamp'}
+                    </span>
+                    {isCurrent && (
+                      <span className="text-[10px] font-mono font-bold bg-blue-100 text-[#0055D4] px-2 py-0.5 rounded border border-blue-300">
+                        Active Viewing
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs bg-slate-100 text-slate-800 px-2 py-0.5 rounded font-mono font-bold border border-slate-300">
+                      {rev.findings?.length || 0} findings
+                    </span>
+                    {rev._id && String(rev._id) !== String(activeSubmissionId) && (
+                      <button
+                        onClick={() => setActiveSubmissionId(rev._id)}
+                        className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-[#0B1E36] hover:bg-[#152B4A] text-white border border-[#0B1E36] cursor-pointer shadow-xs transition"
+                      >
+                        Inspect Revision {rev.revisionNumber}
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <span className="text-xs bg-slate-100 text-slate-800 px-2 py-0.5 rounded font-mono font-bold border border-slate-300">
-                  {rev.findings?.length || 0} findings
-                </span>
+                <p className="text-xs text-slate-600 font-mono italic">Notes: {rev.revisionNotes || 'No notes provided'}</p>
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 font-mono text-xs text-slate-900 whitespace-pre-wrap">
+                  {rev.copyText || rev.extractedText || 'No text copy provided for this revision.'}
+                </div>
               </div>
-              <p className="text-xs text-slate-600 font-mono italic">Notes: {rev.revisionNotes || 'No notes provided'}</p>
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 font-mono text-xs text-slate-900 whitespace-pre-wrap">
-                {rev.copyText || rev.extractedText || 'No text copy provided for this revision.'}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
