@@ -10,6 +10,7 @@ import {
   FileText,
   PieChart,
   ShieldCheck,
+  UploadCloud,
   HelpCircle
 } from 'lucide-react';
 
@@ -18,7 +19,7 @@ export const TOUR_STEPS = [
     step: 1,
     id: 'welcome',
     title: 'Welcome to Cohesora',
-    description: "Cohesora helps your team check content against approved brand rules before it goes public. Let's explore how it works.",
+    description: "Cohesora helps your team check content against approved brand rules before publication. Let's explore how it works.",
     targetSelector: '[data-tour="brand-header"]',
     tab: 'submissions',
     placement: 'bottom',
@@ -28,7 +29,7 @@ export const TOUR_STEPS = [
     step: 2,
     id: 'dashboard',
     title: 'Your Workspace at a Glance',
-    description: 'Find recent reviews, pending tasks and important updates in one place.',
+    description: 'Find recent reviews, intake channels, active compliance status, and pending reviewer tasks in one central dashboard.',
     targetSelector: '[data-tour="submissions-overview"]',
     tab: 'submissions',
     placement: 'bottom',
@@ -38,8 +39,8 @@ export const TOUR_STEPS = [
     step: 3,
     id: 'brand-rules',
     title: 'Keep Brand Rules Together',
-    description: 'Manage approved terminology, product facts, promotional conditions, disclaimers and brand guidelines in one place.',
-    targetSelector: '[data-tour="nav-rules"]',
+    description: 'Manage approved terminology, product facts, promotional conditions, WCAG visual standards, and mandatory legal disclaimers.',
+    targetSelector: '[data-tour="rules-registry-container"]',
     tab: 'rules',
     placement: 'bottom',
     icon: Layers
@@ -48,68 +49,68 @@ export const TOUR_STEPS = [
     step: 4,
     id: 'rule-sources',
     title: 'Know Which Rules Apply',
-    description: "Check a rule's source, version and validity dates to understand whether it applies to your content.",
-    targetSelector: '[data-tour="rules-registry-container"]',
+    description: "Check a rule's source, version and validity dates to understand whether it applies to your content and channel.",
+    targetSelector: '[data-tour="rules-cards-list"]',
     tab: 'rules',
-    placement: 'bottom',
-    icon: Layers
+    placement: 'top',
+    icon: CheckCircle2
   },
   {
     step: 5,
+    id: 'brief-imports',
+    title: 'Import Brand Briefs & Guidelines',
+    description: 'Upload PDF or DOCX campaign briefs. Cohesora extracts text, headings, and candidate policy statements to convert into executable rules.',
+    targetSelector: '[data-tour="brief-upload-dropzone"]',
+    tab: 'brief-imports',
+    placement: 'bottom',
+    icon: UploadCloud
+  },
+  {
+    step: 6,
     id: 'submit-content',
     title: 'Submit Content for Review',
-    description: 'Submit a text draft or supported image so Cohesora can check it before publication.',
+    description: 'Submit campaign copy drafts or banner visual assets (PNG, JPEG, SVG) so Cohesora can check them before publication.',
     targetSelector: '[data-tour="btn-new-submission"]',
     tab: 'submissions',
     placement: 'bottom',
     icon: FileText
   },
   {
-    step: 6,
+    step: 7,
     id: 'campaign-context',
     title: 'Choose the Right Context',
-    description: 'Select the available campaign and publishing channel so the review uses the relevant active brand rules.',
+    description: 'Select the available campaign and publishing channel, or filter submissions by pipeline stage to inspect targeted marketing assets.',
     targetSelector: '[data-tour="filter-toolbar"]',
     tab: 'submissions',
     placement: 'bottom',
     icon: Compass
   },
   {
-    step: 7,
-    id: 'review-content',
-    title: 'See How Cohesora Checks Content',
-    description: 'Cohesora combines defined rule checks with AI-assisted analysis and visual checks for supported creatives.',
-    targetSelector: '[data-tour="review-checks-area"]',
+    step: 8,
+    id: 'judge-demo',
+    title: 'Judge Demonstration Scenarios',
+    description: 'Run 1-click evaluation scenarios to instantly verify how Cohesora catches terminology conflicts, unverified claims, and WCAG contrast failures.',
+    targetSelector: '[data-tour="btn-judge-demo"]',
     tab: 'submissions',
-    placement: 'top',
+    placement: 'bottom',
     icon: Sparkles
   },
   {
-    step: 8,
-    id: 'findings-evidence',
-    title: 'Understand Every Finding',
-    description: 'See what was flagged and why. Claims without enough approved evidence are marked for verification rather than automatically treated as false.',
-    targetSelector: '[data-tour="findings-evidence-panel"]',
+    step: 9,
+    id: 'review-content',
+    title: 'See How Cohesora Checks Content',
+    description: 'Cohesora combines defined rule snapshot verification with claim fact-checking, visual contrast analysis, and AI-suggested corrections.',
+    targetSelector: '[data-tour="review-checks-area"]',
     tab: 'submissions',
     placement: 'top',
     icon: ShieldCheck
   },
   {
-    step: 9,
-    id: 'corrections',
-    title: 'Improve Your Content',
-    description: 'Review suggested corrections, make changes and run the checks again to resolve outstanding issues.',
-    targetSelector: '[data-tour="corrections-actions"]',
-    tab: 'submissions',
-    placement: 'top',
-    icon: CheckCircle2
-  },
-  {
     step: 10,
-    id: 'approvals-governance',
-    title: 'Approve with Confidence',
-    description: 'Authorised reviewers make the final decision. Review history helps your team track decisions and identify recurring problems.',
-    targetSelector: '[data-tour="nav-insights"]',
+    id: 'governance-insights',
+    title: 'Brand Governance Insights',
+    description: 'Track First-Time-Right scores, approval SLA turnaround, submission pipeline status, and identify top triggered or overridden brand rules.',
+    targetSelector: '[data-tour="insights-metric-cards"]',
     tab: 'insights',
     placement: 'bottom',
     icon: PieChart
@@ -138,15 +139,25 @@ export function OnboardingTour({
     if (!isOpen || !step) return;
 
     let el = document.querySelector(step.targetSelector);
-    // If not found, look for fallback containers
+    // If not found, look for fallback containers per tab
     if (!el && step.tab === 'submissions') {
-      el = document.querySelector('[data-tour="submissions-overview"]');
+      el = document.querySelector('[data-tour="review-checks-area"]') ||
+           document.querySelector('[data-tour="filter-toolbar"]') ||
+           document.querySelector('[data-tour="submissions-overview"]');
     }
     if (!el && step.tab === 'rules') {
-      el = document.querySelector('[data-tour="rules-registry-container"]') || document.querySelector('[data-tour="nav-rules"]');
+      el = document.querySelector('[data-tour="rules-cards-list"]') ||
+           document.querySelector('[data-tour="rules-registry-container"]') ||
+           document.querySelector('[data-tour="nav-rules"]');
+    }
+    if (!el && step.tab === 'brief-imports') {
+      el = document.querySelector('[data-tour="brief-upload-dropzone"]') ||
+           document.querySelector('[data-tour="nav-brief-imports"]');
     }
     if (!el && step.tab === 'insights') {
-      el = document.querySelector('[data-tour="nav-insights"]');
+      el = document.querySelector('[data-tour="insights-metric-cards"]') ||
+           document.querySelector('[data-tour="insights-overview"]') ||
+           document.querySelector('[data-tour="nav-insights"]');
     }
 
     if (el) {
@@ -285,12 +296,19 @@ export function OnboardingTour({
       onNavigateTab(step.tab);
     }
 
-    // Give DOM a tick to render destination page
-    const timer = setTimeout(() => {
+    // Give DOM ticks to render destination page and calculate bounding rects
+    const timer1 = setTimeout(() => {
       updatePosition();
-    }, 180);
+    }, 120);
 
-    return () => clearTimeout(timer);
+    const timer2 = setTimeout(() => {
+      updatePosition();
+    }, 280);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
   }, [isOpen, currentStepIndex, step?.tab, activeTab, onNavigateTab, updatePosition]);
 
   // Handle window resize and scroll
@@ -345,6 +363,10 @@ export function OnboardingTour({
     try {
       localStorage.setItem('cohesora_tour_completed', 'true');
     } catch (e) {}
+    // Return to the first page (submissions/reviews)
+    if (onNavigateTab) {
+      onNavigateTab('submissions');
+    }
     onClose();
   };
 
@@ -352,6 +374,10 @@ export function OnboardingTour({
     try {
       localStorage.setItem('cohesora_tour_completed', 'true');
     } catch (e) {}
+    // Return to the first page (submissions/reviews)
+    if (onNavigateTab) {
+      onNavigateTab('submissions');
+    }
     onClose();
   };
 
