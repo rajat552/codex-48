@@ -5,7 +5,10 @@ import { InMemoryStore } from './inMemoryStore.js';
 
 export let isInMemoryMode = false;
 
+let connectionCount = 0;
+
 export async function connectDatabase() {
+  connectionCount++;
   if (mongoose.connection.readyState === 1) {
     return mongoose.connection;
   }
@@ -32,6 +35,10 @@ export async function connectDatabase() {
 }
 
 export async function disconnectDatabase() {
+  connectionCount = Math.max(0, connectionCount - 1);
+  if (connectionCount > 0) {
+    return;
+  }
   if (mongoose.connection.readyState !== 0) {
     await mongoose.disconnect();
     logger.info('Disconnected from MongoDB');
@@ -39,3 +46,4 @@ export async function disconnectDatabase() {
   InMemoryStore.clearAll();
   isInMemoryMode = false;
 }
+
