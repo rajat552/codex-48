@@ -13,6 +13,7 @@ export function App() {
   const [workspaces, setWorkspaces] = useState([]);
   const [currentWorkspace, setCurrentWorkspace] = useState(null);
   const [activeTab, setActiveTab] = useState('submissions');
+  const [activeRole, setActiveRole] = useState('ALL');
   const [loading, setLoading] = useState(true);
 
   // Restore session
@@ -79,7 +80,10 @@ export function App() {
 
   const rawWs = currentWorkspace?.workspace;
   const workspaceId = typeof rawWs === 'object' ? (rawWs?._id || rawWs?.id) : (rawWs || null);
-  const userRoles = currentWorkspace?.roles || ['CREATOR'];
+  const availableRoles = currentWorkspace?.roles || ['CREATOR'];
+  const userRoles = activeRole === 'ALL'
+    ? availableRoles
+    : (availableRoles.includes(activeRole) ? [activeRole] : availableRoles);
 
   return (
     <div className="min-h-screen bg-transparent text-slate-900 flex flex-col selection:bg-[#F59E0B]/30 selection:text-[#0B1E36]">
@@ -87,10 +91,15 @@ export function App() {
         user={user}
         workspaces={workspaces}
         currentWorkspace={currentWorkspace}
-        onSelectWorkspace={ws => setCurrentWorkspace(ws)}
+        onSelectWorkspace={ws => {
+          setCurrentWorkspace(ws);
+          setActiveRole('ALL');
+        }}
         onLogout={handleLogout}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        activeRole={activeRole}
+        onSelectRole={setActiveRole}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -106,6 +115,7 @@ export function App() {
                 key={`sub-${workspaceId}`}
                 workspaceId={workspaceId}
                 userRoles={userRoles}
+                onNavigateTab={setActiveTab}
               />
             )}
             {activeTab === 'rules' && (
