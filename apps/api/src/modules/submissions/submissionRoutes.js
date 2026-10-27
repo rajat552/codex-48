@@ -9,13 +9,27 @@ export const submissionRouter = express.Router({ mergeParams: true });
 submissionRouter.use(authenticate);
 submissionRouter.use(requireWorkspaceMember);
 
-submissionRouter.post('/', upload.single('file'), SubmissionController.create);
+// Accept either 'file' or 'asset' field name from multipart uploads
+const uploadSubmissionFile = (req, res, next) => {
+  upload.fields([
+    { name: 'file', maxCount: 1 },
+    { name: 'asset', maxCount: 1 }
+  ])(req, res, (err) => {
+    if (err) return next(err);
+    if (req.files) {
+      req.file = req.files['file']?.[0] || req.files['asset']?.[0] || null;
+    }
+    next();
+  });
+};
+
+submissionRouter.post('/', uploadSubmissionFile, SubmissionController.create);
 submissionRouter.get('/', SubmissionController.list);
 submissionRouter.get('/:submissionId', SubmissionController.getById);
 
 submissionRouter.post(
   '/:submissionId/revisions',
-  upload.single('file'),
+  uploadSubmissionFile,
   requirePermission(['CREATOR', 'ADMIN']),
   SubmissionController.createRevision
 );
