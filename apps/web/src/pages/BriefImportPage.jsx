@@ -69,7 +69,7 @@ export function BriefImportPage({ workspace, userRoles }) {
       )}
 
       {/* Upload Box */}
-      <div className="bg-white border-2 border-[#0B1E36] rounded-2xl p-6 mb-8 shadow-[4px_4px_0px_#0B1E36]">
+      <div className="bg-white border-2 border-[#0B1E36] rounded-2xl p-6 mb-8 shadow-[4px_4px_0px_#0B1E36]" data-tour="brief-upload-dropzone">
         <form onSubmit={handleUpload} className="space-y-4">
           <div className="border-2 border-dashed border-slate-300 hover:border-[#0055D4] rounded-xl p-8 text-center transition-colors bg-slate-50/50">
             <input
