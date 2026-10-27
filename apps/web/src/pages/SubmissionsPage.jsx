@@ -11,11 +11,15 @@ import {
   ArrowRight,
   UploadCloud,
   RefreshCw,
-  Sparkles
+  Sparkles,
+  Radio,
+  Info,
+  X
 } from 'lucide-react';
 import { api } from '../api/client.js';
 import { ReviewDetailPage } from './ReviewDetailPage.jsx';
 import { JudgeDemoModal } from '../components/JudgeDemoModal.jsx';
+import { getChannelInfo } from '../utils/channelUtils.js';
 
 export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
   const [submissions, setSubmissions] = useState([]);
@@ -23,6 +27,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
   const [error, setError] = useState(null);
   const [selectedSubmissionId, setSelectedSubmissionId] = useState(null);
   const [showJudgeModal, setShowJudgeModal] = useState(false);
+  const [channelModal, setChannelModal] = useState(null);
 
   // Filters
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -246,9 +251,23 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
                     <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300">
                       Campaign: {sub.campaignId}
                     </span>
-                    <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-[#0055D4] border border-blue-200">
-                      {sub.channel}
-                    </span>
+                    {(() => {
+                      const chInfo = getChannelInfo(sub.channel);
+                      return (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChannelModal(chInfo);
+                          }}
+                          className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-blue-50 hover:bg-blue-100 text-[#0055D4] border border-blue-200 hover:border-blue-400 shadow-xs transition-all cursor-pointer group/chan select-none"
+                          title={`Distribution Channel: ${chInfo.full} — Click to view channel details`}
+                        >
+                          <Radio className="w-3 h-3 text-[#0055D4] group-hover/chan:scale-110 transition-transform" />
+                          <span>{chInfo.full}</span>
+                        </button>
+                      );
+                    })()}
                     <span className="text-[10px] font-mono font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-300">
                       Rev {currentRev.revisionNumber || 1}
                     </span>
@@ -429,6 +448,66 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
         }}
         onNavigateTab={onNavigateTab}
       />
+
+      {/* Distribution Channel Details Modal */}
+      {channelModal && (
+        <div className="fixed inset-0 bg-[#0B1E36]/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white border-3 border-[#0B1E36] rounded-2xl max-w-md w-full shadow-[6px_6px_0px_#0B1E36] p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b-2 border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 border-2 border-blue-300 flex items-center justify-center text-[#0055D4] shadow-xs">
+                  <Radio className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0055D4]">
+                    Distribution Channel
+                  </span>
+                  <h3 className="text-base font-black text-[#0B1E36] leading-tight">
+                    {channelModal.full}
+                  </h3>
+                </div>
+              </div>
+              <button
+                onClick={() => setChannelModal(null)}
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#0B1E36] hover:bg-slate-100 transition cursor-pointer"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 font-mono text-xs">
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                  Channel Category & Coverage
+                </span>
+                <p className="text-xs text-slate-800 font-sans leading-relaxed">
+                  {channelModal.scopeDescription}
+                </p>
+              </div>
+
+              <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 block">
+                  Automated Governance Checks Applied
+                </span>
+                <p className="text-xs text-amber-950 font-sans leading-relaxed">
+                  {channelModal.rulesSummary}
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setChannelModal(null)}
+                className="px-5 py-2 bg-[#0B1E36] text-white hover:bg-[#152B4A] rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all shadow-[2px_2px_0px_#F59E0B] cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
