@@ -26,3 +26,10 @@ Thumbs.db
 
 # Blueprint source file (explicitly must not be committed per user instructions)
 workflows.md
+
+# Cloned repositories
+remotion/
+
+# Local database storage
+apps/api/data/
+
