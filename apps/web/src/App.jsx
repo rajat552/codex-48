@@ -58,7 +58,7 @@ export function App() {
       }
     } catch (err) {
       console.warn('Session expired or invalid', err);
-      localStorage.removeItem('cohesora_token');
+      ApiClient.setToken(null);
       setUser(null);
     } finally {
       setLoading(false);
@@ -117,7 +117,7 @@ export function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('cohesora_token');
+    ApiClient.setToken(null);
     api.clearCache();
     setUser(null);
     setWorkspaces([]);
