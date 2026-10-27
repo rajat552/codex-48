@@ -19,7 +19,7 @@ const findingSchema = new mongoose.Schema(
     classification: {
       type: String,
       enum: ['CONFIRMED_RULE_CONFLICT', 'NEEDS_VERIFICATION', 'ADVISORY_STYLE_VISUAL_CONCERN'],
-      required: true
+      default: 'ADVISORY_STYLE_VISUAL_CONCERN'
     },
     sourceExcerpt: {
       type: String,
@@ -27,12 +27,12 @@ const findingSchema = new mongoose.Schema(
     },
     explanation: {
       type: String,
-      required: true
+      default: 'Brand policy review finding.'
     },
     ruleRefs: [
       {
-        ruleId: { type: String, required: true },
-        ruleVersion: { type: Number, required: true },
+        ruleId: { type: String, default: 'RULE-GEN' },
+        ruleVersion: { type: Number, default: 1 },
         sourceVersion: { type: String, default: 'v1.0' }
       }
     ],
@@ -195,10 +195,19 @@ const submissionSchema = new mongoose.Schema(
       actorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       action: {
         type: String,
-        enum: ['approve', 'request_changes', 'reject', 'override_finding']
+        enum: [
+          'approve',
+          'request_changes',
+          'reject',
+          'override_finding',
+          'APPROVED',
+          'CHANGES_REQUESTED',
+          'REJECTED',
+          'OVERRIDE_FINDING'
+        ]
       },
-      reason: { type: String },
-      comment: { type: String },
+      reason: { type: String, default: '' },
+      comment: { type: String, default: '' },
       timestamp: { type: Date }
     },
     submittedAt: {
