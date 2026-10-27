@@ -61,7 +61,7 @@ export const TOUR_STEPS = [
     description: 'Submit a text draft or supported image so Cohesora can check it before publication.',
     targetSelector: '[data-tour="btn-new-submission"]',
     tab: 'submissions',
-    placement: 'left',
+    placement: 'bottom',
     icon: FileText
   },
   {
@@ -169,39 +169,102 @@ export function OnboardingTour({
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
 
-      // Compute tooltip placement
-      const tooltipWidth = Math.min(380, window.innerWidth - 32);
-      const tooltipHeight = 220;
+      // Compute tooltip placement with strict collision avoidance
+      const tooltipWidth = Math.min(390, window.innerWidth - 32);
+      const tooltipHeight = tooltipRef.current?.offsetHeight || 230;
       const padding = 16;
-      let top = 0;
-      let left = 0;
+      const vh = window.innerHeight;
+      const vw = window.innerWidth;
 
-      const placement = step.placement || 'bottom';
+      const targetBox = {
+        top: rect.top - 6,
+        bottom: rect.bottom + 6,
+        left: rect.left - 6,
+        right: rect.right + 6
+      };
 
-      if (placement === 'bottom') {
-        top = rect.bottom + padding;
-        left = rect.left + rect.width / 2 - tooltipWidth / 2;
-      } else if (placement === 'top') {
-        top = rect.top - tooltipHeight - padding;
-        left = rect.left + rect.width / 2 - tooltipWidth / 2;
-      } else if (placement === 'left') {
-        top = rect.top + rect.height / 2 - tooltipHeight / 2;
-        left = rect.left - tooltipWidth - padding;
-      } else if (placement === 'right') {
-        top = rect.top + rect.height / 2 - tooltipHeight / 2;
-        left = rect.right + padding;
+      const hasOverlap = (t, l) => {
+        const box = {
+          top: t,
+          bottom: t + tooltipHeight,
+          left: l,
+          right: l + tooltipWidth
+        };
+        return !(
+          box.right <= targetBox.left ||
+          box.left >= targetBox.right ||
+          box.bottom <= targetBox.top ||
+          box.top >= targetBox.bottom
+        );
+      };
+
+      // Candidate generator for each direction
+      const getCandidate = (p) => {
+        let t = 0;
+        let l = 0;
+        if (p === 'bottom') {
+          t = rect.bottom + padding;
+          l = Math.max(16, Math.min(vw - tooltipWidth - 16, rect.left + rect.width / 2 - tooltipWidth / 2));
+        } else if (p === 'top') {
+          t = rect.top - tooltipHeight - padding;
+          l = Math.max(16, Math.min(vw - tooltipWidth - 16, rect.left + rect.width / 2 - tooltipWidth / 2));
+        } else if (p === 'left') {
+          t = Math.max(16, Math.min(vh - tooltipHeight - 16, rect.top + rect.height / 2 - tooltipHeight / 2));
+          l = rect.left - tooltipWidth - padding;
+        } else if (p === 'right') {
+          t = Math.max(16, Math.min(vh - tooltipHeight - 16, rect.top + rect.height / 2 - tooltipHeight / 2));
+          l = rect.right + padding;
+        }
+
+        const fitsInViewport = (
+          t >= 16 &&
+          t + tooltipHeight <= vh - 16 &&
+          l >= 16 &&
+          l + tooltipWidth <= vw - 16
+        );
+
+        const overlapsTarget = hasOverlap(t, l);
+        return { t, l, fitsInViewport, overlapsTarget };
+      };
+
+      const preferred = step.placement || 'bottom';
+      const order = [preferred, 'bottom', 'top', 'left', 'right'].filter(
+        (val, idx, arr) => arr.indexOf(val) === idx
+      );
+
+      let chosen = null;
+      // 1. Look for a placement that fits in viewport AND does not overlap target
+      for (const p of order) {
+        const cand = getCandidate(p);
+        if (cand.fitsInViewport && !cand.overlapsTarget) {
+          chosen = cand;
+          break;
+        }
       }
 
-      // Constrain inside viewport
-      left = Math.max(16, Math.min(window.innerWidth - tooltipWidth - 16, left));
-      if (top < 16) {
-        top = rect.bottom + padding;
-      }
-      if (top + tooltipHeight > window.innerHeight - 16) {
-        top = Math.max(16, rect.top - tooltipHeight - padding);
+      // 2. Fallback: prioritize non-overlapping candidate even if edge padding is minimal
+      if (!chosen) {
+        for (const p of order) {
+          const cand = getCandidate(p);
+          if (!cand.overlapsTarget) {
+            chosen = cand;
+            break;
+          }
+        }
       }
 
-      setTooltipPos({ top, left });
+      // 3. Absolute fallback: place safely below target with horizontal alignment
+      if (!chosen) {
+        chosen = {
+          t: Math.min(vh - tooltipHeight - 16, rect.bottom + padding),
+          l: Math.max(16, Math.min(vw - tooltipWidth - 16, rect.left))
+        };
+      }
+
+      setTooltipPos({
+        top: Math.max(16, Math.min(vh - tooltipHeight - 16, chosen.t)),
+        left: Math.max(16, Math.min(vw - tooltipWidth - 16, chosen.l))
+      });
     } else {
       setTargetFound(false);
       setTargetRect(null);
