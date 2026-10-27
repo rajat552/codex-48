@@ -61,7 +61,9 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
   };
 
   const loadAll = async () => {
-    setLoading(true);
+    if (!submission) {
+      setLoading(true);
+    }
     setError(null);
     await Promise.all([fetchSubmission(), fetchAudit()]);
     setLoading(false);
@@ -135,7 +137,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
     }
   };
 
-  if (loading) {
+  if (loading && !submission) {
     return (
       <div className="p-16 text-center text-slate-600 bg-white rounded-2xl border-2 border-slate-300 shadow-sm">
         <RefreshCw className="w-8 h-8 animate-spin mx-auto text-[#F59E0B] mb-3" />
