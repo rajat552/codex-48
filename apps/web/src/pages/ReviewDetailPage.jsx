@@ -15,10 +15,13 @@ import {
   Send,
   Eye,
   RefreshCw,
-  ExternalLink
+  ExternalLink,
+  Radio,
+  X
 } from 'lucide-react';
 import { api } from '../api/client.js';
 import { RevisionDiffView } from './RevisionDiffView.jsx';
+import { getChannelInfo } from '../utils/channelUtils.js';
 
 export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack }) {
   const [submission, setSubmission] = useState(null);
@@ -26,6 +29,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [channelModal, setChannelModal] = useState(null);
 
   // View state
   const [activeTab, setActiveTab] = useState('findings'); // 'findings' | 'revisions' | 'audit'
@@ -227,10 +231,28 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
                 Rev {currentRev.revisionNumber || submission.revisionNumber || 1}
               </span>
             </div>
-            <p className="text-xs text-slate-600 font-mono mt-1">
-              Campaign: <span className="text-[#0B1E36] font-bold">{submission.campaignId || 'General'}</span> &bull; Channel:{' '}
-              <span className="text-[#0B1E36] font-bold">{submission.channel || 'All'}</span> &bull; Created by:{' '}
-              <span className="text-[#0B1E36] font-bold">{submission.creatorId?.displayName || submission.createdBy?.displayName || 'User'}</span>
+            <p className="text-xs text-slate-600 font-mono mt-1 flex items-center gap-2 flex-wrap">
+              <span>Campaign: <span className="text-[#0B1E36] font-bold">{submission.campaignId || 'General'}</span></span>
+              <span>&bull;</span>
+              <span className="flex items-center gap-1">
+                Channel:{' '}
+                {(() => {
+                  const chInfo = getChannelInfo(submission.channel);
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => setChannelModal(chInfo)}
+                      className="inline-flex items-center gap-1.5 font-bold text-[#0055D4] hover:text-[#003da5] bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded border border-blue-200 transition-colors cursor-pointer"
+                      title={`Distribution Channel: ${chInfo.full} — Click to view channel details`}
+                    >
+                      <Radio className="w-3 h-3 text-[#0055D4]" />
+                      <span>{chInfo.full}</span>
+                    </button>
+                  );
+                })()}
+              </span>
+              <span>&bull;</span>
+              <span>Created by: <span className="text-[#0B1E36] font-bold">{submission.creatorId?.displayName || submission.createdBy?.displayName || 'User'}</span></span>
             </p>
           </div>
         </div>
@@ -669,6 +691,66 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
                 className="px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1E36] border-2 border-[#0B1E36] shadow-[2px_2px_0px_#0B1E36] cursor-pointer"
               >
                 Trigger Automated Review
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Distribution Channel Details Modal */}
+      {channelModal && (
+        <div className="fixed inset-0 bg-[#0B1E36]/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white border-3 border-[#0B1E36] rounded-2xl max-w-md w-full shadow-[6px_6px_0px_#0B1E36] p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b-2 border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 border-2 border-blue-300 flex items-center justify-center text-[#0055D4] shadow-xs">
+                  <Radio className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0055D4]">
+                    Distribution Channel
+                  </span>
+                  <h3 className="text-base font-black text-[#0B1E36] leading-tight">
+                    {channelModal.full}
+                  </h3>
+                </div>
+              </div>
+              <button
+                onClick={() => setChannelModal(null)}
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#0B1E36] hover:bg-slate-100 transition cursor-pointer"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 font-mono text-xs">
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                  Channel Category & Coverage
+                </span>
+                <p className="text-xs text-slate-800 font-sans leading-relaxed">
+                  {channelModal.scopeDescription}
+                </p>
+              </div>
+
+              <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 block">
+                  Automated Governance Checks Applied
+                </span>
+                <p className="text-xs text-amber-950 font-sans leading-relaxed">
+                  {channelModal.rulesSummary}
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setChannelModal(null)}
+                className="px-5 py-2 bg-[#0B1E36] text-white hover:bg-[#152B4A] rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all shadow-[2px_2px_0px_#F59E0B] cursor-pointer"
+              >
+                Close
               </button>
             </div>
           </div>
