@@ -40,8 +40,17 @@ export class EvidenceValidator {
           }
         }
 
-        // Determine final classification
-        let classification = rawFinding.classification || 'ADVISORY_STYLE_VISUAL_CONCERN';
+        // Determine final classification strictly adhering to the schema enum
+        let classification = String(rawFinding.classification || '').toUpperCase();
+        if (!['CONFIRMED_RULE_CONFLICT', 'NEEDS_VERIFICATION', 'ADVISORY_STYLE_VISUAL_CONCERN'].includes(classification)) {
+          if (classification.includes('CONFLICT') || classification.includes('VIOLAT')) {
+            classification = 'CONFIRMED_RULE_CONFLICT';
+          } else if (classification.includes('VERIF')) {
+            classification = 'NEEDS_VERIFICATION';
+          } else {
+            classification = 'ADVISORY_STYLE_VISUAL_CONCERN';
+          }
+        }
 
         // Non-negotiable principle 2 & 3:
         // A factual finding must cite an approved, applicable rule or be labelled NEEDS_VERIFICATION
@@ -64,7 +73,7 @@ export class EvidenceValidator {
             severity: ['low', 'medium', 'high', 'critical'].includes(rawFinding.severity) ? rawFinding.severity : 'medium',
             classification,
             sourceExcerpt: (rawFinding.excerpt || '').slice(0, 500),
-            explanation: (rawFinding.explanation || '').slice(0, 1000),
+            explanation: (rawFinding.explanation || 'Brand guideline finding detected.').slice(0, 1000),
             ruleRefs: validRuleRefs,
             sourceRefs: validSourceRefs,
             suggestedCorrection: rawFinding.suggestedCorrection ? String(rawFinding.suggestedCorrection).slice(0, 1000) : null,
