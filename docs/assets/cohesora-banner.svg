@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#081424" />
+      <stop offset="50%" stop-color="#0B1E36" />
+      <stop offset="100%" stop-color="#0F284A" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0055D4" />
+    </linearGradient>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1" />
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="320" rx="16" fill="url(#bgGrad)" />
+  <rect width="1200" height="320" rx="16" fill="url(#grid)" />
+  <rect width="1200" height="320" rx="16" fill="none" stroke="rgba(245, 158, 11, 0.3)" stroke-width="2" />
+
+  <!-- Shield Icon Container -->
+  <g transform="translate(80, 85)">
+    <!-- Shadow Card -->
+    <rect x="6" y="6" width="140" height="140" rx="24" fill="#000000" opacity="0.4" />
+    <rect x="0" y="0" width="140" height="140" rx="24" fill="#0E233E" stroke="#F59E0B" stroke-width="2.5" />
+    
+    <!-- Shield Check Icon -->
+    <path d="M70 24 C45 34 32 36 32 36 V76 C32 104 50 120 70 126 C90 120 108 104 108 76 V36 C108 36 95 34 70 24 Z" 
+          fill="none" stroke="url(#accentGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M54 75 L65 86 L88 62" 
+          fill="none" stroke="#F59E0B" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+
+  <!-- Title & Tagline -->
+  <g transform="translate(260, 125)">
+    <!-- Brand Title -->
+    <text x="0" y="20" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif" font-weight="900" font-size="56" fill="#FFFFFF" letter-spacing="-1.5">
+      Cohesora
+    </text>
+
+    <!-- Badge -->
+    <g transform="translate(270, -18)">
+      <rect x="0" y="0" width="168" height="28" rx="6" fill="rgba(245, 158, 11, 0.15)" stroke="#F59E0B" stroke-width="1.2" />
+      <text x="84" y="18" text-anchor="middle" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="11" font-weight="800" fill="#FBBF24" letter-spacing="1.5">
+        EVIDENCE-FIRST
+      </text>
+    </g>
+
+    <!-- Tagline -->
+    <text x="0" y="62" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="19" font-weight="700" fill="#38BDF8" letter-spacing="0.5">
+      Evidence-Led Brand Governance &amp; Compliance Platform
+    </text>
+
+    <!-- Description Subtitle -->
+    <text x="0" y="94" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14.5" fill="#94A3B8">
+      Deterministic brand-rule enforcement, WCAG 2.2 contrast validation, and audit-traceable human approvals.
+    </text>
+  </g>
+
+  <!-- Bottom Accent Stripe -->
+  <rect x="0" y="314" width="1200" height="6" rx="3" fill="url(#accentGrad)" />
+</svg>
