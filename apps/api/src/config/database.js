@@ -7,6 +7,13 @@ export let isInMemoryMode = false;
 
 let connectionCount = 0;
 
+mongoose.connection.on('error', (err) => {
+  logger.warn('Mongoose connection notice:', { error: err?.message });
+  if (err?.name === 'MongoNetworkTimeoutError' || err?.message?.includes('timed out')) {
+    isInMemoryMode = true;
+  }
+});
+
 export async function connectDatabase() {
   connectionCount++;
   if (mongoose.connection.readyState === 1) {
@@ -17,8 +24,9 @@ export async function connectDatabase() {
   try {
     logger.info('Attempting MongoDB connection', { uri: env.MONGODB_URI });
     await mongoose.connect(env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 1500,
-      connectTimeoutMS: 1500
+      serverSelectionTimeoutMS: 3000,
+      connectTimeoutMS: 3000,
+      socketTimeoutMS: 15000
     });
     isInMemoryMode = false;
     logger.info('Connected to live MongoDB successfully', { uri: env.MONGODB_URI });
