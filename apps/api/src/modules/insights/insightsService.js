@@ -18,13 +18,26 @@ export class InsightsService {
     if (sampleSize === 0) {
       return {
         sampleSize: 0,
+        totalSubmissions: 0,
         dateRange: { from, to },
         summary: 'No review submissions found in this workspace for the selected timeframe.',
         byClassification: {},
         byCategory: {},
         bySeverity: {},
+        statusCounts: {
+          PENDING_REVIEW: 0,
+          IN_REVIEW: 0,
+          CHANGES_REQUESTED: 0,
+          APPROVED: 0,
+          REJECTED: 0
+        },
+        firstTimeRightRate: 0,
+        averageReviewTurnaroundHours: 0,
+        totalOverrides: 0,
         topRecurringRules: [],
+        topTriggeredRules: [],
         overriddenRules: [],
+        topOverriddenRules: [],
         medianTurnaroundSeconds: null
       };
     }
@@ -35,12 +48,38 @@ export class InsightsService {
       ADVISORY_STYLE_VISUAL_CONCERN: 0
     };
 
+    const statusCounts = {
+      PENDING_REVIEW: 0,
+      IN_REVIEW: 0,
+      CHANGES_REQUESTED: 0,
+      APPROVED: 0,
+      REJECTED: 0
+    };
+
     const categoryCounts = {};
     const severityCounts = { low: 0, medium: 0, high: 0, critical: 0 };
     const ruleViolationCounts = {};
     const turnarounds = [];
+    let firstTimeRightCount = 0;
 
     for (const sub of submissions) {
+      // Map status pipeline
+      const rawStatus = (sub.status || '').toUpperCase();
+      if (rawStatus === 'SUBMITTED' || rawStatus === 'DRAFT') {
+        statusCounts.PENDING_REVIEW++;
+      } else if (rawStatus === 'PROCESSING' || rawStatus === 'REVIEW_READY' || rawStatus === 'INCOMPLETE') {
+        statusCounts.IN_REVIEW++;
+      } else if (rawStatus === 'CHANGES_REQUESTED') {
+        statusCounts.CHANGES_REQUESTED++;
+      } else if (rawStatus === 'APPROVED') {
+        statusCounts.APPROVED++;
+        if (sub.revisionNumber === 1) {
+          firstTimeRightCount++;
+        }
+      } else if (rawStatus === 'REJECTED') {
+        statusCounts.REJECTED++;
+      }
+
       // Turnaround calculation
       if (sub.processing?.timestamps?.startedAt && sub.processing?.timestamps?.completedAt) {
         const diffSec = (new Date(sub.processing.timestamps.completedAt) - new Date(sub.processing.timestamps.startedAt)) / 1000;
@@ -65,7 +104,7 @@ export class InsightsService {
 
     // Top recurring rule violations
     const topRecurringRules = Object.entries(ruleViolationCounts)
-      .map(([ruleId, count]) => ({ ruleId, count }))
+      .map(([ruleId, count]) => ({ ruleId, count, triggerCount: count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
@@ -82,25 +121,39 @@ export class InsightsService {
     }
 
     const overriddenRules = Object.entries(overrideRuleCounts)
-      .map(([ruleId, count]) => ({ ruleId, count }))
+      .map(([ruleId, count]) => ({ ruleId, count, overrideCount: count }))
       .sort((a, b) => b.count - a.count);
 
-    // Median turnaround
+    const totalOverrides = Object.values(overrideRuleCounts).reduce((a, b) => a + b, 0);
+
+    // Turnaround math
     turnarounds.sort((a, b) => a - b);
     let medianTurnaroundSeconds = null;
+    let averageReviewTurnaroundHours = 0;
     if (turnarounds.length > 0) {
       const mid = Math.floor(turnarounds.length / 2);
       medianTurnaroundSeconds = turnarounds.length % 2 !== 0 ? turnarounds[mid] : parseFloat(((turnarounds[mid - 1] + turnarounds[mid]) / 2).toFixed(2));
+      const avgSec = turnarounds.reduce((a, b) => a + b, 0) / turnarounds.length;
+      averageReviewTurnaroundHours = parseFloat((avgSec / 3600).toFixed(2));
     }
+
+    const firstTimeRightRate = sampleSize > 0 ? parseFloat((firstTimeRightCount / sampleSize).toFixed(2)) : 0;
 
     return {
       sampleSize,
+      totalSubmissions: sampleSize,
       dateRange: { from, to },
       byClassification: classificationCounts,
       byCategory: categoryCounts,
       bySeverity: severityCounts,
+      statusCounts,
+      firstTimeRightRate,
+      averageReviewTurnaroundHours,
+      totalOverrides,
       topRecurringRules,
+      topTriggeredRules: topRecurringRules,
       overriddenRules,
+      topOverriddenRules: overriddenRules,
       medianTurnaroundSeconds
     };
   }
