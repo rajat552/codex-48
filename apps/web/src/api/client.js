@@ -32,10 +32,27 @@ export class ApiClient {
     return localStorage.getItem('cohesora_token') || '';
   }
 
-  static setToken(token) {
+  static getRefreshToken() {
+    return localStorage.getItem('cohesora_refresh_token') || '';
+  }
+
+  static setToken(token, refreshToken = undefined) {
     this.clearCache();
-    if (token) localStorage.setItem('cohesora_token', token);
-    else localStorage.removeItem('cohesora_token');
+    if (token) {
+      localStorage.setItem('cohesora_token', token);
+    } else {
+      localStorage.removeItem('cohesora_token');
+    }
+
+    if (refreshToken !== undefined) {
+      if (refreshToken) {
+        localStorage.setItem('cohesora_refresh_token', refreshToken);
+      } else {
+        localStorage.removeItem('cohesora_refresh_token');
+      }
+    } else if (!token) {
+      localStorage.removeItem('cohesora_refresh_token');
+    }
   }
 
   static prefetch(path) {
@@ -102,6 +119,43 @@ export class ApiClient {
     }
 
     if (!response.ok) {
+      // If 401 Unauthorized and not already a retry or auth route, attempt transparent refresh
+      if (response.status === 401 && !options._isRetry && !path.includes('/auth/')) {
+        const refreshToken = this.getRefreshToken();
+        if (refreshToken) {
+          try {
+            const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ refreshToken })
+            });
+
+            if (refreshRes.ok) {
+              const refreshBody = await refreshRes.json();
+              const newAccessToken = refreshBody.data?.accessToken;
+              if (newAccessToken) {
+                this.setToken(newAccessToken);
+                // Retry the original request with the renewed access token
+                const retryHeaders = {
+                  ...options.headers,
+                  Authorization: `Bearer ${newAccessToken}`
+                };
+                return this.request(path, {
+                  ...options,
+                  headers: retryHeaders,
+                  _isRetry: true
+                });
+              }
+            } else {
+              // Refresh token also invalid or expired
+              this.setToken(null);
+            }
+          } catch (refreshErr) {
+            // Network error during refresh - proceed to normal error throw
+          }
+        }
+      }
+
       const defaultMessage =
         data?.error?.message ||
         (response.status === 502 || response.status === 504 || response.status === 503
