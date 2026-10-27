@@ -22,17 +22,48 @@ function sanitizeApiBase(raw) {
 const API_BASE = sanitizeApiBase(import.meta.env.VITE_API_URL);
 
 export class ApiClient {
+  static cache = new Map();
+
+  static clearCache() {
+    this.cache.clear();
+  }
+
   static getToken() {
     return localStorage.getItem('cohesora_token') || '';
   }
 
   static setToken(token) {
+    this.clearCache();
     if (token) localStorage.setItem('cohesora_token', token);
     else localStorage.removeItem('cohesora_token');
   }
 
-  static async request(path, options = {}) {
+  static prefetch(path) {
+    if (!path) return;
     const token = this.getToken();
+    const cacheKey = `${token}:${path}`;
+    if (!this.cache.has(cacheKey)) {
+      this.revalidateQuietly(path, {}, cacheKey);
+    }
+  }
+
+  static async request(path, options = {}) {
+    const isGet = !options.method || options.method.toUpperCase() === 'GET';
+    const token = this.getToken();
+    const cacheKey = isGet ? `${token}:${path}` : null;
+
+    // On mutations (POST, PUT, DELETE, PATCH), invalidate cache
+    if (!isGet) {
+      this.clearCache();
+    } else if (!options.skipCache && cacheKey && this.cache.has(cacheKey)) {
+      const entry = this.cache.get(cacheKey);
+      // Instant return in 0ms, revalidate quietly in background if older than 4s
+      if (Date.now() - entry.timestamp > 4000) {
+        this.revalidateQuietly(path, options, cacheKey);
+      }
+      return entry.data;
+    }
+
     const headers = {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers
@@ -87,7 +118,32 @@ export class ApiClient {
       throw new Error('Received empty response from server. Please try again.');
     }
 
+    if (isGet && cacheKey && data.data !== undefined) {
+      this.cache.set(cacheKey, { data: data.data, timestamp: Date.now() });
+    }
+
     return data.data;
+  }
+
+  static async revalidateQuietly(path, options, cacheKey) {
+    try {
+      const token = this.getToken();
+      const headers = {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...options.headers
+      };
+      const cleanPath = path.startsWith('/') ? path : `/${path}`;
+      const response = await fetch(`${API_BASE}${cleanPath}`, { ...options, headers });
+      if (response.ok) {
+        const text = await response.text();
+        if (text && text.trim().length > 0) {
+          const parsed = JSON.parse(text);
+          if (parsed && parsed.data !== undefined) {
+            this.cache.set(cacheKey, { data: parsed.data, timestamp: Date.now() });
+          }
+        }
+      }
+    } catch (e) {}
   }
 
   // Auth endpoints
@@ -237,5 +293,7 @@ export const api = {
   },
   insights: {
     get: (wsId, params) => ApiClient.getInsights(wsId, params)
-  }
+  },
+  prefetch: (path) => ApiClient.prefetch(path),
+  clearCache: () => ApiClient.clearCache()
 };
