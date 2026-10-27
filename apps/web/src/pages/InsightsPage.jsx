@@ -76,7 +76,7 @@ export function InsightsPage({ workspaceId }) {
   const approvalRate = totalSubmissions > 0 ? ((approvedCount / totalSubmissions) * 100).toFixed(1) : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-tour="insights-overview">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
