@@ -24,22 +24,45 @@ export class ApiClient {
       }
     }
 
-    const response = await fetch(`${API_BASE}${path}`, {
-      ...options,
-      headers
-    });
+    let response;
+    try {
+      response = await fetch(`${API_BASE}${path}`, {
+        ...options,
+        headers
+      });
+    } catch (networkErr) {
+      throw new Error('Unable to connect to the backend server. Please verify the API server is running.');
+    }
 
     if (response.status === 204) {
       return null;
     }
 
-    const data = await response.json();
+    let data = null;
+    const responseText = await response.text();
+    if (responseText && responseText.trim().length > 0) {
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseErr) {
+        data = null;
+      }
+    }
+
     if (!response.ok) {
-      const err = new Error(data.error?.message || 'API request failed');
-      err.code = data.error?.code;
-      err.details = data.error?.details;
+      const defaultMessage =
+        data?.error?.message ||
+        (response.status === 502 || response.status === 504 || response.status === 503
+          ? 'Backend service is starting up. Please try again in a few seconds.'
+          : `Server request failed with status ${response.status}`);
+      const err = new Error(defaultMessage);
+      err.code = data?.error?.code || `HTTP_${response.status}`;
+      err.details = data?.error?.details;
       err.status = response.status;
       throw err;
+    }
+
+    if (!data) {
+      throw new Error('Received empty response from server. Please try again.');
     }
 
     return data.data;
