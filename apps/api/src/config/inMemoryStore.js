@@ -1,5 +1,12 @@
 import mongoose from 'mongoose';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { logger } from './logger.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DATA_FILE = path.resolve(__dirname, '../../data/inmemory-db.json');
 
 class InMemoryCollection {
   constructor(name) {
@@ -85,10 +92,14 @@ class InMemoryCollection {
     const doc = { ...raw };
     doc._id = doc._id || new mongoose.Types.ObjectId();
     doc.id = doc._id.toString();
+    if (doc.status === undefined) {
+      doc.status = 'active';
+    }
 
     doc.save = async () => {
       doc.updatedAt = new Date();
       this.documents.set(doc._id.toString(), { ...doc });
+      InMemoryStore.saveToFile();
       return doc;
     };
 
@@ -109,12 +120,14 @@ class InMemoryCollection {
     }
     const id = (data._id || new mongoose.Types.ObjectId()).toString();
     const newDoc = {
+      status: 'active',
       ...data,
       _id: data._id || new mongoose.Types.ObjectId(id),
       createdAt: data.createdAt || new Date(),
       updatedAt: data.updatedAt || new Date()
     };
     this.documents.set(id, newDoc);
+    InMemoryStore.saveToFile();
     return this.wrapDocument(newDoc);
   }
 
@@ -134,6 +147,8 @@ class InMemoryCollection {
         return queryObj;
       },
       populate: () => queryObj,
+      lean: () => queryObj,
+      select: () => queryObj,
       then: (resolve, reject) => {
         let res = this.applySort(matched, sortObj);
         if (limitNum) res = res.slice(0, limitNum);
@@ -153,6 +168,8 @@ class InMemoryCollection {
         return queryObj;
       },
       populate: () => queryObj,
+      lean: () => queryObj,
+      select: () => queryObj,
       then: (resolve, reject) => {
         let matched = all.filter(d => this.matchQuery(d, query));
         matched = this.applySort(matched, sortObj);
@@ -180,6 +197,7 @@ class InMemoryCollection {
     }
     updated.updatedAt = new Date();
     this.documents.set(doc._id.toString(), updated);
+    InMemoryStore.saveToFile();
     return this.wrapDocument(options.new ? updated : doc);
   }
 
@@ -190,6 +208,7 @@ class InMemoryCollection {
       else Object.assign(d, update);
       await d.save();
     }
+    InMemoryStore.saveToFile();
     return { modifiedCount: docs.length };
   }
 
@@ -205,8 +224,69 @@ class InMemoryCollection {
 
 export class InMemoryStore {
   static collections = new Map();
+  static isLoaded = false;
+  static lastLoadedMtime = 0;
+
+  static loadFromFile() {
+    if (process.env.NODE_ENV === 'test') return;
+
+    try {
+      if (fs.existsSync(DATA_FILE)) {
+        const stat = fs.statSync(DATA_FILE);
+        if (this.isLoaded && stat.mtimeMs <= this.lastLoadedMtime) {
+          return;
+        }
+        this.lastLoadedMtime = stat.mtimeMs;
+        this.isLoaded = true;
+
+        const raw = fs.readFileSync(DATA_FILE, 'utf-8');
+        const data = JSON.parse(raw);
+        for (const [colName, docs] of Object.entries(data)) {
+          if (!this.collections.has(colName)) {
+            this.collections.set(colName, new InMemoryCollection(colName));
+          }
+          const col = this.collections.get(colName);
+          col.documents.clear();
+          for (const doc of docs) {
+            const copy = { ...doc };
+            if (copy._id) {
+              copy._id = new mongoose.Types.ObjectId(copy._id);
+            }
+            col.documents.set(copy._id.toString(), copy);
+          }
+        }
+      }
+    } catch (e) {
+      logger.warn('Failed to load in-memory database file', { error: e.message });
+    }
+  }
+
+  static saveToFile() {
+    if (process.env.NODE_ENV === 'test') return;
+
+    try {
+      const dir = path.dirname(DATA_FILE);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      const data = {};
+      for (const [colName, col] of this.collections.entries()) {
+        data[colName] = Array.from(col.documents.values()).map(d => ({
+          ...d,
+          _id: d._id ? d._id.toString() : undefined
+        }));
+      }
+      fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+      if (fs.existsSync(DATA_FILE)) {
+        this.lastLoadedMtime = fs.statSync(DATA_FILE).mtimeMs;
+      }
+    } catch (e) {
+      logger.warn('Failed to save in-memory database file', { error: e.message });
+    }
+  }
 
   static getCollection(name) {
+    this.loadFromFile();
     if (!this.collections.has(name)) {
       this.collections.set(name, new InMemoryCollection(name));
     }
@@ -216,6 +296,16 @@ export class InMemoryStore {
   static clearAll() {
     for (const col of this.collections.values()) {
       col.clear();
+    }
+    this.isLoaded = false;
+    this.lastLoadedMtime = 0;
+    if (process.env.NODE_ENV === 'test') return;
+    try {
+      if (fs.existsSync(DATA_FILE)) {
+        fs.unlinkSync(DATA_FILE);
+      }
+    } catch (e) {
+      // ignore
     }
   }
 }
