@@ -14,7 +14,8 @@ export async function connectDatabase() {
   try {
     logger.info('Attempting MongoDB connection', { uri: env.MONGODB_URI });
     await mongoose.connect(env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 2000
+      serverSelectionTimeoutMS: 1500,
+      connectTimeoutMS: 1500
     });
     isInMemoryMode = false;
     logger.info('Connected to live MongoDB successfully', { uri: env.MONGODB_URI });
