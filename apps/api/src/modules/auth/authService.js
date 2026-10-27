@@ -209,6 +209,32 @@ export class AuthService {
       })
     );
 
+    if (!memberships || memberships.length === 0) {
+      let ws = await Workspace.findOne({ createdBy: user._id });
+      if (!ws) {
+        const slug = `${normalizedEmail.split('@')[0]}-${Date.now().toString(36)}`;
+        ws = await Workspace.create({
+          name: `${user.displayName || 'Brand'}'s Workspace`,
+          slug,
+          createdBy: user._id
+        });
+      }
+      let member = await WorkspaceMember.findOne({ workspaceId: ws._id, userId: user._id });
+      if (!member) {
+        member = await WorkspaceMember.create({
+          workspaceId: ws._id,
+          userId: user._id,
+          roles: ['ADMIN', 'REVIEWER', 'CREATOR'],
+          status: 'active'
+        });
+      }
+      memberships = [{
+        workspace: ws,
+        roles: member.roles || ['ADMIN', 'REVIEWER', 'CREATOR'],
+        status: member.status || 'active'
+      }];
+    }
+
     const accessToken = this.generateAccessToken(user);
     const refreshToken = this.generateRefreshToken(user);
 
