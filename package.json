@@ -26,6 +26,8 @@
   "author": "BroCode",
   "license": "UNLICENSED",
   "optionalDependencies": {
-    "@img/sharp-linux-x64": "^0.33.5"
+    "@img/sharp-linux-x64": "^0.33.5",
+    "@rollup/rollup-linux-x64-gnu": "4.65.0",
+    "@rollup/rollup-linux-x64-musl": "4.65.0"
   }
 }
