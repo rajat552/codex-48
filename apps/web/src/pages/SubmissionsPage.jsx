@@ -15,12 +15,14 @@ import {
 } from 'lucide-react';
 import { api } from '../api/client.js';
 import { ReviewDetailPage } from './ReviewDetailPage.jsx';
+import { JudgeDemoModal } from '../components/JudgeDemoModal.jsx';
 
-export function SubmissionsPage({ workspaceId, userRoles }) {
+export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedSubmissionId, setSelectedSubmissionId] = useState(null);
+  const [showJudgeModal, setShowJudgeModal] = useState(false);
 
   // Filters
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -70,10 +72,13 @@ export function SubmissionsPage({ workspaceId, userRoles }) {
       formData.append('campaignId', createForm.campaignId);
       formData.append('channel', createForm.channel);
       formData.append('copyText', createForm.copyText);
+      formData.append('text', createForm.copyText);
       if (createForm.assetFile) {
+        formData.append('file', createForm.assetFile);
         formData.append('asset', createForm.assetFile);
       }
       if (createForm.assetAltText) {
+        formData.append('altText', createForm.assetAltText);
         formData.append('assetAltText', createForm.assetAltText);
       }
 
@@ -137,13 +142,24 @@ export function SubmissionsPage({ workspaceId, userRoles }) {
           </p>
         </div>
 
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1E36] font-mono font-bold text-xs uppercase tracking-wider border-2 border-[#0B1E36] shadow-[3px_3px_0px_#0B1E36] hover:translate-x-[1px] hover:translate-y-[1px] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer"
-        >
-          <Plus className="w-4 h-4 stroke-[3]" />
-          New Creative Submission
-        </button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <button
+            onClick={() => setShowJudgeModal(true)}
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white hover:bg-amber-50/60 text-[#0B1E36] font-mono font-bold text-xs uppercase tracking-wider border-2 border-[#0B1E36] shadow-[3px_3px_0px_#F59E0B] hover:translate-x-[1px] hover:translate-y-[1px] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer"
+            title="1-Click Judge Showcase: Run proposal test scenarios"
+          >
+            <Sparkles className="w-4 h-4 text-[#F59E0B]" />
+            <span>Judge Demo Scenarios</span>
+          </button>
+
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1E36] font-mono font-bold text-xs uppercase tracking-wider border-2 border-[#0B1E36] shadow-[3px_3px_0px_#0B1E36] hover:translate-x-[1px] hover:translate-y-[1px] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4 stroke-[3]" />
+            New Creative Submission
+          </button>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
@@ -397,6 +413,18 @@ export function SubmissionsPage({ workspaceId, userRoles }) {
           </div>
         </div>
       )}
+
+      {/* Judge Demo Scenarios Showcase Modal */}
+      <JudgeDemoModal
+        isOpen={showJudgeModal}
+        onClose={() => setShowJudgeModal(false)}
+        workspaceId={workspaceId}
+        onSubmissionCreated={(id) => {
+          setSelectedSubmissionId(id);
+          fetchSubmissions();
+        }}
+        onNavigateTab={onNavigateTab}
+      />
     </div>
   );
 }
