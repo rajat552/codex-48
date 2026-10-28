@@ -149,10 +149,18 @@ export class ApiClient {
             } else {
               // Refresh token also invalid or expired
               this.setToken(null);
+              try {
+                window.dispatchEvent(new CustomEvent('cohesora:session-expired'));
+              } catch (e) {}
             }
           } catch (refreshErr) {
             // Network error during refresh - proceed to normal error throw
           }
+        } else {
+          this.setToken(null);
+          try {
+            window.dispatchEvent(new CustomEvent('cohesora:session-expired'));
+          } catch (e) {}
         }
       }
 
