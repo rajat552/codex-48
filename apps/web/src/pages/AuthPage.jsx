@@ -13,6 +13,9 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
   const [loading, setLoading] = useState(false);
 
   const notifySuccess = (token, user, membership, refreshToken = null, allMemberships = null) => {
+    try {
+      localStorage.removeItem('cohesora_manual_logout');
+    } catch (e) {}
     ApiClient.setToken(token, refreshToken);
     if (onAuthSuccess) {
       onAuthSuccess({
