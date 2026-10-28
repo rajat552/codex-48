@@ -16,6 +16,7 @@ export function App() {
   const [activeTab, setActiveTab] = useState('submissions');
   const [activeRole, setActiveRole] = useState('ALL');
   const [loading, setLoading] = useState(true);
+  const [workspacesLoading, setWorkspacesLoading] = useState(false);
   const [creatingWs, setCreatingWs] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
 
@@ -46,7 +47,6 @@ export function App() {
     try {
       const me = await Promise.race([api.auth.me(), timeoutPromise]);
       const resolvedUser = me?.user || me;
-      setUser(resolvedUser);
 
       let wsList = await api.workspaces.list();
       wsList = (wsList || []).filter(item => {
@@ -108,11 +108,12 @@ export function App() {
       if (!selectedWs) {
         selectedWs = wsList.find(w => {
           const name = (w?.workspace?.name || w?.name || '').toLowerCase();
-          return name.includes('truecaller');
+          return name.includes('truecaller') || name.includes('acme');
         }) || wsList[0];
       }
 
       setCurrentWorkspace(selectedWs);
+      setUser(resolvedUser);
       const wsId = selectedWs?.workspace?._id || selectedWs?.workspace?.id || selectedWs?._id;
       if (wsId) {
         try {
@@ -160,9 +161,51 @@ export function App() {
     }
   }, [user, currentWorkspace]);
 
-  const handleAuthSuccess = async ({ token, user, membership }) => {
+  const handleAuthSuccess = async ({ token, user, membership, memberships }) => {
     const resolvedUser = user?.user || user;
+
+    // Fast-path: immediately initialize workspaces and active workspace from login/register/demo payload
+    // to eliminate the 2-second flash of "No Workspace Available"
+    const candidateList = ((memberships && memberships.length > 0) ? memberships : (membership ? [membership] : []))
+      .filter(item => {
+        const ws = item?.workspace || item;
+        return !!(ws?._id || ws?.id);
+      });
+
+    let immediateWs = null;
+    if (candidateList.length > 0) {
+      setWorkspaces(candidateList);
+      try {
+        const savedWsId = localStorage.getItem('cohesora_active_workspace_id');
+        if (savedWsId) {
+          immediateWs = candidateList.find(w => {
+            const id = w?.workspace?._id || w?.workspace?.id || w?._id;
+            return id === savedWsId;
+          });
+        }
+      } catch (e) {}
+
+      if (!immediateWs) {
+        immediateWs = candidateList.find(w => {
+          const name = (w?.workspace?.name || w?.name || '').toLowerCase();
+          return name.includes('acme') || name.includes('truecaller');
+        }) || candidateList[0];
+      }
+
+      setCurrentWorkspace(immediateWs);
+      const wsId = immediateWs?.workspace?._id || immediateWs?.workspace?.id || immediateWs?._id;
+      if (wsId) {
+        try {
+          localStorage.setItem('cohesora_active_workspace_id', wsId);
+        } catch (e) {}
+        prefetchWorkspaceData(wsId);
+      }
+    } else {
+      setWorkspacesLoading(true);
+    }
+
     setUser(resolvedUser);
+
     try {
       let wsList = await api.workspaces.list();
       wsList = (wsList || []).filter(item => {
@@ -170,11 +213,8 @@ export function App() {
         return !!(ws?._id || ws?.id);
       });
 
-      if ((!wsList || wsList.length === 0) && membership) {
-        const mWs = membership?.workspace || membership;
-        if (mWs?._id || mWs?.id) {
-          wsList = [membership];
-        }
+      if ((!wsList || wsList.length === 0) && candidateList.length > 0) {
+        wsList = candidateList;
       }
 
       if (!wsList || wsList.length === 0) {
@@ -220,7 +260,7 @@ export function App() {
       if (!selectedWs) {
         selectedWs = wsList.find(w => {
           const name = (w?.workspace?.name || w?.name || '').toLowerCase();
-          return name.includes('truecaller');
+          return name.includes('acme') || name.includes('truecaller');
         }) || wsList[0];
       }
 
@@ -234,10 +274,12 @@ export function App() {
       }
     } catch (err) {
       console.error('Failed to load workspaces after auth', err);
-      if (membership) {
-        setWorkspaces([membership]);
-        setCurrentWorkspace(membership);
+      if (candidateList.length > 0) {
+        setWorkspaces(candidateList);
+        setCurrentWorkspace(candidateList[0]);
       }
+    } finally {
+      setWorkspacesLoading(false);
     }
   };
 
@@ -294,6 +336,7 @@ export function App() {
     setUser(null);
     setWorkspaces([]);
     setCurrentWorkspace(null);
+    setWorkspacesLoading(false);
   };
 
   if (loading) {
@@ -363,23 +406,35 @@ export function App() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
         {!workspaceId ? (
-          <div className="p-12 text-center bg-white border-2 border-[#0B1E36] rounded-2xl shadow-[4px_4px_0px_#0B1E36] space-y-4 max-w-lg mx-auto">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 border-2 border-[#0B1E36] flex items-center justify-center mx-auto shadow-[2px_2px_0px_#0B1E36]">
-              <Building2 className="w-6 h-6 text-[#0B1E36]" />
+          workspacesLoading ? (
+            <div className="p-12 text-center bg-white border-2 border-[#0B1E36] rounded-2xl shadow-[4px_4px_0px_#0B1E36] space-y-4 max-w-lg mx-auto">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 border-2 border-[#0B1E36] flex items-center justify-center mx-auto shadow-[2px_2px_0px_#0B1E36]">
+                <RefreshCw className="w-6 h-6 animate-spin text-[#F59E0B]" />
+              </div>
+              <h3 className="text-lg font-black text-[#0B1E36]">Connecting Brand Workspace...</h3>
+              <p className="text-xs text-slate-600 font-mono">
+                Synchronizing brand governance rules and active campaigns...
+              </p>
             </div>
-            <h3 className="text-lg font-black text-[#0B1E36]">No Workspace Available</h3>
-            <p className="text-xs text-slate-600 font-mono">
-              Create your brand governance workspace to begin submitting campaigns and managing compliance rules.
-            </p>
-            <button
-              onClick={handleCreateWorkspace}
-              disabled={creatingWs}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0B1E36] text-white hover:bg-[#152B4A] rounded-xl text-xs font-mono font-bold uppercase transition-all shadow-[2px_2px_0px_#F59E0B] cursor-pointer disabled:opacity-50"
-            >
-              {creatingWs ? <RefreshCw className="w-4 h-4 animate-spin text-[#F59E0B]" /> : <Plus className="w-4 h-4 text-[#F59E0B]" />}
-              <span>{creatingWs ? 'Creating...' : 'Create Brand Workspace'}</span>
-            </button>
-          </div>
+          ) : (
+            <div className="p-12 text-center bg-white border-2 border-[#0B1E36] rounded-2xl shadow-[4px_4px_0px_#0B1E36] space-y-4 max-w-lg mx-auto">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 border-2 border-[#0B1E36] flex items-center justify-center mx-auto shadow-[2px_2px_0px_#0B1E36]">
+                <Building2 className="w-6 h-6 text-[#0B1E36]" />
+              </div>
+              <h3 className="text-lg font-black text-[#0B1E36]">No Workspace Available</h3>
+              <p className="text-xs text-slate-600 font-mono">
+                Create your brand governance workspace to begin submitting campaigns and managing compliance rules.
+              </p>
+              <button
+                onClick={handleCreateWorkspace}
+                disabled={creatingWs}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0B1E36] text-white hover:bg-[#152B4A] rounded-xl text-xs font-mono font-bold uppercase transition-all shadow-[2px_2px_0px_#F59E0B] cursor-pointer disabled:opacity-50"
+              >
+                {creatingWs ? <RefreshCw className="w-4 h-4 animate-spin text-[#F59E0B]" /> : <Plus className="w-4 h-4 text-[#F59E0B]" />}
+                <span>{creatingWs ? 'Creating...' : 'Create Brand Workspace'}</span>
+              </button>
+            </div>
+          )
         ) : (
           <div className="w-full">
             <div className={activeTab === 'submissions' ? 'block' : 'hidden'}>
