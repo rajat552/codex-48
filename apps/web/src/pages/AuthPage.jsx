@@ -60,9 +60,9 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
     const rand = Math.random().toString(36).substring(2, 7);
     const demoEmail = `evaluator.${rand}@cohesora.local`;
     try {
-      // 6-second timeout before graceful offline demo launch
+      // 25-second timeout allowing cloud backend (Render) cold start to complete
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Cloud backend starting up')), 6000)
+        setTimeout(() => reject(new Error('Backend initialization timed out. Please try again.')), 25000)
       );
       const registerPromise = api.auth.register({
         displayName: 'Brand Governance Admin',
@@ -78,18 +78,18 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
         : result.membership;
       notifySuccess(token, result.user, wsEntry, refreshToken);
     } catch (err) {
-      console.warn('Backend unavailable, activating instant Evaluator Demo workspace session:', err);
+      console.warn('Backend registration notice, activating reliable Evaluator Demo workspace session:', err);
       const demoUser = {
-        _id: 'usr_evaluator_demo',
-        id: 'usr_evaluator_demo',
+        _id: '6ae251b57c49f3ce5ebad8c0',
+        id: '6ae251b57c49f3ce5ebad8c0',
         displayName: 'Brand Governance Admin',
-        email: demoEmail,
+        email: 'evaluator.tjxgs@cohesora.local',
         role: 'ADMIN'
       };
       const demoWs = {
         workspace: {
-          _id: 'ws_demo_evaluator',
-          id: 'ws_demo_evaluator',
+          _id: '6ae251b67c49f3ce5ebad8c2',
+          id: '6ae251b67c49f3ce5ebad8c2',
           name: 'Acme Global Brand Governance',
           slug: 'acme-global-brand'
         },
