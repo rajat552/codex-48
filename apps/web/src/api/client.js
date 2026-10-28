@@ -296,16 +296,34 @@ export class ApiClient {
     });
   }
 
-  static overrideFinding(workspaceId, submissionId, findingId, reason) {
-    return this.request(`/workspaces/${workspaceId}/submissions/${submissionId}/findings/${findingId}/override`, {
-      method: 'POST',
-      body: { reason }
-    });
+  static async overrideFinding(workspaceId, submissionId, findingId, reason) {
+    try {
+      return await this.request(`/workspaces/${workspaceId}/submissions/${submissionId}/findings/${findingId}/override`, {
+        method: 'POST',
+        body: { reason }
+      });
+    } catch (err) {
+      return await this.request(`/workspaces/${workspaceId}/submissions/${submissionId}/decisions`, {
+        method: 'POST',
+        body: {
+          action: 'override_finding',
+          findingId,
+          reason
+        }
+      });
+    }
   }
 
-  static getAuditEvents(workspaceId, params = {}) {
+  static async getAuditEvents(workspaceId, params = {}) {
     const q = new URLSearchParams(params).toString();
-    return this.request(`/workspaces/${workspaceId}/audit-events${q ? `?${q}` : ''}`);
+    try {
+      return await this.request(`/workspaces/${workspaceId}/audit-events${q ? `?${q}` : ''}`);
+    } catch (err) {
+      if (params.submissionId) {
+        return await this.request(`/workspaces/${workspaceId}/submissions/${params.submissionId}/audit-events`);
+      }
+      throw err;
+    }
   }
 
   // Brief Imports (Named Improvement 1)
