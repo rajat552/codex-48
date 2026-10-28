@@ -11,7 +11,7 @@ import {
   PieChart,
   ShieldCheck,
   UploadCloud,
-  HelpCircle
+  Users
 } from 'lucide-react';
 
 export const TOUR_STEPS = [
@@ -19,7 +19,8 @@ export const TOUR_STEPS = [
     step: 1,
     id: 'welcome',
     title: 'Welcome to Cohesora',
-    description: "Cohesora helps your team check content against approved brand rules before publication. Let's explore how it works.",
+    tag: 'Evidence-Led Governance',
+    description: 'Cohesora helps your team verify marketing claims, approved terms, and visual contrast before publishing.',
     targetSelector: '[data-tour="brand-header"]',
     tab: 'submissions',
     placement: 'bottom',
@@ -27,89 +28,76 @@ export const TOUR_STEPS = [
   },
   {
     step: 2,
-    id: 'dashboard',
-    title: 'Your Workspace at a Glance',
-    description: 'Find recent reviews, intake channels, active compliance status, and pending reviewer tasks in one central dashboard.',
-    targetSelector: '[data-tour="submissions-overview"]',
+    id: 'roles-workspaces',
+    title: 'Workspace & Role Switching',
+    tag: 'Role-Based Access',
+    description: 'Switch between Admin (policies & rules), Reviewer (approvals & human overrides), and Creator (content submissions).',
+    targetSelector: '[data-tour="role-selector"]',
     tab: 'submissions',
     placement: 'bottom',
-    icon: FileText
+    icon: Users
   },
   {
     step: 3,
-    id: 'brand-rules',
-    title: 'Keep Brand Rules Together',
-    description: 'Manage approved terminology, product facts, promotional conditions, WCAG visual standards, and mandatory legal disclaimers.',
-    targetSelector: '[data-tour="rules-registry-container"]',
-    tab: 'rules',
-    placement: 'bottom',
-    icon: Layers
-  },
-  {
-    step: 4,
-    id: 'rule-sources',
-    title: 'Know Which Rules Apply',
-    description: "Check a rule's source, version and validity dates to understand whether it applies to your content and channel.",
-    targetSelector: '[data-tour="rules-cards-list"]',
-    tab: 'rules',
-    placement: 'top',
-    icon: CheckCircle2
-  },
-  {
-    step: 5,
-    id: 'brief-imports',
-    title: 'Import Brand Briefs & Guidelines',
-    description: 'Upload PDF or DOCX campaign briefs. Cohesora extracts text, headings, and candidate policy statements to convert into executable rules.',
-    targetSelector: '[data-tour="brief-upload-dropzone"]',
-    tab: 'brief-imports',
-    placement: 'bottom',
-    icon: UploadCloud
-  },
-  {
-    step: 6,
-    id: 'submit-content',
-    title: 'Submit Content for Review',
-    description: 'Submit campaign copy drafts or banner visual assets (PNG, JPEG, SVG) so Cohesora can check them before publication.',
-    targetSelector: '[data-tour="btn-new-submission"]',
-    tab: 'submissions',
-    placement: 'bottom',
-    icon: FileText
-  },
-  {
-    step: 7,
-    id: 'campaign-context',
-    title: 'Choose the Right Context',
-    description: 'Select the available campaign and publishing channel, or filter submissions by pipeline stage to inspect targeted marketing assets.',
-    targetSelector: '[data-tour="filter-toolbar"]',
-    tab: 'submissions',
-    placement: 'bottom',
-    icon: Compass
-  },
-  {
-    step: 8,
     id: 'judge-demo',
-    title: 'Judge Demonstration Scenarios',
-    description: 'Run 1-click evaluation scenarios to instantly verify how Cohesora catches terminology conflicts, unverified claims, and WCAG contrast failures.',
+    title: 'Judge Demo Scenarios',
+    tag: '1-Click Evaluation',
+    description: 'Run pre-configured test scenarios to verify how Cohesora detects unverified claims, missing disclaimers, and contrast flaws.',
     targetSelector: '[data-tour="btn-judge-demo"]',
     tab: 'submissions',
     placement: 'bottom',
     icon: Sparkles
   },
   {
-    step: 9,
-    id: 'review-content',
-    title: 'See How Cohesora Checks Content',
-    description: 'Cohesora combines defined rule snapshot verification with claim fact-checking, visual contrast analysis, and AI-suggested corrections.',
-    targetSelector: '[data-tour="review-checks-area"]',
+    step: 4,
+    id: 'submit-content',
+    title: 'New Creative Submission',
+    tag: 'Multi-Modal Intake',
+    description: 'Submit marketing copy drafts or banner graphics (PNG, JPG, SVG). Content is immediately scanned against active brand rules.',
+    targetSelector: '[data-tour="btn-new-submission"]',
     tab: 'submissions',
-    placement: 'top',
-    icon: ShieldCheck
+    placement: 'bottom',
+    icon: FileText
   },
   {
-    step: 10,
+    step: 5,
+    id: 'pipeline-filters',
+    title: 'Review Queue & Pipeline',
+    tag: 'Workflow SLA',
+    description: 'Inspect creatives across workflow stages: Pending Review, In Review, Changes Requested, Approved, and Rejected.',
+    targetSelector: '[data-tour="filter-toolbar"]',
+    tab: 'submissions',
+    placement: 'bottom',
+    icon: CheckCircle2
+  },
+  {
+    step: 6,
+    id: 'brand-rules',
+    title: 'Deterministic Brand Rules Engine',
+    tag: 'Policy Registry',
+    description: 'Define clear brand rules for approved claims, mandatory legal disclaimers, forbidden competitors, and WCAG visual standards.',
+    targetSelector: '[data-tour="rules-registry-container"]',
+    tab: 'rules',
+    placement: 'bottom',
+    icon: Layers
+  },
+  {
+    step: 7,
+    id: 'brief-imports',
+    title: 'Brand Brief & Document Ingestion',
+    tag: 'Automated Extraction',
+    description: 'Upload PDF or DOCX campaign briefs. Cohesora extracts policy statements and converts them directly into executable rules.',
+    targetSelector: '[data-tour="brief-upload-dropzone"]',
+    tab: 'brief-imports',
+    placement: 'bottom',
+    icon: UploadCloud
+  },
+  {
+    step: 8,
     id: 'governance-insights',
-    title: 'Brand Governance Insights',
-    description: 'Track First-Time-Right scores, approval SLA turnaround, submission pipeline status, and identify top triggered or overridden brand rules.',
+    title: 'Governance Analytics & Insights',
+    tag: 'Real-Time Insights',
+    description: 'Track First-Time-Right scores, average review SLA turnaround, approval rates, and identify top triggered brand rules.',
     targetSelector: '[data-tour="insights-metric-cards"]',
     tab: 'insights',
     placement: 'bottom',
@@ -128,6 +116,13 @@ export function OnboardingTour({
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
   const [targetFound, setTargetFound] = useState(false);
   const tooltipRef = useRef(null);
+
+  // Whenever tour is opened, ALWAYS restart from the 1st step (index 0)
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentStepIndex(0);
+    }
+  }, [isOpen]);
 
   const step = TOUR_STEPS[currentStepIndex];
   const StepIcon = step?.icon || Sparkles;
@@ -363,7 +358,7 @@ export function OnboardingTour({
     try {
       localStorage.setItem('cohesora_tour_completed', 'true');
     } catch (e) {}
-    // Return to the first page (submissions/reviews)
+    setCurrentStepIndex(0);
     if (onNavigateTab) {
       onNavigateTab('submissions');
     }
@@ -374,7 +369,7 @@ export function OnboardingTour({
     try {
       localStorage.setItem('cohesora_tour_completed', 'true');
     } catch (e) {}
-    // Return to the first page (submissions/reviews)
+    setCurrentStepIndex(0);
     if (onNavigateTab) {
       onNavigateTab('submissions');
     }
@@ -382,6 +377,10 @@ export function OnboardingTour({
   };
 
   if (!isOpen || !step) return null;
+
+  const totalSteps = TOUR_STEPS.length;
+  const currentStepNumber = currentStepIndex + 1;
+  const progressPercent = (currentStepNumber / totalSteps) * 100;
 
   return (
     <div
@@ -423,8 +422,13 @@ export function OnboardingTour({
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950 font-mono font-black text-[11px] uppercase tracking-wider border border-amber-300">
               <StepIcon className="w-3.5 h-3.5 text-amber-700" />
-              <span>Step {step.step} of 10</span>
+              <span>Step {currentStepNumber} of {totalSteps}</span>
             </span>
+            {step.tag && (
+              <span className="inline-block text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">
+                {step.tag}
+              </span>
+            )}
           </div>
 
           <button
@@ -441,12 +445,12 @@ export function OnboardingTour({
         <div className="w-full bg-slate-100 rounded-full h-1.5 mb-4 overflow-hidden border border-slate-200">
           <div
             className="bg-[#F59E0B] h-1.5 rounded-full transition-all duration-300"
-            style={{ width: `${(step.step / 10) * 100}%` }}
+            style={{ width: `${progressPercent}%` }}
           />
         </div>
 
         {/* Title */}
-        <h3 className="text-base font-black text-[#0B1E36] tracking-tight leading-snug mb-2 flex items-center gap-2">
+        <h3 className="text-base font-black text-[#0B1E36] tracking-tight leading-snug mb-1.5 flex items-center gap-2">
           {step.title}
         </h3>
 
