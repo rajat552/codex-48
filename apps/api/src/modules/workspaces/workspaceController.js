@@ -1,6 +1,7 @@
 import { Workspace } from './workspaceModel.js';
 import { WorkspaceMember } from './workspaceMemberModel.js';
 import { User } from '../auth/userModel.js';
+import { AuditService } from '../audit/auditService.js';
 import { ValidationError, ConflictError, NotFoundError } from '../../middleware/errorHandler.js';
 
 export class WorkspaceController {
@@ -165,6 +166,26 @@ export class WorkspaceController {
 
       return res.status(201).json({
         data: member,
+        meta: { requestId: req.requestId }
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getAuditEvents(req, res, next) {
+    try {
+      const { submissionId, entityType, entityId, limit } = req.query;
+      let events;
+      if (submissionId) {
+        events = await AuditService.getEventsForEntity(req.workspace._id, 'submission', submissionId);
+      } else if (entityType && entityId) {
+        events = await AuditService.getEventsForEntity(req.workspace._id, entityType, entityId);
+      } else {
+        events = await AuditService.getWorkspaceEvents(req.workspace._id, limit ? parseInt(limit, 10) : 100);
+      }
+      return res.status(200).json({
+        data: events || [],
         meta: { requestId: req.requestId }
       });
     } catch (err) {
