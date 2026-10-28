@@ -64,20 +64,22 @@ export class InsightsService {
 
     for (const sub of submissions) {
       // Map status pipeline
-      const rawStatus = (sub.status || '').toUpperCase();
-      if (rawStatus === 'SUBMITTED' || rawStatus === 'DRAFT') {
-        statusCounts.PENDING_REVIEW++;
-      } else if (rawStatus === 'PROCESSING' || rawStatus === 'REVIEW_READY' || rawStatus === 'INCOMPLETE') {
-        statusCounts.IN_REVIEW++;
-      } else if (rawStatus === 'CHANGES_REQUESTED') {
+      const rawStatus = String(sub.status || '').trim().toUpperCase();
+      const decisionAction = String(sub.decision?.action || '').trim().toUpperCase();
+
+      if (rawStatus === 'CHANGES_REQUESTED' || rawStatus === 'REQUEST_CHANGES' || decisionAction === 'REQUEST_CHANGES') {
         statusCounts.CHANGES_REQUESTED++;
-      } else if (rawStatus === 'APPROVED') {
+      } else if (rawStatus === 'APPROVED' || rawStatus === 'APPROVE' || decisionAction === 'APPROVE') {
         statusCounts.APPROVED++;
         if (sub.revisionNumber === 1) {
           firstTimeRightCount++;
         }
-      } else if (rawStatus === 'REJECTED') {
+      } else if (rawStatus === 'REJECTED' || rawStatus === 'REJECT' || decisionAction === 'REJECT') {
         statusCounts.REJECTED++;
+      } else if (rawStatus === 'SUBMITTED' || rawStatus === 'DRAFT') {
+        statusCounts.PENDING_REVIEW++;
+      } else {
+        statusCounts.IN_REVIEW++;
       }
 
       // Turnaround calculation
