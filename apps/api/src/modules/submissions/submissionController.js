@@ -42,6 +42,7 @@ export class SubmissionController {
       return res.status(202).json({
         data: {
           id: submission._id,
+          _id: submission._id,
           submissionGroupId: submission.submissionGroupId,
           revisionNumber: submission.revisionNumber,
           status: submission.status
