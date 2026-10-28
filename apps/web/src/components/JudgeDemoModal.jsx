@@ -57,15 +57,22 @@ export function JudgeDemoModal({
     setRunningScenario(1);
     setScenarioError(null);
     try {
-      // 1. Ensure Rule PR-104 exists in this workspace
+      // 1. Ensure Rule PR-104 exists and is active in this workspace
       try {
-        await api.rules.create(workspaceId, {
+        const newRule = await api.rules.create(workspaceId, {
           ruleId: 'PR-104',
-          ruleText: 'Free shipping is available on orders above INR 999 (Rs. 999).',
+          ruleText: 'Free shipping is available only on orders above INR 999 (Rs. 999). Unconditional free shipping claims violate promotional guidelines.',
           category: 'PROMOTIONAL_TERMS',
           severity: 'HIGH',
-          sourceDoc: 'Policy PR-104 (version v1.2)'
+          sourceId: 'POLICY-PR-104',
+          sourceVersion: 'v1.2'
         });
+        if (newRule) {
+          try {
+            await api.rules.approve(workspaceId, 'PR-104', { version: 1 });
+            await api.rules.activate(workspaceId, 'PR-104', { version: 1 });
+          } catch (actErr) {}
+        }
       } catch (e) {
         // Rule may already exist, ignore conflict
       }
