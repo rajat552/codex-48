@@ -21,7 +21,7 @@ import { ReviewDetailPage } from './ReviewDetailPage.jsx';
 import { JudgeDemoModal } from '../components/JudgeDemoModal.jsx';
 import { getChannelInfo } from '../utils/channelUtils.js';
 
-export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
+export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab, isActive = true }) {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -61,10 +61,10 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
   };
 
   useEffect(() => {
-    if (workspaceId) {
+    if (workspaceId && (isActive === undefined || isActive)) {
       fetchSubmissions();
     }
-  }, [workspaceId]);
+  }, [workspaceId, isActive]);
 
   const handleCreateSubmission = async e => {
     e.preventDefault();
@@ -130,16 +130,16 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
     if (filterId === 'ALL') return true;
     const s = String(subStatus || '').toLowerCase().trim();
     if (filterId === 'IN_REVIEW') {
-      return ['submitted', 'processing', 'review_ready', 'draft', 'pending_review', 'in_review'].includes(s);
+      return ['submitted', 'processing', 'review_ready', 'draft', 'pending_review', 'in_review', 'incomplete'].includes(s);
     }
     if (filterId === 'CHANGES_REQUESTED') {
-      return s === 'changes_requested';
+      return s === 'changes_requested' || s === 'request_changes';
     }
     if (filterId === 'APPROVED') {
-      return s === 'approved';
+      return s === 'approved' || s === 'approve';
     }
     if (filterId === 'REJECTED') {
-      return s === 'rejected';
+      return s === 'rejected' || s === 'reject';
     }
     return s === filterId.toLowerCase();
   };
