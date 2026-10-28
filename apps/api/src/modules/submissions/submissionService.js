@@ -242,11 +242,16 @@ export class SubmissionService {
         throw new ValidationError('A reasoned explanation is mandatory when overriding a brand finding.');
       }
 
-      const finding = submission.findings.find(f => f.findingId === findingId);
+      const finding = submission.findings.find(f => (
+        f.findingId === findingId ||
+        String(f._id || '') === String(findingId) ||
+        String(f.id || '') === String(findingId)
+      ));
       if (!finding) {
         throw new NotFoundError(`Finding ${findingId} not found on this submission.`);
       }
 
+      finding.status = 'OVERRIDDEN';
       finding.override = {
         overridden: true,
         reason: reason.trim(),
@@ -342,8 +347,8 @@ export class SubmissionService {
       throw new NotFoundError('Submission not found.');
     }
 
-    // Auto-execute review if findings are not evaluated yet or status is submitted
-    if (submission.status === 'submitted' || (!submission.findings || submission.findings.length === 0)) {
+    // Auto-execute review only if status is strictly 'submitted' (never if already decided or reviewed)
+    if (submission.status === 'submitted') {
       try {
         const reviewed = await ReviewOrchestrator.executeReview(submission._id);
         if (reviewed) {
