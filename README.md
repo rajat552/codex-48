@@ -6,61 +6,73 @@
 
 <p align="center">
   <strong>"Evidence Before Enforcement."</strong><br>
-  An enterprise brand governance and creative review platform engineered to ensure digital marketing copy, visual creatives, and promotional campaigns strictly conform to approved brand rules, legal disclaimers, promotional constraints, and accessibility standards prior to publication.
+  An enterprise-grade brand governance and creative review platform engineered to ensure digital marketing copy, visual creatives, and promotional campaigns strictly conform to approved brand rules, legal disclaimers, promotional constraints, and accessibility standards prior to publication.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js 18+" />
-  <img src="https://img.shields.io/badge/Express-4.21-000000?style=flat-square&logo=express&logoColor=white" alt="Express 4.21" />
-  <img src="https://img.shields.io/badge/React-18.3-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 18.3" />
-  <img src="https://img.shields.io/badge/Vite-6.1-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite 6.1" />
-  <img src="https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="TailwindCSS 3.4" />
-  <img src="https://img.shields.io/badge/Tests-39%20Passed-10B981?style=flat-square&logo=checkmarx&logoColor=white" alt="Tests 39 Passed" />
-  <img src="https://img.shields.io/badge/Golden%20Benchmark-100%25%20Recall-F59E0B?style=flat-square&logo=speedtest&logoColor=white" alt="Golden Benchmark 100% Recall" />
-  <img src="https://img.shields.io/badge/License-UNLICENSED-slate?style=flat-square" alt="License UNLICENSED" />
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node.js-18%2B%20%7C%2020%2B%20%7C%2022%20LTS-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js 18+ | 20+ | 22 LTS" /></a>
+  <a href="https://expressjs.com"><img src="https://img.shields.io/badge/Express-4.21-000000?style=flat-square&logo=express&logoColor=white" alt="Express 4.21" /></a>
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-18.3-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 18.3" /></a>
+  <a href="https://vite.dev"><img src="https://img.shields.io/badge/Vite-6.1-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite 6.1" /></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="TailwindCSS 3.4" /></a>
+  <a href="#verification--benchmark-results"><img src="https://img.shields.io/badge/Tests-39%20Passed%20(100%25)-10B981?style=flat-square&logo=checkmarx&logoColor=white" alt="Tests 39 Passed (100%)" /></a>
+  <a href="#25-case-golden-evaluation-benchmark"><img src="https://img.shields.io/badge/Golden%20Benchmark-100%25%20Recall-F59E0B?style=flat-square&logo=speedtest&logoColor=white" alt="Golden Benchmark 100% Recall" /></a>
+  <a href="https://www.w3.org/WAI/standards-guidelines/wcag/"><img src="https://img.shields.io/badge/WCAG-2.2%20AA%2FAAA-4F46E5?style=flat-square&logo=w3c&logoColor=white" alt="WCAG 2.2 AA/AAA" /></a>
+  <a href="#authorship--license"><img src="https://img.shields.io/badge/License-UNLICENSED-slate?style=flat-square" alt="License UNLICENSED" /></a>
+</p>
+
+<p align="center">
+  <a href="https://codex-48.vercel.app"><strong>🚀 Live Web Application</strong></a> &bull;
+  <a href="https://codex-48.onrender.com"><strong>🔌 Live REST API</strong></a> &bull;
+  <a href="docs/api.md"><strong>📖 API Reference Blueprint</strong></a> &bull;
+  <a href="workflows.md"><strong>📋 Product Specification</strong></a> &bull;
+  <a href="#verification--benchmark-results"><strong>🧪 Benchmark Results</strong></a>
 </p>
 
 ---
 
 ## 📑 Table of Contents
 
-- [Project Overview](#-project-overview)
+- [Executive Summary](#executive-summary)
   - [The Problem Statement](#the-problem-statement)
   - [The Cohesora Solution: Evidence Before Enforcement](#the-cohesora-solution-evidence-before-enforcement)
   - [User Personas & Value Proposition](#user-personas--value-proposition)
-- [Key Features & Named Improvements](#-key-features--named-improvements)
-  - [1. Multi-Format Brief Document Parsing](#1-multi-format-brief-document-parsing-named-improvement-1)
-  - [2. Automated Rule Conflict Detection on Import](#2-automated-rule-conflict-detection-on-import-named-improvement-2)
-  - [3. Side-by-Side Visual & Text Revision Diffing](#3-side-by-side-visual--text-revision-diffing-named-improvement-3)
+- [Key Features & Named Improvements](#key-features--named-improvements)
+  - [1. Multi-Format Brief Document Parsing *(Named Improvement 1)*](#1-multi-format-brief-document-parsing-named-improvement-1)
+  - [2. Automated Rule Conflict Detection on Import *(Named Improvement 2)*](#2-automated-rule-conflict-detection-on-import-named-improvement-2)
+  - [3. Side-by-Side Visual & Text Revision Diffing *(Named Improvement 3)*](#3-side-by-side-visual--text-revision-diffing-named-improvement-3)
   - [4. Deterministic Review & Compliance Engine](#4-deterministic-review--compliance-engine)
   - [5. Server-Side Evidence Citation Validation](#5-server-side-evidence-citation-validation)
   - [6. Immutable Audit Log & Governance Insights](#6-immutable-audit-log--governance-insights)
-- [Application Visual Showcase](#-application-visual-showcase)
-- [Architecture & System Design](#-architecture--system-design)
+  - [7. Interactive Guided Onboarding Tour](#7-interactive-guided-onboarding-tour)
+  - [8. 1-Click Judge Showcase Demo](#8-1-click-judge-showcase-demo)
+- [Application Visual Showcase](#application-visual-showcase)
+- [Architecture & System Design](#architecture--system-design)
   - [System Component Architecture](#system-component-architecture)
   - [End-to-End Review Workflow Pipeline](#end-to-end-review-workflow-pipeline)
-- [Technology Stack](#-technology-stack)
-- [Project Structure](#-project-structure)
-- [Prerequisites & Local Installation](#-prerequisites--local-installation)
+  - [Data Model & Entity Relationships](#data-model--entity-relationships)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Prerequisites & Quickstart](#prerequisites--quickstart)
+  - [Prerequisites](#prerequisites)
   - [Step 1: Clone Repository & Install Dependencies](#step-1-clone-repository--install-dependencies)
   - [Step 2: Environment Configuration](#step-2-environment-configuration)
   - [Step 3: Launch in Development Mode](#step-3-launch-in-development-mode)
   - [Step 4: Build for Production](#step-4-build-for-production)
-- [Environment Variables & Configuration](#-environment-variables--configuration)
-- [API Reference Summary](#-api-reference-summary)
-- [Database & Evidence Data Model](#-database--evidence-data-model)
-- [Security & Responsible AI Engineering](#-security--responsible-ai-engineering)
-- [Verification & Benchmark Results](#-verification--benchmark-results)
+- [Environment Variables & Configuration](#environment-variables--configuration)
+- [API Reference Summary](#api-reference-summary)
+- [Security & Responsible AI Engineering](#security--responsible-ai-engineering)
+- [Verification & Benchmark Results](#verification--benchmark-results)
   - [Automated Test Suites (39 / 39 Passed)](#automated-test-suites-39--39-passed)
   - [25-Case Golden Evaluation Benchmark](#25-case-golden-evaluation-benchmark)
-- [Deployment Configuration](#-deployment-configuration)
-- [Roadmap & Planned Enhancements](#-roadmap--planned-enhancements)
-- [Known Limitations](#-known-limitations)
-- [Authorship & License](#-authorship--license)
+- [Production Deployment](#production-deployment)
+- [Roadmap & Planned Enhancements](#roadmap--planned-enhancements)
+- [Known Limitations](#known-limitations)
+- [Authorship & License](#authorship--license)
 
 ---
 
-## 💡 Project Overview
+## 💡 Executive Summary
 
 ### The Problem Statement
 
@@ -69,8 +81,8 @@ Modern brand marketing moves fast across social media, email campaigns, display 
 This operational fragmentation results in five persistent challenges:
 
 1. **Fragmented Sources of Truth**: Copywriters and design agencies operate against superseded guidelines or outdated promotional terms.
-2. **Unsupported Promotional Claims**: Copy often promises discounts or shipping terms that lack approved commercial or legal clearance.
-3. **Inconsistent Terminology & Disclaimers**: Content may sound compelling, yet breach prohibited term policies or omit mandatory legal disclaimers (e.g., missing `*T&C apply`).
+2. **Unsupported Promotional Claims**: Copy often promises discounts, delivery terms, or guarantees that lack approved commercial or legal clearance.
+3. **Inconsistent Terminology & Disclaimers**: Content may sound compelling, yet breach prohibited term policies (e.g., superlative claims like *"cheapest"*) or omit mandatory legal disclaimers (e.g., missing `*T&C apply`).
 4. **Visual & Accessibility Failures**: Creative graphics frequently suffer from unreadable text with poor WCAG contrast ratios or off-brand color schemes.
 5. **Subjective, Action-Deficient Feedback**: Review cycles stall on vague feedback like *"doesn't feel on-brand"* without specific rule citations or actionable corrections.
 
@@ -78,10 +90,16 @@ This operational fragmentation results in five persistent challenges:
 
 Cohesora introduces a foundational shift: **no claim is approved simply because it sounds convincing, and no violation is penalized without an explicit rule citation.**
 
+```
+Traditional Workflow: Content Intake ──> Vague Human / LLM Opinion ──> Fragmented Edits ──> Compliance Risk
+Cohesora Workflow:    Content Intake ──> Frozen Snapshot ──> Deterministic + AI Citation ──> Traceable Audit ──> Human Clearance
+```
+
 - **Frozen Rule Snapshots**: At the moment of submission intake, Cohesora freezes an immutable snapshot of all active workspace rules. Future rule updates cannot retroactively fail historic reviews.
 - **Deterministic-First Validation**: Explicit promotional thresholds (e.g., minimum spend requirements), prohibited terms, required disclaimers, and WCAG contrast calculations are enforced mathematically and deterministically—not delegated to non-deterministic LLM guessing.
 - **Evidence-Linked AI Analysis**: Gemini Flash assists with tone, contextual interpretation, and rewrite suggestions, but server-side validators verify every finding against the frozen rule snapshot. Any unsupported claim is categorized as `NEEDS_VERIFICATION`.
 - **Zero AI Auto-Approval**: AI and OCR engines **never** approve or publish content autonomously. The platform strictly enforces human reviewer approval prior to campaign clearance.
+- **Zero-Dependency Fallback**: The backend includes an embedded in-memory MongoDB store matching Mongoose query semantics. The entire platform, API, and test suite execute without external database installations.
 
 ### User Personas & Value Proposition
 
@@ -96,8 +114,8 @@ Cohesora introduces a foundational shift: **no claim is approved simply because 
 ## 🚀 Key Features & Named Improvements
 
 ### 1. Multi-Format Brief Document Parsing *(Named Improvement 1)*
-- **Native Document Ingestion**: Ingests PDF and DOCX campaign briefs and policy manuals directly using `pdfjs-dist` and `mammoth` without external binary dependencies.
-- **Structural Extraction**: Automatically parses document headings, bullet points, disclaimers, and candidate rule clauses.
+- **Native Document Ingestion**: Ingests PDF and DOCX campaign briefs and policy manuals directly using pure JavaScript engines (`pdfjs-dist` and `mammoth`) without external binary dependencies.
+- **Structural Extraction**: Automatically parses document headings, bullet points, disclaimers, and candidate rule clauses into structured text streams.
 - **Candidate Rule Conversion**: Empowers administrators to convert extracted policy clauses into versioned Brand Rules in draft status with single-click conversion.
 
 ### 2. Automated Rule Conflict Detection on Import *(Named Improvement 2)*
@@ -110,7 +128,7 @@ Cohesora introduces a foundational shift: **no claim is approved simply because 
 
 ### 3. Side-by-Side Visual & Text Revision Diffing *(Named Improvement 3)*
 - **Word-Level Highlighting**: Computes unified word additions (highlighted green) and deletions (red strike-through) between Revision $N$ and Revision $N+1$.
-- **Measurable Visual Delta**: Calculates quantitative shifts in WCAG contrast ratios (e.g., tracking an illegible 1.12:1 contrast ratio improving to a compliant 14.22:1 ratio).
+- **Measurable Visual Delta**: Calculates quantitative shifts in WCAG contrast ratios (e.g., tracking an illegible 1.12:1 contrast ratio improving to a compliant 14.22:1 ratio, showing $+13.10:1$ gain).
 - **Finding Resolution Matrix**: Automatically classifies findings across revisions as `RESOLVED`, `PERSISTING`, or `NEW`.
 
 ### 4. Deterministic Review & Compliance Engine
@@ -132,6 +150,18 @@ Cohesora introduces a foundational shift: **no claim is approved simply because 
 - **Mandatory Override Justifications**: Overriding any automated finding requires a mandatory, substantive justification ($\ge 5$ characters) that is permanently audited.
 - **Governance Insights**: Real-time workspace analytics tracking approval rates, first-time-right percentages, review turnaround SLAs, top triggered rules, and policy exception hotspots.
 
+### 7. Interactive Guided Onboarding Tour
+- **6-Step Interactive Walkthrough**: Built into the frontend via [`OnboardingTour.jsx`](apps/web/src/components/OnboardingTour.jsx), guiding new users through:
+  1. Welcome & Governance Philosophy
+  2. Submissions & Workspace Overview
+  3. Brand Knowledge Registry
+  4. Document Brief Ingestion (NI 1)
+  5. Rule Conflict Resolution (NI 2)
+  6. Revision Diffing & Governance Insights (NI 3)
+
+### 8. 1-Click Judge Showcase Demo
+- **Evaluator Test Harness**: Integrated modal [`JudgeDemoModal.jsx`](apps/web/src/components/JudgeDemoModal.jsx) allowing evaluators to execute end-to-end hackathon scenarios (PR-104 violation, revision correction, and conflict detection) in a single click with pre-populated test data.
+
 ---
 
 ## 📸 Application Visual Showcase
@@ -152,7 +182,7 @@ The centralized registry for versioned brand rules, promotional conditions (incl
 
 ---
 
-### 3. Multi-Format Brief Document Parser (Named Improvement 1)
+### 3. Multi-Format Brief Document Parser *(Named Improvement 1)*
 Extracts policy statements, headings, and promotional tables from uploaded PDF and DOCX briefs, enabling direct conversion into draft brand rules.
 
 ![Cohesora Multi-Format Brief Imports](docs/assets/screenshots/03-brief-imports.png)
@@ -173,7 +203,7 @@ Detailed review breakdown showing frozen rule snapshot citations, multi-class fi
 
 ---
 
-### 6. Side-by-Side Revision Diff View (Named Improvement 3)
+### 6. Side-by-Side Revision Diff View *(Named Improvement 3)*
 Word-level revision diffing with measurable WCAG visual contrast improvements and finding resolution tracking across campaign iterations.
 
 ![Cohesora Side-by-Side Revision Diff](docs/assets/screenshots/06-revision-diff-view.png)
@@ -195,18 +225,24 @@ Interactive test harness allowing evaluators to execute end-to-end hackathon sce
 flowchart TD
     subgraph ClientLayer ["Client Layer (Web Application)"]
         UI["React 18 + Vite SPA"]
+        Tour["Interactive Onboarding Tour"]
+        JudgeModal["1-Click Judge Demo Modal"]
         Cache["Stale-While-Revalidate (SWR) Client Cache"]
         Router["Dynamic Role & Tab Router"]
+        UI --> Tour
+        UI --> JudgeModal
         UI --> Cache --> Router
     end
 
-    subgraph ApiGateway ["API Gateway & Middleware Layer"]
+    subgraph ApiGateway ["API Gateway & Security Middleware"]
         Express["Express 4 REST Server (/api/v1)"]
-        AuthGuard["JWT Authentication & RBAC Guard"]
+        AuthGuard["JWT Authentication Guard"]
+        RoleGuard["Role-Based Access Control (RBAC)"]
         TenantGuard["Workspace Isolation Guard"]
         UploadGuard["Magic-Byte File Upload Guard"]
+        RateLimiter["IP & Route Rate Limiter"]
         Router -->|HTTPS / Bearer JWT| Express
-        Express --> AuthGuard --> TenantGuard --> UploadGuard
+        Express --> RateLimiter --> AuthGuard --> RoleGuard --> TenantGuard --> UploadGuard
     end
 
     subgraph CoreEngine ["Review Orchestration & Compliance Engines"]
@@ -215,8 +251,9 @@ flowchart TD
         DetEngine["Deterministic Rule Engine\n- PR-104 Promo Threshold\n- Prohibited Terminology\n- Mandatory Disclaimers"]
         VisualEngine["Visual & Accessibility Engine\n- WCAG 2.2 Contrast (sRGB)\n- CIEDE2000 Delta E\n- Local OCR (Tesseract.js)"]
         AIAdapter["Gemini Flash Adapter\n- Semantic Analysis\n- Citation Integrity Validator"]
-        ConflictDetector["Automated Rule Conflict Detector"]
-        BriefParser["Brief Parser (pdfjs-dist & mammoth)"]
+        ConflictDetector["Automated Rule Conflict Detector (NI 2)"]
+        BriefParser["Brief Parser: pdfjs-dist & mammoth (NI 1)"]
+        DiffService["Revision Diff Service (NI 3)"]
         
         UploadGuard --> Orchestrator
         Orchestrator --> Snapshot
@@ -227,13 +264,13 @@ flowchart TD
 
     subgraph DataLayer ["Data & Persistence Layer"]
         Mongo["MongoDB Atlas (Primary Store)"]
-        MemFallback["In-Memory Store (Zero-Dependency Fallback)"]
+        MemFallback["Embedded In-Memory Store (Zero-Dependency Fallback)"]
         AuditStore["Immutable Append-Only Audit Log"]
         FileStorage["Private Hashed Storage (/private-uploads)"]
         
         Orchestrator --> AuditStore
         DetEngine --> Mongo
-        DetEngine -.->|Fallback on failure| MemFallback
+        DetEngine -.->|Fallback on connection failure| MemFallback
         UploadGuard --> FileStorage
     end
 ```
@@ -251,7 +288,7 @@ sequenceDiagram
     participant AI as Gemini Flash Adapter
     actor Reviewer as Human Reviewer
 
-    Creator->>Client: Submit copy / image creative
+    Creator->>Client: Submit copy or static image creative
     Client->>API: POST /workspaces/:id/submissions
     API->>Orch: Trigger review pipeline
     Note over Orch: Freeze active rules snapshot
@@ -274,225 +311,11 @@ sequenceDiagram
         Reviewer->>API: POST /decisions (Status: CHANGES_REQUESTED)
         Creator->>Client: Submit updated revision
         Client->>API: POST /submissions/:id/revisions
-        Note over Client: Side-by-side diff compares revisions
+        Note over Client: Side-by-side diff compares revisions (NI 3)
     end
 ```
 
----
-
-## 🛠️ Technology Stack
-
-| Layer | Technology | Purpose & Architectural Justification |
-| :--- | :--- | :--- |
-| **Frontend Framework** | **React 18.3** | Component-driven, responsive user interface with optimistic rendering. |
-| **Build Tool** | **Vite 6.1** | Sub-second Hot Module Replacement (HMR) and optimized Rollup production bundling. |
-| **Styling & Design System** | **Tailwind CSS 3.4** | Utility-first CSS configured with custom brand tokens (Deep Navy `#0B1E36`, Gold `#F59E0B`, Blue `#0055D4`). |
-| **Icons** | **Lucide React** | Consistent, accessible iconography. |
-| **Backend Runtime** | **Node.js (ESM)** | Event-driven, asynchronous I/O with native ES Module imports. |
-| **API Framework** | **Express 4.21** | Lightweight REST routing, middleware orchestration, and centralized error handling. |
-| **Database & ODM** | **Mongoose 8.9 / MongoDB** | Document-oriented persistence with schema validation for versioned rules and submissions. |
-| **Fallback Document Store** | **In-Memory Store** | Custom pure in-memory document store matching Mongoose query semantics, ensuring zero-dependency local and test execution. |
-| **AI Integration** | **Google Gemini Flash** | Semantic analysis, contextual tone checks, and intent-preserving rewrite generation. |
-| **OCR & Image Processing** | **Sharp & Tesseract.js** | Native image metadata inspection, pixel buffer contrast calculations, and local OCR extraction. |
-| **Document Parsers** | **pdfjs-dist & mammoth** | Pure JavaScript extraction of text and headings from PDF and DOCX brief files without legacy binary dependencies. |
-| **Security & Auth** | **JWT & bcryptjs** | Stateless JSON Web Token authentication with bcrypt password hashing (10 salt rounds). |
-| **Testing Suite** | **Node.js Test Runner (`node:test`)** | Native test runner providing zero-dependency unit, integration, and benchmark test execution. |
-| **Deployment** | **Render & Vercel** | Backend hosted on Render; frontend hosted on Vercel with automatic continuous deployment. |
-
----
-
-## 📁 Project Structure
-
-```text
-codex-48/
-├── .env.example                      # Sanitized environment template
-├── package.json                      # Monorepo workspaces manifest
-├── README.md                         # Project documentation
-├── workflows.md                      # Implementation blueprint and product specifications
-├── apps/
-│   ├── api/                          # Express 4 Backend & Review Engine
-│   │   ├── package.json
-│   │   ├── src/
-│   │   │   ├── app.js                # Express application configuration & route binding
-│   │   │   ├── server.js             # HTTP server entrypoint bound to 0.0.0.0
-│   │   │   ├── config/
-│   │   │   │   ├── db.js             # MongoDB connection manager with auto-fallback
-│   │   │   │   ├── env.js            # Environment variable validation & safe defaults
-│   │   │   │   ├── inMemoryStore.js  # Zero-dependency in-memory database fallback
-│   │   │   │   └── logger.js         # Structured JSON logger with credential masking
-│   │   │   ├── middleware/
-│   │   │   │   ├── authenticate.js   # JWT token verification
-│   │   │   │   ├── errorHandler.js   # Standardized error responses & HTTP mapping
-│   │   │   │   ├── rateLimiter.js    # Endpoint rate limiting guards
-│   │   │   │   ├── requireRole.js    # Role-based access control (ADMIN, REVIEWER, CREATOR)
-│   │   │   │   ├── requireWorkspaceMember.js # Multi-tenant isolation guard
-│   │   │   │   └── uploadGuard.js    # Multer configuration with magic-byte validation
-│   │   │   ├── modules/
-│   │   │   │   ├── audit/            # Append-only audit event logging & queries
-│   │   │   │   ├── auth/             # User registration, login, profile & JWT issuance
-│   │   │   │   ├── briefImports/     # PDF/DOCX brief parsing & rule conversion (NI 1)
-│   │   │   │   ├── diff/             # Side-by-side text & visual revision diffing (NI 3)
-│   │   │   │   ├── health/           # System health checks & diagnostic ping
-│   │   │   │   ├── insights/         # SLA metrics, approval rates & violation hotspots
-│   │   │   │   ├── rules/            # Versioned Brand Knowledge Registry & conflict detector (NI 2)
-│   │   │   │   ├── submissions/      # Review orchestration, revisions, overrides & decisions
-│   │   │   │   ├── visual/           # WCAG contrast math & OCR processing
-│   │   │   │   └── workspaces/       # Tenant management & membership assignments
-│   │   │   └── storage/
-│   │   │       └── fileStorage.js    # Private hashed file upload storage manager
-│   │   └── tests/
-│   │       ├── benchmark/            # 25-case golden benchmark test runner
-│   │       └── integration/          # 39 end-to-end automated integration tests
-│   │
-│   └── web/                          # React + Vite Frontend
-│       ├── package.json
-│       ├── vite.config.js            # Vite build configuration with reverse proxy
-│       └── src/
-│           ├── main.jsx              # Web client entrypoint
-│           ├── App.jsx               # Root application shell & persistent tab manager
-│           ├── index.css             # Design tokens, typography & CSS variables
-│           ├── api/
-│           │   └── client.js         # REST client with Stale-While-Revalidate (SWR) cache
-│           ├── components/
-│           │   ├── JudgeDemoModal.jsx # 1-Click interactive evaluator test harness
-│           │   └── Navbar.jsx        # Navigation bar, workspace switcher & role selector
-│           └── pages/
-│               ├── AuthPage.jsx      # Login, registration & demo account launcher
-│               ├── BriefImportPage.jsx # Multi-format brief parser UI
-│               ├── InsightsPage.jsx  # Governance analytics dashboard
-│               ├── ReviewDetailPage.jsx # Findings breakdown & override manager
-│               ├── RevisionDiffView.jsx # Side-by-side text & contrast comparison
-│               ├── RulesPage.jsx     # Brand Knowledge Registry management
-│               └── SubmissionsPage.jsx # Intake submissions list & intake creator
-│
-├── docs/
-│   ├── api.md                        # Complete REST API blueprint & schema reference
-│   └── assets/
-│       ├── cohesora-banner.svg       # Vector brand banner
-│       └── screenshots/              # Real application capture assets (01 to 07)
-│
-└── scripts/
-    └── start-dev.js                  # Concurrent development orchestrator
-```
-
----
-
-## ⚡ Prerequisites & Local Installation
-
-### Prerequisites
-- **Node.js**: `v18.0.0` or higher (`v20+` or `v22 LTS` recommended)
-- **npm**: `v9.0.0` or higher
-- **MongoDB** *(Optional)*: Local MongoDB or cloud MongoDB Atlas instance.  
-  > **Note**: Cohesora includes an automatic zero-dependency in-memory document store. If MongoDB is unavailable or unreachable, the application and test suites seamlessly operate in-memory without errors.
-
-### Step 1: Clone Repository & Install Dependencies
-
-```bash
-git clone https://github.com/rajat552/codex-48.git
-cd codex-48
-
-# Install dependencies across all monorepo workspaces
-npm install
-```
-
-### Step 2: Environment Configuration
-
-Copy the example environment template:
-
-```bash
-# Windows PowerShell
-Copy-Item .env.example .env
-
-# macOS / Linux
-cp .env.example .env
-```
-
-Ensure `.env` contains valid configuration values (or retain the pre-configured local development defaults).
-
-### Step 3: Launch in Development Mode
-
-Launch the Express API server and Vite frontend concurrently using the workspace orchestrator:
-
-```bash
-npm run dev
-```
-
-Once initialized, verify the local services:
-- **Web Application**: [`http://localhost:5173`](http://localhost:5173)
-- **Backend API Base**: [`http://localhost:4000/api/v1`](http://localhost:4000/api/v1)
-- **Health Check**: [`http://localhost:4000/api/v1/health`](http://localhost:4000/api/v1/health)
-
-### Step 4: Build for Production
-
-Compile the web application for production distribution:
-
-```bash
-npm run build
-```
-
----
-
-## 🔐 Environment Variables & Configuration
-
-The platform requires configuration variables defined in `.env`. Sensible defaults are included for local development:
-
-| Variable | Type | Required | Default | Purpose |
-| :--- | :---: | :---: | :---: | :--- |
-| `NODE_ENV` | String | Yes | `development` | Runtime environment (`development`, `production`, `test`). |
-| `PORT` | Number | Yes | `4000` | Port for the Express API server. |
-| `API_BASE_PATH` | String | Yes | `/api/v1` | URL path prefix for all REST endpoints. |
-| `MONGODB_URI` | String | No | Local In-Memory | MongoDB connection string. Falls back to in-memory store if unset or unreachable. |
-| `JWT_ACCESS_SECRET` | String | Yes | *Auto-fallback* | Cryptographic secret for signing short-lived access tokens. |
-| `JWT_REFRESH_SECRET` | String | Yes | *Auto-fallback* | Cryptographic secret for signing long-lived refresh tokens. |
-| `JWT_ISSUER` | String | Yes | `cohesora-api` | JWT issuer verification claim. |
-| `JWT_AUDIENCE` | String | Yes | `cohesora-web` | JWT audience verification claim. |
-| `ACCESS_TOKEN_TTL_MINUTES` | Number | Yes | `15` | Expiry duration for access tokens. |
-| `REFRESH_TOKEN_TTL_DAYS` | Number | Yes | `7` | Expiry duration for refresh tokens. |
-| `GEMINI_API_KEY` | String | No | Empty | Google Gemini API key for external semantic evaluation. Operates deterministically when unset. |
-| `GEMINI_MODEL` | String | No | `gemini-3.8-flash` | Gemini model variant used for semantic reviews. |
-| `GEMINI_TIMEOUT_MS` | Number | No | `20000` | Timeout threshold before safely transitioning to `INCOMPLETE` state. |
-| `UPLOAD_DIR` | String | Yes | `./private-uploads` | Directory for storing uploaded creative files. |
-| `MAX_UPLOAD_BYTES` | Number | Yes | `10485760` (10 MB) | Maximum permitted file upload size. |
-| `ALLOWED_ORIGINS` | String | Yes | `http://localhost:5173` | Comma-separated list of allowed CORS origins. |
-
----
-
-## 📡 API Reference Summary
-
-The table below outlines the primary REST endpoints implemented by the Cohesora backend. Detailed payloads, request headers, and schemas are documented in [`docs/api.md`](docs/api.md).
-
-| Group | Method | Endpoint | Auth | Purpose |
-| :--- | :---: | :--- | :---: | :--- |
-| **System** | `GET` | `/` | None | Root deployment health probe. |
-| **System** | `GET` | `/api/v1/health` | None | Service diagnostic endpoint (DB status, uptime, version). |
-| **Auth** | `POST` | `/api/v1/auth/register` | None | Register tenant user, provision workspace, and issue JWT tokens. |
-| **Auth** | `POST` | `/api/v1/auth/login` | None | Authenticate credentials and return active workspaces. |
-| **Auth** | `GET` | `/api/v1/auth/me` | Bearer | Retrieve authenticated user profile and memberships. |
-| **Workspaces** | `GET` | `/api/v1/workspaces` | Bearer | List workspaces accessible to the user (with auto-provisioning). |
-| **Workspaces** | `POST` | `/api/v1/workspaces` | Bearer | Create a new brand governance workspace. |
-| **Brand Rules** | `GET` | `/api/v1/workspaces/:wsId/rules` | Bearer | List workspace rules with category, status, and channel filters. |
-| **Brand Rules** | `POST` | `/api/v1/workspaces/:wsId/rules` | `ADMIN` | Create a new brand rule in `DRAFT` status. |
-| **Brand Rules** | `POST` | `/api/v1/workspaces/:wsId/rules/conflict-check` | `ADMIN` | **(NI 2)** Detect rule conflicts against active workspace rules. |
-| **Brand Rules** | `POST` | `/api/v1/workspaces/:wsId/rules/:ruleId/approve` | `ADMIN` | Approve a draft rule for activation. |
-| **Brand Rules** | `POST` | `/api/v1/workspaces/:wsId/rules/:ruleId/activate` | `ADMIN` | Activate an approved rule for review snapshots. |
-| **Submissions** | `GET` | `/api/v1/workspaces/:wsId/submissions` | Bearer | List submissions with status and campaign search filters. |
-| **Submissions** | `POST` | `/api/v1/workspaces/:wsId/submissions` | `CREATOR` | Ingest copy or static image creative and freeze rule snapshot. |
-| **Submissions** | `GET` | `/api/v1/workspaces/:wsId/submissions/:id` | Bearer | Retrieve submission details, revisions, and finding breakdown. |
-| **Submissions** | `POST` | `/api/v1/workspaces/:wsId/submissions/:id/review-runs` | Bearer | Trigger automated deterministic and semantic review pipeline. |
-| **Submissions** | `POST` | `/api/v1/workspaces/:wsId/submissions/:id/revisions` | `CREATOR` | Submit Revision $N+1$ with updated copy or visual asset. |
-| **Submissions** | `POST` | `/api/v1/workspaces/:wsId/submissions/:id/decisions` | `REVIEWER` | Human governance approval or changes request. |
-| **Submissions** | `POST` | `/api/v1/workspaces/:wsId/submissions/:id/findings/:fId/override` | `REVIEWER` | Override finding with mandatory $\ge 5$ character audit reason. |
-| **Diff** | `GET` | `/api/v1/workspaces/:wsId/submissions/:id/revisions/diff` | Bearer | **(NI 3)** Generate word-level text diff and contrast comparison. |
-| **Briefs** | `POST` | `/api/v1/workspaces/:wsId/brief-imports` | `ADMIN` | **(NI 1)** Ingest and parse PDF/DOCX brief documents. |
-| **Briefs** | `POST` | `/api/v1/workspaces/:wsId/brief-imports/:id/convert-to-rules` | `ADMIN` | Convert extracted brief candidates into draft brand rules. |
-| **Insights** | `GET` | `/api/v1/workspaces/:wsId/insights` | Bearer | Aggregate SLA turnaround, approval rate, and top violated rules. |
-| **Audit** | `GET` | `/api/v1/workspaces/:wsId/audit-events` | `ADMIN` | Query immutable append-only audit trail. |
-
----
-
-## 🗄️ Database & Evidence Data Model
-
-Cohesora models relationships to guarantee end-to-end auditability and rule snapshot isolation:
+### Data Model & Entity Relationships
 
 ```mermaid
 erDiagram
@@ -501,6 +324,7 @@ erDiagram
     WORKSPACE ||--o{ BRAND_RULE : defines
     WORKSPACE ||--o{ SUBMISSION : owns
     WORKSPACE ||--o{ AUDIT_EVENT : records
+    WORKSPACE ||--o{ BRIEF_IMPORT : parses
     SUBMISSION ||--o{ REVISION : contains
     REVISION ||--o{ FINDING : produces
     REVISION }o--|| BRAND_RULE : snapshots
@@ -578,11 +402,245 @@ erDiagram
         object metadata
         timestamp createdAt
     }
+
+    BRIEF_IMPORT {
+        string id PK
+        string workspaceId FK
+        string fileName
+        string fileType "pdf | docx"
+        int candidateCount
+        object[] extractedCandidates
+    }
 ```
 
-### Traceability Guarantees
-- **Rule Snapshot Isolation**: When a submission is ingested, the exact definitions and versions of all active rules are stored within `Revision.ruleSnapshot`. Even if Rule PR-104 is subsequently modified or deactivated, historic reviews remain evaluated against their intake snapshot.
-- **Audit Event Immutability**: The `AuditEvent` collection has no update or delete routes in the API. All governance transitions—including finding overrides, reviewer approvals, and candidate conversions—are recorded as permanent append-only entries.
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology | Purpose & Architectural Justification |
+| :--- | :--- | :--- |
+| **Frontend Framework** | **React 18.3** | Component-driven, responsive user interface with optimistic rendering. |
+| **Build Tool** | **Vite 6.1** | Sub-second Hot Module Replacement (HMR) and optimized Rollup production bundling. |
+| **Styling & Design System** | **Tailwind CSS 3.4** | Utility-first CSS configured with custom brand tokens (Deep Navy `#0B1E36`, Gold `#F59E0B`, Blue `#0055D4`). |
+| **Icons** | **Lucide React** | Consistent, accessible iconography across all dashboards. |
+| **Backend Runtime** | **Node.js (ESM)** | Event-driven, asynchronous I/O with native ES Module imports (`type: "module"`). |
+| **API Framework** | **Express 4.21** | Lightweight REST routing, middleware orchestration, and centralized error handling. |
+| **Database & ODM** | **Mongoose 8.9 / MongoDB** | Document-oriented persistence with schema validation for versioned rules and submissions. |
+| **Fallback Document Store** | **In-Memory Store** | Custom pure in-memory document store matching Mongoose query semantics, ensuring zero-dependency local and test execution. |
+| **AI Integration** | **Google Gemini Flash** | Semantic analysis, contextual tone checks, and intent-preserving rewrite generation. |
+| **OCR & Image Processing** | **Sharp & Tesseract.js** | Native image metadata inspection, pixel buffer contrast calculations, and local OCR extraction. |
+| **Document Parsers** | **pdfjs-dist & mammoth** | Pure JavaScript extraction of text and headings from PDF and DOCX brief files without legacy binary dependencies. |
+| **Security & Auth** | **JWT & bcryptjs** | Stateless JSON Web Token authentication with bcrypt password hashing (10 salt rounds). |
+| **Testing Suite** | **Node.js Test Runner (`node:test`)** | Native test runner providing zero-dependency unit, integration, and benchmark test execution. |
+| **Deployment** | **Render & Vercel** | Backend hosted on Render; frontend hosted on Vercel with automatic continuous deployment. |
+
+---
+
+## 📁 Project Structure
+
+```text
+codex-48/
+├── .env.example                          # Sanitized environment template
+├── package.json                          # Monorepo workspaces manifest (root)
+├── README.md                             # Comprehensive platform documentation
+├── workflows.md                          # Implementation blueprint and product specifications
+├── vercel.json                           # Vercel SPA routing and reverse proxy rules
+├── apps/
+│   ├── api/                              # Express 4 Backend & Compliance Engine
+│   │   ├── package.json
+│   │   ├── src/
+│   │   │   ├── app.js                    # Express app configuration & middleware routing
+│   │   │   ├── server.js                 # HTTP server entrypoint bound to 0.0.0.0
+│   │   │   ├── config/
+│   │   │   │   ├── database.js           # MongoDB connection manager with auto in-memory fallback
+│   │   │   │   ├── env.js                # Environment variable validation & safe defaults
+│   │   │   │   ├── inMemoryStore.js      # Zero-dependency in-memory database fallback
+│   │   │   │   ├── logger.js             # Structured JSON logger with credential masking
+│   │   │   │   └── modelProxy.js         # Mongoose vs in-memory storage proxy abstraction
+│   │   │   ├── jobs/
+│   │   │   │   └── reviewWorker.js       # Background job processor for asynchronous reviews
+│   │   │   ├── middleware/
+│   │   │   │   ├── authenticate.js       # Bearer JWT token verification
+│   │   │   │   ├── errorHandler.js       # Standardized error responses & HTTP mapping
+│   │   │   │   ├── rateLimit.js          # Route-level and global rate limiters
+│   │   │   │   ├── requestId.js          # Unique X-Request-ID propagation
+│   │   │   │   ├── requireWorkspaceMember.js # Multi-tenant isolation & RBAC guard
+│   │   │   │   └── uploadGuard.js        # Multer upload guard with magic-byte validation
+│   │   │   ├── modules/
+│   │   │   │   ├── audit/                # Append-only audit events & queries
+│   │   │   │   ├── auth/                 # User registration, login, profile & JWT issuance
+│   │   │   │   ├── health/               # System health checks & diagnostic ping
+│   │   │   │   ├── imports/              # PDF/DOCX brief parsing & rule conversion (NI 1)
+│   │   │   │   ├── insights/             # SLA metrics, approval rates & violation hotspots
+│   │   │   │   ├── jobs/                 # Background processing job models
+│   │   │   │   ├── revisions/            # Side-by-side text & visual revision diffing (NI 3)
+│   │   │   │   ├── rules/                # Versioned Brand Rules & conflict detector (NI 2)
+│   │   │   │   ├── submissions/          # Submissions, revisions, overrides & decisions
+│   │   │   │   ├── visual/               # WCAG contrast math & OCR processing
+│   │   │   │   └── workspaces/           # Tenant management & membership assignments
+│   │   │   ├── providers/
+│   │   │   │   └── geminiProvider.js     # Gemini Flash integration with structured output
+│   │   │   ├── services/
+│   │   │   │   ├── deterministicEngine.js # PR-104, superlatives, and disclaimers engine
+│   │   │   │   ├── evidenceValidator.js   # Server-side citation integrity validator
+│   │   │   │   ├── reviewOrchestrator.js  # Orchestration coordinator for all reviews
+│   │   │   │   └── ruleSnapshotBuilder.js # Immutable rule snapshot freeze utility
+│   │   │   └── storage/
+│   │   │       └── fileStorage.js        # Private hashed file upload storage manager
+│   │   └── tests/
+│   │       ├── benchmark/                # 25-case golden benchmark test runner
+│   │       ├── fixtures/                 # Sample documents and test assets
+│   │       └── integration/              # 39 end-to-end automated integration tests
+│   │
+│   ├── test-fixtures/                    # Real test PDFs and brief fixtures
+│   │   └── briefs/                       # Text-heavy, multi-heading, and corrupted PDFs
+│   │
+│   └── web/                              # React 18 + Vite Frontend
+│       ├── package.json
+│       ├── vite.config.js                # Vite build configuration with reverse proxy
+│       └── src/
+│           ├── main.jsx                  # React application entrypoint
+│           ├── App.jsx                   # Root application shell & persistent tab manager
+│           ├── index.css                 # Design tokens, typography & CSS variables
+│           ├── api/
+│           │   └── client.js             # REST client with Stale-While-Revalidate (SWR) cache
+│           ├── components/
+│           │   ├── JudgeDemoModal.jsx    # 1-Click interactive evaluator test harness
+│           │   ├── Navbar.jsx            # Navigation bar, workspace switcher & role selector
+│           │   └── OnboardingTour.jsx    # 6-step interactive guided onboarding tour
+│           ├── pages/
+│           │   ├── AuthPage.jsx          # Login, registration & demo account launcher
+│           │   ├── BriefImportPage.jsx   # Multi-format brief parser UI
+│           │   ├── InsightsPage.jsx      # Governance analytics dashboard
+│           │   ├── ReviewDetailPage.jsx  # Findings breakdown & override manager
+│           │   ├── RevisionDiffView.jsx  # Side-by-side text & contrast comparison
+│           │   ├── RulesPage.jsx         # Brand Knowledge Registry management
+│           │   └── SubmissionsPage.jsx   # Intake submissions list & intake creator
+│           └── utils/
+│               └── channelUtils.js       # Channel badges and styling helpers
+│
+├── docs/
+│   ├── api.md                            # Complete REST API blueprint & schema reference
+│   └── assets/
+│       ├── cohesora-banner.svg           # High-resolution vector brand banner
+│       └── screenshots/                  # Real application capture assets (01 to 07)
+│
+└── scripts/
+    └── start-dev.js                      # Concurrent development orchestrator
+```
+
+---
+
+## ⚡ Prerequisites & Quickstart
+
+### Prerequisites
+- **Node.js**: `v18.0.0` or higher (`v20+` or `v22 LTS` recommended)
+- **npm**: `v9.0.0` or higher
+- **MongoDB** *(Optional)*: Local MongoDB or cloud MongoDB Atlas instance.  
+  > **Zero-Dependency Note**: Cohesora includes an automatic zero-dependency in-memory document store. If MongoDB is unavailable or unreachable, the application and test suites seamlessly operate in-memory without errors.
+
+### Step 1: Clone Repository & Install Dependencies
+
+```bash
+git clone https://github.com/rajat552/codex-48.git
+cd codex-48
+
+# Install dependencies across all monorepo workspaces
+npm install
+```
+
+### Step 2: Environment Configuration
+
+Copy the example environment template:
+
+```bash
+# Windows PowerShell
+Copy-Item .env.example .env
+
+# macOS / Linux
+cp .env.example .env
+```
+
+Ensure `.env` contains valid configuration values (or retain the pre-configured local development defaults).
+
+### Step 3: Launch in Development Mode
+
+Launch the Express API server and Vite frontend concurrently using the workspace orchestrator:
+
+```bash
+npm run dev
+```
+
+Once initialized, access the local services:
+- **Web Application**: [`http://localhost:5173`](http://localhost:5173)
+- **Backend API Base**: [`http://localhost:4000/api/v1`](http://localhost:4000/api/v1)
+- **Health Diagnostic**: [`http://localhost:4000/api/v1/health`](http://localhost:4000/api/v1/health)
+
+### Step 4: Build for Production
+
+Compile the web application for production distribution:
+
+```bash
+npm run build
+```
+
+---
+
+## 🔐 Environment Variables & Configuration
+
+The platform requires configuration variables defined in `.env`. Sensible defaults are included for local development:
+
+| Variable | Type | Required | Default | Purpose |
+| :--- | :---: | :---: | :---: | :--- |
+| `NODE_ENV` | String | Yes | `development` | Runtime environment (`development`, `production`, `test`). |
+| `PORT` | Number | Yes | `4000` | Port for the Express API server. |
+| `API_BASE_PATH` | String | Yes | `/api/v1` | URL path prefix for all REST endpoints. |
+| `MONGODB_URI` | String | No | Local In-Memory | MongoDB connection string. Falls back to in-memory store if unset or unreachable. |
+| `JWT_ACCESS_SECRET` | String | Yes | *Auto-fallback* | Cryptographic secret for signing short-lived access tokens. |
+| `JWT_REFRESH_SECRET` | String | Yes | *Auto-fallback* | Cryptographic secret for signing long-lived refresh tokens. |
+| `JWT_ISSUER` | String | Yes | `cohesora-api` | JWT issuer verification claim. |
+| `JWT_AUDIENCE` | String | Yes | `cohesora-web` | JWT audience verification claim. |
+| `ACCESS_TOKEN_TTL_MINUTES` | Number | Yes | `1440` | Expiry duration for access tokens. |
+| `REFRESH_TOKEN_TTL_DAYS` | Number | Yes | `7` | Expiry duration for refresh tokens. |
+| `GEMINI_API_KEY` | String | No | Empty | Google Gemini API key for external semantic evaluation. Operates deterministically when unset. |
+| `GEMINI_MODEL` | String | No | `gemini-3.8-flash` | Gemini model variant used for semantic reviews. |
+| `GEMINI_TIMEOUT_MS` | Number | No | `20000` | Timeout threshold before safely transitioning to `INCOMPLETE` state. |
+| `UPLOAD_DIR` | String | Yes | `./private-uploads` | Directory for storing uploaded creative files. |
+| `MAX_UPLOAD_BYTES` | Number | Yes | `10485760` (10 MB) | Maximum permitted file upload size. |
+| `ALLOWED_ORIGINS` | String | Yes | `http://localhost:5173` | Comma-separated list of allowed CORS origins. |
+
+---
+
+## 📡 API Reference Summary
+
+The table below outlines the primary REST endpoints implemented by the Cohesora backend. Detailed payloads, request headers, and schemas are documented in [`docs/api.md`](docs/api.md).
+
+| Group | Method | Endpoint | Auth | Purpose |
+| :--- | :---: | :--- | :---: | :--- |
+| **System** | `GET` | `/` | None | Root deployment health probe & platform metadata. |
+| **System** | `GET` | `/api/v1/health` | None | Service diagnostic endpoint (DB status, uptime, version). |
+| **Auth** | `POST` | `/api/v1/auth/register` | None | Register tenant user, provision workspace, and issue JWT tokens. |
+| **Auth** | `POST` | `/api/v1/auth/login` | None | Authenticate credentials and return active workspaces. |
+| **Auth** | `GET` | `/api/v1/auth/me` | Bearer | Retrieve authenticated user profile and memberships. |
+| **Workspaces** | `GET` | `/api/v1/workspaces` | Bearer | List workspaces accessible to the user (with auto-provisioning). |
+| **Workspaces** | `POST` | `/api/v1/workspaces` | Bearer | Create a new brand governance workspace. |
+| **Brand Rules** | `GET` | `/api/v1/workspaces/:wsId/rules` | Bearer | List workspace rules with category, status, and channel filters. |
+| **Brand Rules** | `POST` | `/api/v1/workspaces/:wsId/rules` | `ADMIN` | Create a new brand rule in `DRAFT` status. |
+| **Brand Rules** | `POST` | `/api/v1/workspaces/:wsId/rules/conflict-check` | `ADMIN` | **(NI 2)** Detect rule conflicts against active workspace rules. |
+| **Brand Rules** | `POST` | `/api/v1/workspaces/:wsId/rules/:ruleId/approve` | `ADMIN` | Approve a draft rule for activation. |
+| **Brand Rules** | `POST` | `/api/v1/workspaces/:wsId/rules/:ruleId/activate` | `ADMIN` | Activate an approved rule for review snapshots. |
+| **Submissions** | `GET` | `/api/v1/workspaces/:wsId/submissions` | Bearer | List submissions with status and campaign search filters. |
+| **Submissions** | `POST` | `/api/v1/workspaces/:wsId/submissions` | `CREATOR` | Ingest copy or static image creative and freeze rule snapshot. |
+| **Submissions** | `GET` | `/api/v1/workspaces/:wsId/submissions/:id` | Bearer | Retrieve submission details, revisions, and finding breakdown. |
+| **Submissions** | `POST` | `/api/v1/workspaces/:wsId/submissions/:id/review-runs` | Bearer | Trigger automated deterministic and semantic review pipeline. |
+| **Submissions** | `POST` | `/api/v1/workspaces/:wsId/submissions/:id/revisions` | `CREATOR` | Submit Revision $N+1$ with updated copy or visual asset. |
+| **Submissions** | `POST` | `/api/v1/workspaces/:wsId/submissions/:id/decisions` | `REVIEWER` | Human governance approval or changes request. |
+| **Submissions** | `POST` | `/api/v1/workspaces/:wsId/submissions/:id/findings/:fId/override` | `REVIEWER` | Override finding with mandatory $\ge 5$ character audit reason. |
+| **Diff** | `GET` | `/api/v1/workspaces/:wsId/submissions/:id/revisions/diff` | Bearer | **(NI 3)** Generate word-level text diff and contrast comparison. |
+| **Briefs** | `POST` | `/api/v1/workspaces/:wsId/brief-imports` | `ADMIN` | **(NI 1)** Ingest and parse PDF/DOCX brief documents. |
+| **Briefs** | `POST` | `/api/v1/workspaces/:wsId/brief-imports/:id/convert-to-rules` | `ADMIN` | Convert extracted brief candidates into draft brand rules. |
+| **Insights** | `GET` | `/api/v1/workspaces/:wsId/insights` | Bearer | Aggregate SLA turnaround, approval rate, and top violated rules. |
+| **Audit** | `GET` | `/api/v1/workspaces/:wsId/audit-events` | `ADMIN` | Query immutable append-only audit trail. |
 
 ---
 
@@ -601,6 +659,7 @@ erDiagram
 4. **Anti-Hallucination & Citation Integrity**: Gemini Flash outputs are intercepted on the server. If a returned finding references a rule ID not present in the active snapshot, the finding is reclassified as `NEEDS_VERIFICATION`.
 5. **Zero AI Auto-Approval**: AI and OCR engines cannot transition content to `APPROVED`. A human reviewer must explicitly authorize clearance.
 6. **Graceful Fail-Safe State**: When external AI providers or OCR services encounter rate limits or timeouts, the review is marked `INCOMPLETE` rather than silently marked compliant.
+7. **Mandatory Audit Overrides**: Reviewers cannot dismiss findings without a substantive explanation ($\ge 5$ characters). The override reason, timestamp, and reviewer ID are permanently committed to the immutable audit log.
 
 ---
 
@@ -608,7 +667,7 @@ erDiagram
 
 ### Automated Test Suites (39 / 39 Passed)
 
-Cohesora includes 39 automated integration and unit tests validating all core workflows and named improvements.
+Cohesora includes 39 automated integration and unit tests validating all core workflows and named improvements using the native Node.js Test Runner (`node:test`).
 
 Run all tests:
 ```bash
@@ -666,7 +725,7 @@ npm test
   - Resolved vs persisting vs new finding categorization
   - Cross-workspace rejection guard
 
-Total: 39 tests, 39 passed, 0 failed, 0 skipped (Duration: ~28s).
+Total: 39 tests, 6 test suites, 39 passed, 0 failed, 0 skipped.
 ```
 
 ### 25-Case Golden Evaluation Benchmark
@@ -676,6 +735,39 @@ Cohesora is evaluated against a curated 25-case golden benchmark covering positi
 Run the golden benchmark:
 ```bash
 npm run test:benchmark
+```
+
+```text
+================================================================
+       COHESORA 25-CASE CURATED BENCHMARK EVALUATION           
+================================================================
+
+RESULTS BY CASE:
+[BM-01] PASS (TP) : Unconditional free shipping claim violating PR-104 minimum order threshold (INR 999)
+[BM-02] PASS (TP) : Zero delivery fee claim without minimum order value
+[BM-03] PASS (TP) : Prohibited superlative "cheapest" in copy
+[BM-04] PASS (TP) : Prohibited claim "100% risk-free" in promotional headline
+[BM-05] PASS (TP) : Missing mandatory legal disclaimer "*T&C apply"
+[BM-06] PASS (TP) : T-03: Low-contrast pale yellow (#FFF3B0) on white text region (< 4.5:1 AA)
+[BM-07] PASS (TP) : Sub-threshold contrast ratio (2.8:1) failing normal-text AA standard
+[BM-08] PASS (TP) : Free delivery claim under INR 500 violating minimum INR 999 condition
+[BM-09] PASS (TP) : Prohibited word variation with punctuation "cheapest!" in sentence
+[BM-10] PASS (TP) : Promotional copy omitting disclaimer on seasonal discount
+[BM-11] PASS (TP) : Free shipping on all orders claim in email newsletter copy
+[BM-12] PASS (TP) : Severely degraded contrast ratio (1.05:1) on white background
+[BM-13] PASS (TN) : Properly qualified free shipping on orders above INR 999 with mandatory disclaimer
+[BM-14] PASS (TN) : Brand-compliant copy using approved term "affordable" and disclaimer
+[BM-15] PASS (TN) : T-04: High-contrast Navy (#1B2A4A) on white satisfying AA 14.22:1
+[BM-16] PASS (TN) : Informational product feature overview without promotional promises
+[BM-17] PASS (TN) : Customer testimonial copy adhering to terminology and disclaimer guidelines
+[BM-18] PASS      : T-02: Unsupported factual promise "Increases sales by 400%" with no active source
+[BM-19] PASS      : Unsubstantiated market leadership claim "Ranked #1 brand tool globally"
+[BM-20] PASS      : Zero carbon neutral claim lacking registered sustainability evidence
+[BM-21] PASS      : Informal colloquial tone concern on enterprise channel
+[BM-22] PASS      : Urgency pressuring copy advisory
+[BM-23] PASS      : T-06: External AI provider timeout safely marks review INCOMPLETE without crashing
+[BM-24] PASS      : T-07: Unusable or failed OCR extraction marks review INCOMPLETE with safe diagnostics
+[BM-25] PASS      : T-15: Malformed/disguised file payload is safely rejected at intake guard
 ```
 
 | Evaluation Metric | Measured Result | Blueprint Target | Status |
@@ -689,17 +781,17 @@ npm run test:benchmark
 
 ---
 
-## 🌐 Deployment Configuration
+## 🌐 Production Deployment
 
-Cohesora is architected for dual-cloud hosting:
+Cohesora is deployed across dual cloud providers:
 
-- **Frontend (Vercel)**: Static React + Vite build deployed with client-side routing.
-  - Production URL: `https://codex-48.vercel.app`
-  - Environment Variable: `VITE_API_URL=https://codex-48.onrender.com/api/v1`
+- **Frontend (Vercel)**: Static React + Vite build deployed with client-side SPA routing and reverse proxy rules.
+  - Production URL: [`https://codex-48.vercel.app`](https://codex-48.vercel.app)
+  - Vercel Configuration: [`vercel.json`](vercel.json) routes `/api/v1/*` to Render while serving `/index.html` for client routing.
 - **Backend (Render)**: Containerized Express 4 API server deployed as a Web Service.
-  - Production API: `https://codex-48.onrender.com`
-  - Health Endpoint: `https://codex-48.onrender.com/api/v1/health`
-  - Root Probe: `GET /` returning `{"service":"cohesora-api","status":"active"}`
+  - Production API: [`https://codex-48.onrender.com`](https://codex-48.onrender.com)
+  - Health Endpoint: [`https://codex-48.onrender.com/api/v1/health`](https://codex-48.onrender.com/api/v1/health)
+  - Root Probe: `GET /` returning `{"name":"Cohesora Platform API","status":"online","version":"1.0.0"}`
 
 ---
 
@@ -713,6 +805,8 @@ Cohesora is architected for dual-cloud hosting:
 | **Deterministic Rule PR-104 Enforcement** | Core Compliance | ✅ **Completed** |
 | **WCAG 2.2 Contrast & CIEDE2000 Color Math** | Core Compliance | ✅ **Completed** |
 | **Zero AI Auto-Approval Human Gating** | Responsible AI | ✅ **Completed** |
+| **Interactive 6-Step Onboarding Tour** | User Experience | ✅ **Completed** |
+| **1-Click Judge Showcase Demo Harness** | Evaluator Experience | ✅ **Completed** |
 | **Append-Only Audit Trail & SLA Analytics** | Governance | ✅ **Completed** |
 | **Sub-Millisecond SWR Client Caching** | Performance | ✅ **Completed** |
 | *Enterprise SSO (SAML 2.0 / Okta / Azure AD)* | Enterprise Identity | 📋 *Planned* |
@@ -724,9 +818,9 @@ Cohesora is architected for dual-cloud hosting:
 
 ## ⚠️ Known Limitations
 
-1. **Complex Brief Layouts**: The document parser extracts text, tables, and headings from standard PDFs and Word DOCX briefs. Highly ornate multi-column agency brochures with embedded vector illustrations may require manual candidate review.
+1. **Complex Brief Layouts**: The document parser extracts text, tables, and headings from standard PDFs and Word DOCX briefs. Highly ornate multi-column agency brochures with complex embedded vector layers may require manual candidate review.
 2. **OCR Image Quality**: Tesseract.js performs reliably on clear raster typography. Highly stylized cursive or low-resolution compressed graphics ($< 72$ DPI) may yield partial text extraction and trigger the `INCOMPLETE` safe diagnostic state.
-3. **Single Active LLM Adapter**: The platform currently integrates Google Gemini Flash. While the adapter interface is modular, dynamic multi-model consensus routing (e.g., fallback to Claude or GPT-4o) is planned for a future release.
+3. **Single Active LLM Adapter**: The platform currently integrates Google Gemini Flash. While the provider interface is modular, dynamic multi-model consensus routing (e.g., fallback to Claude or GPT-4o) is planned for a future release.
 4. **Free-Tier Cold Starts**: When hosted on Render's free tier, the backend may take 30–50 seconds to spin up from an idle state. Once active, all requests respond with normal sub-second latencies.
 
 ---
@@ -735,4 +829,5 @@ Cohesora is architected for dual-cloud hosting:
 
 - **Team**: **BroCode**
 - **Platform**: **Cohesora — Evidence-Led Brand Governance**
+- **Event Context**: We Code Coders Hackathon
 - **License**: **UNLICENSED** &bull; Proprietary to Cohesora. All rights reserved.
