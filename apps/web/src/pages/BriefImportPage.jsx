@@ -50,8 +50,8 @@ export function BriefImportPage({ workspace, userRoles }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <div className="mb-8">
+    <div className="max-w-5xl mx-auto space-y-6">
+      <div className="mb-6">
         <h1 className="text-2xl font-black uppercase tracking-tight text-[#0B1E36] flex items-center gap-2">
           <UploadCloud className="w-6 h-6 text-[#0055D4]" />
           Multi-Format Brief Parser (PDF / DOCX)
