@@ -219,9 +219,9 @@ export function Navbar({
                 }`}
                 title={`Active Workspace: ${currentWsName}`}
               >
-                <Building2 className="w-3.5 h-3.5 text-slate-600" />
-                <span className="text-[#0B1E36] font-mono uppercase text-xs tracking-wider">
-                  Workspace
+                <Building2 className="w-3.5 h-3.5 text-[#0055D4]" />
+                <span className="text-[#0B1E36] font-mono uppercase text-xs tracking-wider max-w-[130px] sm:max-w-[160px] truncate" title={currentWsName}>
+                  {currentWsName}
                 </span>
                 <ChevronDown
                   className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${
