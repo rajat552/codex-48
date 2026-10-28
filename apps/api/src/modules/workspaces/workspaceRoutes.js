@@ -23,3 +23,8 @@ workspaceRouter.post(
   requirePermission(['ADMIN']),
   WorkspaceController.addMember
 );
+workspaceRouter.get(
+  '/:workspaceId/audit-events',
+  requireWorkspaceMember,
+  WorkspaceController.getAuditEvents
+);
