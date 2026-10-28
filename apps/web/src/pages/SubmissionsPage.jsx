@@ -228,7 +228,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
           ))}
         </div>
 
-        <div className="relative min-w-[260px]">
+        <div className="relative w-full sm:w-auto sm:min-w-[260px] flex-1">
           <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
           <input
             type="text"
@@ -378,7 +378,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
       {/* Modal: New Creative Submission */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#0B1E36] rounded-2xl max-w-xl w-full p-6 space-y-5 shadow-[6px_6px_0px_#0B1E36]">
+          <div className="bg-white border-2 border-[#0B1E36] rounded-2xl max-w-xl w-full p-4 sm:p-6 space-y-5 shadow-[6px_6px_0px_#0B1E36] max-h-[90vh] overflow-y-auto">
             <div>
               <h2 className="text-lg font-black text-[#0B1E36] uppercase flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-amber-500" />
@@ -508,7 +508,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
       {/* Distribution Channel Details Modal */}
       {channelModal && (
         <div className="fixed inset-0 bg-[#0B1E36]/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white border-3 border-[#0B1E36] rounded-2xl max-w-md w-full shadow-[6px_6px_0px_#0B1E36] p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white border-3 border-[#0B1E36] rounded-2xl max-w-md w-full shadow-[6px_6px_0px_#0B1E36] p-4 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-3 border-b-2 border-slate-100">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-blue-50 border-2 border-blue-300 flex items-center justify-center text-[#0055D4] shadow-xs">
