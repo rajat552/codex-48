@@ -41,6 +41,16 @@ submissionRouter.post(
 );
 
 submissionRouter.post(
+  '/:submissionId/findings/:findingId/override',
+  requirePermission(['REVIEWER', 'ADMIN']),
+  (req, res, next) => {
+    req.body.action = 'override_finding';
+    req.body.findingId = req.params.findingId;
+    return SubmissionController.recordDecision(req, res, next);
+  }
+);
+
+submissionRouter.post(
   '/:submissionId/review-runs',
   SubmissionController.triggerReviewRun
 );
