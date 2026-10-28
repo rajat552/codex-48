@@ -14,20 +14,24 @@ export class WorkspaceController {
       const workspaces = await Promise.all(
         memberships.map(async m => {
           let ws = m.workspaceId;
-          if (ws && typeof ws === 'object' && ws.name) {
+          if (ws && typeof ws === 'object' && ws.name && (ws._id || ws.id)) {
             return { workspace: ws, roles: m.roles, status: m.status };
           }
-          // If not populated by driver/mock, resolve from Workspace collection
-          const wsDoc = await Workspace.findById(ws?._id || ws);
-          return {
-            workspace: wsDoc || { _id: ws, name: 'Default Workspace' },
-            roles: m.roles,
-            status: m.status
-          };
+          const wsId = ws?._id || ws;
+          if (!wsId) return null;
+          const wsDoc = await Workspace.findById(wsId);
+          if (wsDoc && (wsDoc._id || wsDoc.id)) {
+            return {
+              workspace: wsDoc,
+              roles: m.roles,
+              status: m.status
+            };
+          }
+          return null;
         })
       );
 
-      let validWorkspaces = workspaces.filter(w => w.workspace);
+      let validWorkspaces = workspaces.filter(w => w && w.workspace && (w.workspace._id || w.workspace.id));
       if (validWorkspaces.length === 0) {
         const userDoc = await User.findById(req.user.userId);
         const wsName = `${userDoc?.displayName || 'Brand'}'s Workspace`;
