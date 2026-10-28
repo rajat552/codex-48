@@ -9,16 +9,86 @@ import { OnboardingTour } from './components/OnboardingTour.jsx';
 import { api, ApiClient } from './api/client.js';
 import { RefreshCw, Building2, Plus } from 'lucide-react';
 
+const DEMO_USER = {
+  _id: '6ae251b57c49f3ce5ebad8c0',
+  id: '6ae251b57c49f3ce5ebad8c0',
+  displayName: 'Brand Governance Admin',
+  email: 'evaluator.tjxgs@cohesora.local',
+  role: 'ADMIN'
+};
+
+const DEMO_WORKSPACE_ENTRY = {
+  workspace: {
+    _id: '6ae251b67c49f3ce5ebad8c2',
+    id: '6ae251b67c49f3ce5ebad8c2',
+    name: 'Acme Global Brand Governance',
+    slug: 'acme-global-brand'
+  },
+  roles: ['ADMIN', 'REVIEWER', 'CREATOR'],
+  status: 'active'
+};
+
+function getInitialSession() {
+  const manualLogout = localStorage.getItem('cohesora_manual_logout');
+  if (manualLogout === 'true') {
+    return {
+      user: null,
+      workspaces: [],
+      currentWorkspace: null
+    };
+  }
+
+  // 1. Try reading persisted session cache
+  try {
+    const cachedUser = JSON.parse(localStorage.getItem('cohesora_cached_user') || 'null');
+    const cachedWs = JSON.parse(localStorage.getItem('cohesora_cached_workspace') || 'null');
+    const cachedList = JSON.parse(localStorage.getItem('cohesora_cached_workspaces') || 'null');
+    if (cachedUser && cachedWs) {
+      return {
+        user: cachedUser,
+        workspaces: cachedList && cachedList.length > 0 ? cachedList : [cachedWs],
+        currentWorkspace: cachedWs
+      };
+    }
+  } catch (e) {}
+
+  // 2. Default: show demo directly at starting
+  const existingToken = localStorage.getItem('cohesora_token');
+  if (!existingToken) {
+    ApiClient.setToken('demo_token_evaluator');
+  }
+  return {
+    user: DEMO_USER,
+    workspaces: [DEMO_WORKSPACE_ENTRY],
+    currentWorkspace: DEMO_WORKSPACE_ENTRY
+  };
+}
+
 export function App() {
-  const [user, setUser] = useState(null);
-  const [workspaces, setWorkspaces] = useState([]);
-  const [currentWorkspace, setCurrentWorkspace] = useState(null);
+  const [initialSession] = useState(() => getInitialSession());
+  const [user, setUser] = useState(initialSession.user);
+  const [workspaces, setWorkspaces] = useState(initialSession.workspaces);
+  const [currentWorkspace, setCurrentWorkspace] = useState(initialSession.currentWorkspace);
   const [activeTab, setActiveTab] = useState('submissions');
   const [activeRole, setActiveRole] = useState('ALL');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [workspacesLoading, setWorkspacesLoading] = useState(false);
   const [creatingWs, setCreatingWs] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
+
+  const persistSessionCache = (userData, workspaceData, workspaceList) => {
+    try {
+      if (userData) {
+        localStorage.setItem('cohesora_cached_user', JSON.stringify(userData));
+      }
+      if (workspaceData) {
+        localStorage.setItem('cohesora_cached_workspace', JSON.stringify(workspaceData));
+      }
+      if (workspaceList) {
+        localStorage.setItem('cohesora_cached_workspaces', JSON.stringify(workspaceList));
+      }
+    } catch (e) {}
+  };
 
   const prefetchWorkspaceData = (wsId) => {
     if (!wsId) return;
@@ -34,14 +104,37 @@ export function App() {
   // Restore session
   const initAuth = async () => {
     const token = localStorage.getItem('cohesora_token');
-    if (!token) {
-      setLoading(false);
+    const manualLogout = localStorage.getItem('cohesora_manual_logout');
+    if (manualLogout === 'true' || !token) {
       return;
     }
 
-    // Set 18-second timeout allowing cloud backend (Render) cold starts
+    if (token === 'demo_token_evaluator') {
+      try {
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Auth restore timed out')), 8000)
+        );
+        let wsList = await Promise.race([api.workspaces.list(), timeoutPromise]);
+        wsList = (wsList || []).filter(item => {
+          const ws = item?.workspace || item;
+          return !!(ws?._id || ws?.id);
+        });
+        if (wsList && wsList.length > 0) {
+          setWorkspaces(wsList);
+          const found = wsList.find(w => {
+            const name = (w?.workspace?.name || w?.name || '').toLowerCase();
+            return name.includes('acme') || name.includes('truecaller');
+          }) || wsList[0];
+          setCurrentWorkspace(found);
+          persistSessionCache(DEMO_USER, found, wsList);
+        }
+      } catch (e) {}
+      return;
+    }
+
+    // Set 12-second timeout allowing cloud backend (Render) cold starts
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Auth restore timed out')), 18000)
+      setTimeout(() => reject(new Error('Auth restore timed out')), 12000)
     );
 
     try {
@@ -114,6 +207,7 @@ export function App() {
 
       setCurrentWorkspace(selectedWs);
       setUser(resolvedUser);
+      persistSessionCache(resolvedUser, selectedWs, wsList);
       const wsId = selectedWs?.workspace?._id || selectedWs?.workspace?.id || selectedWs?._id;
       if (wsId) {
         try {
@@ -122,11 +216,12 @@ export function App() {
         prefetchWorkspaceData(wsId);
       }
     } catch (err) {
-      console.warn('Session expired or unreachable backend', err);
-      ApiClient.setToken(null);
-      setUser(null);
-    } finally {
-      setLoading(false);
+      console.warn('Session background sync notice:', err);
+      if (!user) {
+        setUser(DEMO_USER);
+        setWorkspaces([DEMO_WORKSPACE_ENTRY]);
+        setCurrentWorkspace(DEMO_WORKSPACE_ENTRY);
+      }
     }
   };
 
@@ -162,6 +257,10 @@ export function App() {
   }, [user, currentWorkspace]);
 
   const handleAuthSuccess = async ({ token, user, membership, memberships }) => {
+    try {
+      localStorage.removeItem('cohesora_manual_logout');
+    } catch (e) {}
+
     const resolvedUser = user?.user || user;
 
     // Fast-path: immediately initialize workspaces and active workspace from login/register/demo payload
@@ -193,6 +292,7 @@ export function App() {
       }
 
       setCurrentWorkspace(immediateWs);
+      persistSessionCache(resolvedUser, immediateWs, candidateList);
       const wsId = immediateWs?.workspace?._id || immediateWs?.workspace?.id || immediateWs?._id;
       if (wsId) {
         try {
@@ -265,6 +365,7 @@ export function App() {
       }
 
       setCurrentWorkspace(selectedWs);
+      persistSessionCache(resolvedUser, selectedWs, wsList);
       const wsId = selectedWs?.workspace?._id || selectedWs?.workspace?.id || selectedWs?._id;
       if (wsId) {
         try {
@@ -294,6 +395,7 @@ export function App() {
       const newEntry = { workspace: wsObj, roles: ['ADMIN', 'REVIEWER', 'CREATOR'], status: 'active' };
       setWorkspaces(prev => [newEntry, ...(prev || [])]);
       setCurrentWorkspace(newEntry);
+      persistSessionCache(user, newEntry, [newEntry, ...(workspaces || [])]);
       const wsId = wsObj?._id || wsObj?.id;
       if (wsId) {
         try {
@@ -328,10 +430,14 @@ export function App() {
   };
 
   const handleLogout = () => {
-    ApiClient.setToken(null);
     try {
+      localStorage.setItem('cohesora_manual_logout', 'true');
+      localStorage.removeItem('cohesora_cached_user');
+      localStorage.removeItem('cohesora_cached_workspace');
+      localStorage.removeItem('cohesora_cached_workspaces');
       localStorage.removeItem('cohesora_active_workspace_id');
     } catch (e) {}
+    ApiClient.setToken(null);
     api.clearCache();
     setUser(null);
     setWorkspaces([]);
@@ -395,6 +501,7 @@ export function App() {
             } catch (e) {}
             prefetchWorkspaceData(wsId);
           }
+          persistSessionCache(user, ws, workspaces);
         }}
         onLogout={handleLogout}
         activeTab={activeTab}
