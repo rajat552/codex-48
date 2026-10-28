@@ -12,12 +12,18 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const notifySuccess = (token, user, membership, refreshToken = null) => {
+  const notifySuccess = (token, user, membership, refreshToken = null, allMemberships = null) => {
     ApiClient.setToken(token, refreshToken);
     if (onAuthSuccess) {
-      onAuthSuccess({ token, user, membership, refreshToken });
+      onAuthSuccess({
+        token,
+        user,
+        membership,
+        refreshToken,
+        memberships: allMemberships || (membership ? [membership] : [])
+      });
     } else if (onAuthenticated) {
-      onAuthenticated(user, membership ? [membership] : [], membership);
+      onAuthenticated(user, allMemberships || (membership ? [membership] : []), membership);
     }
   };
 
@@ -39,13 +45,13 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
         const wsEntry = result.workspace
           ? { workspace: result.workspace, roles: result.membership?.roles || ['ADMIN', 'REVIEWER', 'CREATOR'], status: 'active' }
           : result.membership;
-        notifySuccess(token, result.user, wsEntry, refreshToken);
+        notifySuccess(token, result.user, wsEntry, refreshToken, wsEntry ? [wsEntry] : null);
       } else {
         const result = await api.auth.login({ email, password });
         const token = result.tokens?.accessToken || result.token;
         const refreshToken = result.tokens?.refreshToken;
         const activeWs = result.memberships?.[0] || null;
-        notifySuccess(token, result.user, activeWs, refreshToken);
+        notifySuccess(token, result.user, activeWs, refreshToken, result.memberships || (activeWs ? [activeWs] : []));
       }
     } catch (err) {
       setError(err.message || 'Authentication failed. Please verify credentials.');
@@ -76,7 +82,7 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
       const wsEntry = result.workspace
         ? { workspace: result.workspace, roles: result.membership?.roles || ['ADMIN', 'REVIEWER', 'CREATOR'], status: 'active' }
         : result.membership;
-      notifySuccess(token, result.user, wsEntry, refreshToken);
+      notifySuccess(token, result.user, wsEntry, refreshToken, wsEntry ? [wsEntry] : null);
     } catch (err) {
       console.warn('Backend registration notice, activating reliable Evaluator Demo workspace session:', err);
       const demoUser = {
@@ -96,7 +102,7 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
         roles: ['ADMIN', 'REVIEWER', 'CREATOR'],
         status: 'active'
       };
-      notifySuccess('demo_token_evaluator', demoUser, demoWs, null);
+      notifySuccess('demo_token_evaluator', demoUser, demoWs, null, [demoWs]);
     } finally {
       setLoading(false);
     }
