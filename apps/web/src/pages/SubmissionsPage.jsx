@@ -45,14 +45,17 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab, isActiv
   });
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchSubmissions = async () => {
-    if (submissions.length === 0) {
+  const fetchSubmissions = async (isManual = false) => {
+    if (submissions.length === 0 || isManual) {
       setLoading(true);
+    }
+    if (isManual) {
+      api.clearCache();
     }
     setError(null);
     try {
-      const data = await api.submissions.list(workspaceId);
-      setSubmissions(data);
+      const data = await api.submissions.list(workspaceId, {}, { skipCache: true });
+      setSubmissions(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -62,7 +65,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab, isActiv
 
   useEffect(() => {
     if (workspaceId && (isActive === undefined || isActive)) {
-      fetchSubmissions();
+      fetchSubmissions(true);
     }
   }, [workspaceId, isActive]);
 
@@ -120,15 +123,28 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab, isActiv
         userRoles={userRoles}
         onBack={() => {
           setSelectedSubmissionId(null);
-          fetchSubmissions();
+          api.clearCache();
+          fetchSubmissions(true);
         }}
       />
     );
   }
 
-  const matchesStatus = (subStatus, filterId) => {
+  const getSubmissionStatus = (sub) => {
+    if (!sub) return 'submitted';
+    const decisionAction = String(sub.decision?.action || '').toLowerCase().trim();
+    if (decisionAction === 'reject' || decisionAction === 'rejected') return 'rejected';
+    if (decisionAction === 'approve' || decisionAction === 'approved') return 'approved';
+    if (decisionAction === 'request_changes' || decisionAction === 'changes_requested') return 'changes_requested';
+    return String(sub.status || 'submitted').toLowerCase().trim();
+  };
+
+  const matchesStatus = (subOrStatus, filterId) => {
     if (filterId === 'ALL') return true;
-    const s = String(subStatus || '').toLowerCase().trim();
+    const s = (typeof subOrStatus === 'object' && subOrStatus !== null)
+      ? getSubmissionStatus(subOrStatus)
+      : String(subOrStatus || '').toLowerCase().trim();
+
     if (filterId === 'IN_REVIEW') {
       return ['submitted', 'processing', 'review_ready', 'draft', 'pending_review', 'in_review', 'incomplete'].includes(s);
     }
@@ -146,14 +162,14 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab, isActiv
 
   const statusCounts = {
     ALL: submissions.length,
-    IN_REVIEW: submissions.filter(s => matchesStatus(s.status, 'IN_REVIEW')).length,
-    CHANGES_REQUESTED: submissions.filter(s => matchesStatus(s.status, 'CHANGES_REQUESTED')).length,
-    APPROVED: submissions.filter(s => matchesStatus(s.status, 'APPROVED')).length,
-    REJECTED: submissions.filter(s => matchesStatus(s.status, 'REJECTED')).length
+    IN_REVIEW: submissions.filter(s => matchesStatus(s, 'IN_REVIEW')).length,
+    CHANGES_REQUESTED: submissions.filter(s => matchesStatus(s, 'CHANGES_REQUESTED')).length,
+    APPROVED: submissions.filter(s => matchesStatus(s, 'APPROVED')).length,
+    REJECTED: submissions.filter(s => matchesStatus(s, 'REJECTED')).length
   };
 
   const filteredSubmissions = submissions.filter(sub => {
-    if (!matchesStatus(sub.status, statusFilter)) return false;
+    if (!matchesStatus(sub, statusFilter)) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const matchTitle = (sub.title || sub.originalFilename || sub.campaignId || '').toLowerCase().includes(q);
@@ -179,6 +195,16 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab, isActiv
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
+          <button
+            onClick={() => fetchSubmissions(true)}
+            disabled={loading}
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#0B1E36] font-mono font-bold text-xs uppercase tracking-wider border-2 border-[#0B1E36] shadow-[2px_2px_0px_#0B1E36] hover:translate-x-[1px] hover:translate-y-[1px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer disabled:opacity-60"
+            title="Refresh submissions list"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#F59E0B]' : 'text-[#0B1E36]'}`} />
+            <span>Refresh</span>
+          </button>
+
           <button
             onClick={() => setShowJudgeModal(true)}
             data-tour="btn-judge-demo"
@@ -358,14 +384,19 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab, isActiv
                   )}
 
                   {/* Overall Submission status */}
-                  <span className={`text-xs font-mono font-bold uppercase px-3 py-1 rounded border-2 ${
-                    String(sub.status).toUpperCase() === 'APPROVED' ? 'bg-emerald-50 text-emerald-800 border-emerald-500' :
-                    String(sub.status).toUpperCase() === 'REJECTED' ? 'bg-red-50 text-red-700 border-red-500' :
-                    String(sub.status).toUpperCase() === 'CHANGES_REQUESTED' ? 'bg-amber-50 text-amber-800 border-amber-500' :
-                    'bg-blue-50 text-[#0055D4] border-blue-400'
-                  }`}>
-                    {String(sub.status || 'SUBMITTED').replace('_', ' ')}
-                  </span>
+                  {(() => {
+                    const effectiveStatus = getSubmissionStatus(sub);
+                    return (
+                      <span className={`text-xs font-mono font-bold uppercase px-3 py-1 rounded border-2 ${
+                        effectiveStatus === 'approved' ? 'bg-emerald-50 text-emerald-800 border-emerald-500 shadow-[1px_1px_0px_#10B981]' :
+                        effectiveStatus === 'rejected' ? 'bg-red-50 text-red-700 border-red-500 shadow-[1px_1px_0px_#EF4444]' :
+                        effectiveStatus === 'changes_requested' ? 'bg-amber-50 text-amber-800 border-amber-500 shadow-[1px_1px_0px_#F59E0B]' :
+                        'bg-blue-50 text-[#0055D4] border-blue-400'
+                      }`}>
+                        {effectiveStatus.replace('_', ' ')}
+                      </span>
+                    );
+                  })()}
 
                   {/* MLH Signature Golden Arrow Badge */}
                   <div className="w-8 h-8 rounded-lg bg-[#F59E0B] group-hover:bg-[#D97706] border-2 border-[#0B1E36] flex items-center justify-center text-[#0B1E36] shadow-[2px_2px_0px_#0B1E36] transition-all">
