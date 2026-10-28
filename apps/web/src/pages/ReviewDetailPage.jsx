@@ -220,7 +220,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
   return (
     <div className="space-y-6">
       {/* Top Banner Navigation & Summary */}
-      <div className="bg-white border-2 border-[#0B1E36] rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4 shadow-[4px_4px_0px_#0B1E36]">
+      <div className="bg-white border-2 border-[#0B1E36] rounded-2xl p-4 sm:p-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 shadow-[4px_4px_0px_#0B1E36]">
         <div className="flex items-center gap-4" data-tour="review-checks-area">
           <button
             onClick={onBack}
@@ -348,7 +348,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b-2 border-slate-200" data-tour="findings-evidence-panel">
+      <div className="flex items-center gap-2 border-b-2 border-slate-200 overflow-x-auto no-scrollbar pb-1 sm:pb-0" data-tour="findings-evidence-panel">
         {[
           { id: 'findings', label: `Findings & Review (${findings.length})`, icon: ShieldAlert },
           { id: 'revisions', label: `Revision History (${revisionsList.length})`, icon: History },
@@ -360,7 +360,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
             <button
               key={t.id}
               onClick={() => setActiveTab(t.id)}
-              className={`flex items-center gap-2 px-4 py-3 text-xs font-mono font-bold uppercase tracking-wider border-b-2 transition cursor-pointer ${
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-xs font-mono font-bold uppercase tracking-wider border-b-2 transition cursor-pointer flex-shrink-0 whitespace-nowrap ${
                 isActive
                   ? 'border-[#0055D4] text-[#0055D4] bg-blue-50/50'
                   : 'border-transparent text-slate-600 hover:text-[#0B1E36]'
@@ -594,7 +594,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
       {/* Modal: Finding Override */}
       {overrideModal.open && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#0B1E36] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-[6px_6px_0px_#0B1E36]">
+          <div className="bg-white border-2 border-[#0B1E36] rounded-2xl max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-[6px_6px_0px_#0B1E36] max-h-[90vh] overflow-y-auto">
             <h3 className="text-base font-black text-[#0B1E36] uppercase flex items-center gap-2">
               <ShieldAlert className="w-5 h-5 text-amber-500" />
               Human Override of Brand Finding
@@ -639,7 +639,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
       {/* Modal: Reviewer Decision */}
       {decisionModal.open && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#0B1E36] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-[6px_6px_0px_#0B1E36]">
+          <div className="bg-white border-2 border-[#0B1E36] rounded-2xl max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-[6px_6px_0px_#0B1E36] max-h-[90vh] overflow-y-auto">
             <h3 className="text-base font-black text-[#0B1E36] uppercase">
               Confirm Decision: {decisionModal.type}
             </h3>
@@ -682,7 +682,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
       {/* Modal: Submit Revision */}
       {revisionModal.open && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#0B1E36] rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-[6px_6px_0px_#0B1E36]">
+          <div className="bg-white border-2 border-[#0B1E36] rounded-2xl max-w-xl w-full p-4 sm:p-6 space-y-4 shadow-[6px_6px_0px_#0B1E36] max-h-[90vh] overflow-y-auto">
             <h3 className="text-base font-black text-[#0B1E36] uppercase flex items-center gap-2">
               <PlusCircle className="w-5 h-5 text-[#0055D4]" />
               Submit Creative Revision
