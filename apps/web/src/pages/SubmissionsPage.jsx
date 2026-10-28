@@ -123,8 +123,34 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
     );
   }
 
+  const matchesStatus = (subStatus, filterId) => {
+    if (filterId === 'ALL') return true;
+    const s = String(subStatus || '').toLowerCase().trim();
+    if (filterId === 'IN_REVIEW') {
+      return ['submitted', 'processing', 'review_ready', 'draft', 'pending_review', 'in_review'].includes(s);
+    }
+    if (filterId === 'CHANGES_REQUESTED') {
+      return s === 'changes_requested';
+    }
+    if (filterId === 'APPROVED') {
+      return s === 'approved';
+    }
+    if (filterId === 'REJECTED') {
+      return s === 'rejected';
+    }
+    return s === filterId.toLowerCase();
+  };
+
+  const statusCounts = {
+    ALL: submissions.length,
+    IN_REVIEW: submissions.filter(s => matchesStatus(s.status, 'IN_REVIEW')).length,
+    CHANGES_REQUESTED: submissions.filter(s => matchesStatus(s.status, 'CHANGES_REQUESTED')).length,
+    APPROVED: submissions.filter(s => matchesStatus(s.status, 'APPROVED')).length,
+    REJECTED: submissions.filter(s => matchesStatus(s.status, 'REJECTED')).length
+  };
+
   const filteredSubmissions = submissions.filter(sub => {
-    if (statusFilter !== 'ALL' && sub.status !== statusFilter) return false;
+    if (!matchesStatus(sub.status, statusFilter)) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const matchTitle = (sub.title || sub.originalFilename || sub.campaignId || '').toLowerCase().includes(q);
@@ -174,17 +200,30 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
       {/* Filter and Search Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-white border-2 border-slate-300 rounded-2xl p-4 shadow-sm" data-tour="filter-toolbar">
         <div className="flex items-center gap-2 flex-wrap">
-          {['ALL', 'PENDING_REVIEW', 'IN_REVIEW', 'CHANGES_REQUESTED', 'APPROVED', 'REJECTED'].map(status => (
+          {[
+            { id: 'ALL', label: 'All' },
+            { id: 'IN_REVIEW', label: 'In Review' },
+            { id: 'CHANGES_REQUESTED', label: 'Changes Requested' },
+            { id: 'APPROVED', label: 'Approved' },
+            { id: 'REJECTED', label: 'Rejected' }
+          ].map(tab => (
             <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition cursor-pointer ${
-                statusFilter === status
+              key={tab.id}
+              onClick={() => setStatusFilter(tab.id)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition cursor-pointer ${
+                statusFilter === tab.id
                   ? 'bg-[#0B1E36] text-white border-2 border-[#0B1E36] shadow-[2px_2px_0px_#F59E0B]'
                   : 'bg-slate-50 text-slate-700 hover:text-[#0B1E36] border-2 border-slate-200 hover:border-[#0B1E36]'
               }`}
             >
-              {status.replace('_', ' ')}
+              <span>{tab.label}</span>
+              <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-bold ${
+                statusFilter === tab.id
+                  ? 'bg-[#F59E0B] text-[#0B1E36]'
+                  : 'bg-slate-200 text-slate-700'
+              }`}>
+                {statusCounts[tab.id] || 0}
+              </span>
             </button>
           ))}
         </div>
@@ -214,19 +253,33 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
       ) : filteredSubmissions.length === 0 ? (
         <div className="p-16 text-center bg-white border-2 border-[#0B1E36] rounded-2xl shadow-[4px_4px_0px_#0B1E36] space-y-3" data-tour="review-checks-area" data-tour-alias="submissions-list-area">
           <FileText className="w-12 h-12 text-slate-400 mx-auto" />
-          <h3 className="text-base font-black text-[#0B1E36] uppercase">No submissions found</h3>
+          <h3 className="text-base font-black text-[#0B1E36] uppercase">
+            {submissions.length === 0 ? 'No Submissions Found' : 'No Matching Submissions'}
+          </h3>
           <p className="text-xs text-slate-600 font-mono max-w-sm mx-auto">
-            {searchQuery || statusFilter !== 'ALL'
-              ? 'Try modifying your search or filter criteria.'
-              : 'Submit your first creative brief copy or image to run automated brand rule validation.'}
+            {submissions.length === 0
+              ? 'Submit your first creative brief copy or image to run automated brand rule validation.'
+              : `No submissions currently match status "${statusFilter.replace('_', ' ')}"${searchQuery ? ` and query "${searchQuery}"` : ''}. Click below to view all workspace submissions.`}
           </p>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1E36] font-mono font-bold text-xs uppercase border-2 border-[#0B1E36] shadow-[2px_2px_0px_#0B1E36] mt-2 cursor-pointer"
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            Create First Submission
-          </button>
+          {submissions.length === 0 ? (
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F59E0B] hover:bg-[#D97706] text-[#0B1E36] font-mono font-bold text-xs uppercase border-2 border-[#0B1E36] shadow-[2px_2px_0px_#0B1E36] mt-2 cursor-pointer"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              Create First Submission
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setStatusFilter('ALL');
+                setSearchQuery('');
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B1E36] hover:bg-[#152B4A] text-white font-mono font-bold text-xs uppercase border-2 border-[#0B1E36] shadow-[2px_2px_0px_#F59E0B] mt-2 cursor-pointer"
+            >
+              View All Submissions ({submissions.length})
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3.5" data-tour="review-checks-area" data-tour-alias="submissions-list-area">
@@ -303,12 +356,12 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
 
                   {/* Overall Submission status */}
                   <span className={`text-xs font-mono font-bold uppercase px-3 py-1 rounded border-2 ${
-                    sub.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-800 border-emerald-500' :
-                    sub.status === 'REJECTED' ? 'bg-red-50 text-red-700 border-red-500' :
-                    sub.status === 'CHANGES_REQUESTED' ? 'bg-amber-50 text-amber-800 border-amber-500' :
+                    String(sub.status).toUpperCase() === 'APPROVED' ? 'bg-emerald-50 text-emerald-800 border-emerald-500' :
+                    String(sub.status).toUpperCase() === 'REJECTED' ? 'bg-red-50 text-red-700 border-red-500' :
+                    String(sub.status).toUpperCase() === 'CHANGES_REQUESTED' ? 'bg-amber-50 text-amber-800 border-amber-500' :
                     'bg-blue-50 text-[#0055D4] border-blue-400'
                   }`}>
-                    {sub.status.replace('_', ' ')}
+                    {String(sub.status || 'SUBMITTED').replace('_', ' ')}
                   </span>
 
                   {/* MLH Signature Golden Arrow Badge */}
