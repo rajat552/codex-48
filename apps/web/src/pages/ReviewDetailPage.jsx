@@ -142,8 +142,17 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
     try {
       await api.submissions.submitDecision(workspaceId, activeSubmissionId, type, comment);
       setDecisionModal({ open: false, type: '', comment: '' });
-      // Optimistically update local state so UI immediately renders APPROVED
-      setSubmission(prev => prev ? ({ ...prev, status: type.toLowerCase() }) : prev);
+      // Optimistically update local state so UI immediately renders decision
+      setSubmission(prev => prev ? ({
+        ...prev,
+        status: type.toLowerCase(),
+        decision: {
+          action: type.toLowerCase() === 'approved' ? 'approve' : type.toLowerCase() === 'rejected' ? 'reject' : 'request_changes',
+          reason: comment,
+          comment,
+          timestamp: new Date()
+        }
+      }) : prev);
       api.clearCache();
       await loadAll();
     } catch (err) {
@@ -244,7 +253,15 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
         revisionNotes: 'Initial revision intake'
       }];
 
-  const normalizedStatus = String(submission.status || '').toUpperCase();
+  const effectiveStatus = (() => {
+    const dec = String(submission?.decision?.action || '').toLowerCase().trim();
+    if (dec === 'reject' || dec === 'rejected') return 'REJECTED';
+    if (dec === 'approve' || dec === 'approved') return 'APPROVED';
+    if (dec === 'request_changes' || dec === 'changes_requested') return 'CHANGES_REQUESTED';
+    return String(submission?.status || 'SUBMITTED').toUpperCase();
+  })();
+
+  const normalizedStatus = effectiveStatus;
 
   return (
     <div className="space-y-6">
@@ -266,7 +283,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
                 normalizedStatus === 'CHANGES_REQUESTED' ? 'bg-amber-50 text-amber-800 border-amber-500 shadow-[1px_1px_0px_#F59E0B]' :
                 'bg-blue-50 text-[#0055D4] border-blue-400'
               }`}>
-                {(submission.status || 'SUBMITTED').replace('_', ' ')}
+                {normalizedStatus.replace('_', ' ')}
               </span>
               <span className="text-xs bg-slate-100 text-slate-800 px-2 py-0.5 rounded font-mono font-bold border border-slate-300">
                 Rev {currentRev.revisionNumber || submission.revisionNumber || 1}
