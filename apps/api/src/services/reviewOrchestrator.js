@@ -25,8 +25,11 @@ export class ReviewOrchestrator {
       contentType: submission.contentType
     });
 
-    submission.status = 'processing';
-    await submission.save();
+    const isDecided = ['approved', 'rejected', 'changes_requested'].includes(submission.status);
+    if (!isDecided) {
+      submission.status = 'processing';
+      await submission.save();
+    }
 
     const completedLayers = [];
     const failedLayers = [];
@@ -145,10 +148,13 @@ export class ReviewOrchestrator {
 
     // Safe Failure Semantics (Section G5 & Non-negotiable principle 7)
     // If OCR failed or an AI call was attempted and failed, mark INCOMPLETE
-    if (failedLayers.includes('ocr') || (failedLayers.includes('gemini_semantic') && !aiResult?.skipped)) {
-      submission.status = 'incomplete';
-    } else {
-      submission.status = 'review_ready';
+    // Preserve human reviewer decision if already made (e.g. approved / rejected)
+    if (!isDecided) {
+      if (failedLayers.includes('ocr') || (failedLayers.includes('gemini_semantic') && !aiResult?.skipped)) {
+        submission.status = 'incomplete';
+      } else {
+        submission.status = 'review_ready';
+      }
     }
 
     await submission.save();
