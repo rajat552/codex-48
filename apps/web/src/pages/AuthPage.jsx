@@ -36,7 +36,10 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
         });
         const token = result.tokens?.accessToken || result.token;
         const refreshToken = result.tokens?.refreshToken;
-        notifySuccess(token, result.user, result.membership, refreshToken);
+        const wsEntry = result.workspace
+          ? { workspace: result.workspace, roles: result.membership?.roles || ['ADMIN', 'REVIEWER', 'CREATOR'], status: 'active' }
+          : result.membership;
+        notifySuccess(token, result.user, wsEntry, refreshToken);
       } else {
         const result = await api.auth.login({ email, password });
         const token = result.tokens?.accessToken || result.token;
@@ -70,7 +73,10 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
       const result = await Promise.race([registerPromise, timeoutPromise]);
       const token = result.tokens?.accessToken || result.token;
       const refreshToken = result.tokens?.refreshToken;
-      notifySuccess(token, result.user, result.membership, refreshToken);
+      const wsEntry = result.workspace
+        ? { workspace: result.workspace, roles: result.membership?.roles || ['ADMIN', 'REVIEWER', 'CREATOR'], status: 'active' }
+        : result.membership;
+      notifySuccess(token, result.user, wsEntry, refreshToken);
     } catch (err) {
       console.warn('Backend unavailable, activating instant Evaluator Demo workspace session:', err);
       const demoUser = {
