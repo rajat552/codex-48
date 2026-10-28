@@ -247,7 +247,7 @@ export function RevisionDiffView({ workspaceId, submission, onBack }) {
                 <p className="text-xs text-slate-500 italic">No previous findings were resolved in this revision.</p>
               ) : (
                 <div className="space-y-2">
-                  {diffData.findingsDiff.resolvedFindings.map((f, i) => (
+                  {diffData.findingsDiff?.resolvedFindings?.map((f, i) => (
                     <div key={i} className="p-3 bg-emerald-50 border-2 border-emerald-200 rounded-xl text-xs space-y-1">
                       <div className="font-bold text-emerald-900">{f.message}</div>
                       <div className="text-slate-500 text-[11px]">Rule: {f.ruleReference?.ruleId || 'N/A'}</div>
