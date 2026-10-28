@@ -296,6 +296,14 @@ export class SubmissionService {
 
     await submission.save();
 
+    // Settle any queued/running background jobs for this submission to prevent worker race conditions
+    try {
+      await ProcessingJob.updateMany(
+        { submissionId: submission._id, status: { $in: ['queued', 'running'] } },
+        { $set: { status: 'succeeded', completedAt: new Date() } }
+      );
+    } catch (e) {}
+
     await AuditService.recordEvent({
       workspaceId,
       actorId,
@@ -324,6 +332,14 @@ export class SubmissionService {
 
     return list.map(sub => {
       const obj = sub.toObject ? sub.toObject() : { ...sub };
+      const decisionAction = String(obj.decision?.action || '').trim().toLowerCase();
+      if (decisionAction === 'reject' || decisionAction === 'rejected') {
+        obj.status = 'rejected';
+      } else if (decisionAction === 'approve' || decisionAction === 'approved') {
+        obj.status = 'approved';
+      } else if (decisionAction === 'request_changes' || decisionAction === 'changes_requested') {
+        obj.status = 'changes_requested';
+      }
       if (!obj.title) {
         obj.title = obj.originalFilename || (obj.campaignId ? `${obj.campaignId} Creative` : `Creative #${String(obj._id).slice(-4)}`);
       }
@@ -366,6 +382,18 @@ export class SubmissionService {
 
     const submissionObj = submission.toObject ? submission.toObject() : { ...submission };
     const latestRev = (allRevs && allRevs.length > 0) ? allRevs[allRevs.length - 1] : submission;
+
+    const decisionAction = String(submission.decision?.action || '').trim().toLowerCase();
+    if (decisionAction === 'reject' || decisionAction === 'rejected') {
+      submission.status = 'rejected';
+      submissionObj.status = 'rejected';
+    } else if (decisionAction === 'approve' || decisionAction === 'approved') {
+      submission.status = 'approved';
+      submissionObj.status = 'approved';
+    } else if (decisionAction === 'request_changes' || decisionAction === 'changes_requested') {
+      submission.status = 'changes_requested';
+      submissionObj.status = 'changes_requested';
+    }
 
     submissionObj.currentRevision = {
       _id: submission._id,
