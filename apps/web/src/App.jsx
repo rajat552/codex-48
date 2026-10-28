@@ -241,12 +241,13 @@ export function App() {
     return () => clearTimeout(slowTimer);
   }, []);
 
-  // Auto-launch onboarding tour for first-time users
+  // Auto-launch onboarding tour for first-time or new session users
   useEffect(() => {
     if (user && currentWorkspace) {
       try {
-        const completed = localStorage.getItem('cohesora_tour_completed');
-        if (!completed) {
+        const sessionTourShown = sessionStorage.getItem('cohesora_session_tour_shown');
+        if (!sessionTourShown) {
+          sessionStorage.setItem('cohesora_session_tour_shown', 'true');
           const tourTimer = setTimeout(() => {
             setTourOpen(true);
           }, 800);
@@ -259,6 +260,7 @@ export function App() {
   const handleAuthSuccess = async ({ token, user, membership, memberships }) => {
     try {
       localStorage.removeItem('cohesora_manual_logout');
+      sessionStorage.removeItem('cohesora_session_tour_shown');
     } catch (e) {}
 
     const resolvedUser = user?.user || user;
@@ -300,6 +302,7 @@ export function App() {
         } catch (e) {}
         prefetchWorkspaceData(wsId);
       }
+      setTimeout(() => setTourOpen(true), 600);
     } else {
       setWorkspacesLoading(true);
     }
