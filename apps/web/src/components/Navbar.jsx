@@ -204,7 +204,7 @@ export function Navbar({
             )}
 
             {/* 1. Workspace Dropdown (First only show "Workspace", click to view/switch) */}
-            <div className="relative flex-shrink-0" ref={workspaceDropdownRef}>
+            <div className="relative hidden sm:block flex-shrink-0" ref={workspaceDropdownRef}>
               <button
                 type="button"
                 data-tour="workspace-selector"
@@ -297,7 +297,7 @@ export function Navbar({
             </div>
 
             {/* 2. Role Dropdown */}
-            <div className="relative flex-shrink-0" ref={roleDropdownRef}>
+            <div className="relative hidden sm:block flex-shrink-0" ref={roleDropdownRef}>
               <button
                 type="button"
                 data-tour="role-selector"
@@ -327,8 +327,8 @@ export function Navbar({
                 >
                   {activeRole === 'ALL'
                     ? currentRoles.length > 1
-                      ? `ALL (${currentRoles.length})`
-                      : currentRoles[0]
+                    ? `ALL (${currentRoles.length})`
+                    : currentRoles[0]
                     : activeRole}
                 </span>
                 <ChevronDown
@@ -461,6 +461,7 @@ export function Navbar({
             {/* Mobile menu trigger */}
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
+              aria-label="Toggle navigation menu"
               className="md:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 border border-slate-300 flex-shrink-0 cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -473,35 +474,161 @@ export function Navbar({
 
       {/* Mobile navigation drawer when open */}
       {mobileMenuOpen && user && (
-        <div className="md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-2">
-          <div className="grid grid-cols-2 gap-2">
-            {navItems.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
+        <div className="md:hidden border-t-2 border-slate-200 bg-white px-4 py-4 space-y-4 shadow-lg animate-in slide-in-from-top-2 duration-150">
+          {/* Main Navigation tabs */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+              Navigation
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              {navItems.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-[#0B1E36] text-white border-2 border-[#0B1E36] shadow-[2px_2px_0px_#F59E0B]'
+                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border-2 border-slate-200'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Mobile Workspace Switcher */}
+          <div className="space-y-2 pt-2 border-t border-slate-100">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                Workspace ({workspaces.length})
+              </span>
+              <span className="text-[10px] font-mono text-emerald-800 bg-emerald-100 border border-emerald-300 px-1.5 py-0.5 rounded font-bold">
+                {currentWsName}
+              </span>
+            </div>
+            {workspaces.length > 1 && (
+              <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
+                {workspaces.map((w) => {
+                  const id =
+                    typeof w.workspace === 'object'
+                      ? w.workspace._id || w.workspace.id
+                      : w.workspace;
+                  const name =
+                    typeof w.workspace === 'object'
+                      ? w.workspace.name || 'Workspace'
+                      : 'Workspace';
+                  const isSelected = id === currentWsId;
+
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => {
+                        onSelectWorkspace(w);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center justify-between border cursor-pointer ${
+                        isSelected
+                          ? 'bg-amber-50 text-[#0B1E36] border-[#F59E0B]'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      <span className="truncate">{name}</span>
+                      {isSelected && <Check className="w-3.5 h-3.5 text-[#0055D4] flex-shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Role Switcher */}
+          <div className="space-y-2 pt-2 border-t border-slate-100">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                Active Role View
+              </span>
+              <span
+                className={`text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded border ${
+                  activeRole === 'ALL'
+                    ? 'bg-slate-100 text-[#0B1E36] border-slate-300'
+                    : getRoleBadgeStyle(activeRole)
+                }`}
+              >
+                {activeRole}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {currentRoles.length > 1 && (
                 <button
-                  key={tab.id}
+                  type="button"
                   onClick={() => {
-                    setActiveTab(tab.id);
+                    if (onSelectRole) onSelectRole('ALL');
                     setMobileMenuOpen(false);
                   }}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
-                    isActive
-                      ? 'bg-[#0B1E36] text-white'
-                      : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase border cursor-pointer ${
+                    activeRole === 'ALL'
+                      ? 'bg-[#0B1E36] text-white border-[#0B1E36]'
+                      : 'bg-slate-50 text-slate-700 border-slate-200'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{tab.label}</span>
+                  ALL
                 </button>
-              );
-            })}
+              )}
+              {currentRoles.map((role) => (
+                <button
+                  key={role}
+                  type="button"
+                  onClick={() => {
+                    if (onSelectRole) onSelectRole(role);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase border cursor-pointer ${
+                    activeRole === role
+                      ? 'bg-[#0B1E36] text-white border-[#0B1E36]'
+                      : 'bg-slate-50 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  {role}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="pt-2 border-t border-slate-100 text-xs font-mono text-slate-500">
-            Workspace: <span className="font-bold text-[#0B1E36]">{currentWsName}</span>
-          </div>
-          <div className="text-xs font-mono text-slate-500">
-            Signed in as: <span className="font-bold text-[#0B1E36]">{user.displayName}</span> ({user.email})
+
+          {/* Mobile User Profile & Sign Out */}
+          <div className="pt-3 border-t border-slate-200 flex items-center justify-between">
+            <div className="flex items-center gap-2 overflow-hidden">
+              <div className="w-8 h-8 rounded-lg bg-[#0B1E36] text-[#F59E0B] font-mono font-bold text-xs flex items-center justify-center flex-shrink-0">
+                {userInitials}
+              </div>
+              <div className="overflow-hidden">
+                <div className="text-xs font-bold text-[#0B1E36] truncate leading-tight">
+                  {user.displayName}
+                </div>
+                <div className="text-[10px] text-slate-500 font-mono truncate leading-tight">
+                  {user.email}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onLogout();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
       )}
