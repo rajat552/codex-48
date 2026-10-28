@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { api } from '../api/client.js';
 
-export function InsightsPage({ workspaceId }) {
+export function InsightsPage({ workspaceId, isActive = true }) {
   const [insights, setInsights] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -29,7 +29,7 @@ export function InsightsPage({ workspaceId }) {
     }
     setError(null);
     try {
-      const data = await api.insights.get(workspaceId, {}, { skipCache: isManualRefresh });
+      const data = await api.insights.get(workspaceId, {}, { skipCache: true });
       setInsights(data);
       setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     } catch (err) {
@@ -54,10 +54,10 @@ export function InsightsPage({ workspaceId }) {
   };
 
   useEffect(() => {
-    if (workspaceId) {
-      fetchInsights(false);
+    if (workspaceId && (isActive === undefined || isActive)) {
+      fetchInsights(true);
     }
-  }, [workspaceId]);
+  }, [workspaceId, isActive]);
 
   if (loading && !insights) {
     return (
