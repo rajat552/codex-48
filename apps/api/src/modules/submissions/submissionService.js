@@ -103,11 +103,17 @@ export class SubmissionService {
       }
     });
 
-    try {
-      await ReviewOrchestrator.executeReview(submission._id);
-    } catch (reviewErr) {
+    // Execute review without blocking the HTTP intake if processing is heavy (e.g. OCR/LLM)
+    const reviewPromise = ReviewOrchestrator.executeReview(submission._id).catch(reviewErr => {
       console.warn('Initial review execution notice:', reviewErr.message);
-    }
+    });
+
+    // Quick race: if evaluation finishes quickly (< 2.5s), return with findings;
+    // otherwise let it safely finish in background without blocking the client response
+    await Promise.race([
+      reviewPromise,
+      new Promise(resolve => setTimeout(resolve, 2500))
+    ]);
 
     return submission;
   }
@@ -196,11 +202,14 @@ export class SubmissionService {
       }
     });
 
-    try {
-      await ReviewOrchestrator.executeReview(revision._id);
-    } catch (reviewErr) {
+    const reviewPromise = ReviewOrchestrator.executeReview(revision._id).catch(reviewErr => {
       console.warn('Revision review execution notice:', reviewErr.message);
-    }
+    });
+
+    await Promise.race([
+      reviewPromise,
+      new Promise(resolve => setTimeout(resolve, 2500))
+    ]);
 
     return revision;
   }
