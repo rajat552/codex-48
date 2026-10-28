@@ -51,9 +51,11 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
   const fetchSubmission = async () => {
     try {
       const data = await api.submissions.getById(workspaceId, activeSubmissionId);
-      setSubmission(data);
-      if (data.currentRevision?.copyText) {
-        setRevisionModal(prev => ({ ...prev, copyText: data.currentRevision.copyText }));
+      if (data) {
+        setSubmission(data);
+        if (data.currentRevision?.copyText) {
+          setRevisionModal(prev => ({ ...prev, copyText: data.currentRevision.copyText }));
+        }
       }
     } catch (err) {
       setError(err.message);
@@ -63,7 +65,9 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
   const fetchAudit = async () => {
     try {
       const events = await api.audit.list(workspaceId, { submissionId: activeSubmissionId });
-      setAuditEvents(events);
+      if (Array.isArray(events)) {
+        setAuditEvents(events);
+      }
     } catch (err) {
       console.error('Failed to load audit events', err);
     }
@@ -74,8 +78,13 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
       setLoading(true);
     }
     setError(null);
-    await Promise.all([fetchSubmission(), fetchAudit()]);
-    setLoading(false);
+    try {
+      await Promise.all([fetchSubmission(), fetchAudit()]);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -133,6 +142,9 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
     try {
       await api.submissions.submitDecision(workspaceId, activeSubmissionId, type, comment);
       setDecisionModal({ open: false, type: '', comment: '' });
+      // Optimistically update local state so UI immediately renders APPROVED
+      setSubmission(prev => prev ? ({ ...prev, status: type.toLowerCase() }) : prev);
+      api.clearCache();
       await loadAll();
     } catch (err) {
       alert(`Decision failed: ${err.message}`);
@@ -232,6 +244,8 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
         revisionNotes: 'Initial revision intake'
       }];
 
+  const normalizedStatus = String(submission.status || '').toUpperCase();
+
   return (
     <div className="space-y-6">
       {/* Top Banner Navigation & Summary */}
@@ -247,9 +261,9 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
             <div className="flex items-center gap-3 flex-wrap">
               <h2 className="text-xl font-black text-[#0B1E36]">{submission.title || submission.campaignId || 'Creative Review'}</h2>
               <span className={`text-xs font-mono font-bold uppercase px-2.5 py-0.5 rounded border-2 ${
-                submission.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-800 border-emerald-500' :
-                submission.status === 'REJECTED' ? 'bg-red-50 text-red-700 border-red-500' :
-                submission.status === 'CHANGES_REQUESTED' ? 'bg-amber-50 text-amber-800 border-amber-500' :
+                normalizedStatus === 'APPROVED' ? 'bg-emerald-50 text-emerald-800 border-emerald-500 shadow-[1px_1px_0px_#10B981]' :
+                normalizedStatus === 'REJECTED' ? 'bg-red-50 text-red-700 border-red-500 shadow-[1px_1px_0px_#EF4444]' :
+                normalizedStatus === 'CHANGES_REQUESTED' ? 'bg-amber-50 text-amber-800 border-amber-500 shadow-[1px_1px_0px_#F59E0B]' :
                 'bg-blue-50 text-[#0055D4] border-blue-400'
               }`}>
                 {(submission.status || 'SUBMITTED').replace('_', ' ')}
@@ -326,7 +340,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
             </button>
           )}
 
-          {isReviewerOrAdmin && submission.status !== 'APPROVED' && (
+          {isReviewerOrAdmin && normalizedStatus !== 'APPROVED' && (
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setDecisionModal({ open: true, type: 'APPROVED', comment: '' })}
@@ -359,8 +373,47 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
               </button>
             </div>
           )}
+
+          {isReviewerOrAdmin && normalizedStatus === 'APPROVED' && (
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 text-emerald-800 border-2 border-emerald-500 rounded-xl text-xs font-mono font-bold uppercase shadow-[2px_2px_0px_#10B981]">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                Approved
+              </span>
+              <button
+                onClick={() => setDecisionModal({ open: true, type: 'CHANGES_REQUESTED', comment: '' })}
+                className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-lg text-[11px] font-mono font-bold uppercase cursor-pointer"
+                title="Change decision to Changes Requested"
+              >
+                Change
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Approved Status Banner */}
+      {normalizedStatus === 'APPROVED' && (
+        <div className="p-4 bg-emerald-50 border-2 border-emerald-500 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[3px_3px_0px_#10B981]">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
+            <div>
+              <p className="text-sm font-black font-mono text-emerald-900">
+                Creative Approved for Live Production
+              </p>
+              <p className="text-xs font-mono text-emerald-700">
+                This creative revision has passed all compliance checks and is listed under the <strong>APPROVED</strong> filter on the reviews dashboard.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onBack}
+            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-mono font-bold uppercase transition cursor-pointer shrink-0 self-start sm:self-auto"
+          >
+            View in Approved List &rarr;
+          </button>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex items-center gap-2 border-b-2 border-slate-200 overflow-x-auto no-scrollbar pb-1 sm:pb-0" data-tour="findings-evidence-panel">
@@ -472,7 +525,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
                     key={idx}
                     finding={finding}
                     isReviewerOrAdmin={isReviewerOrAdmin}
-                    onOpenOverride={f => setOverrideModal({ open: true, findingId: f._id, message: f.message, reason: '' })}
+                    onOpenOverride={f => setOverrideModal({ open: true, findingId: f.findingId || f.id || f._id, message: f.message, reason: '' })}
                   />
                 ))
               )}
@@ -497,7 +550,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
                     key={idx}
                     finding={finding}
                     isReviewerOrAdmin={isReviewerOrAdmin}
-                    onOpenOverride={f => setOverrideModal({ open: true, findingId: f._id, message: f.message, reason: '' })}
+                    onOpenOverride={f => setOverrideModal({ open: true, findingId: f.findingId || f.id || f._id, message: f.message, reason: '' })}
                   />
                 ))
               )}
@@ -522,7 +575,7 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
                     key={idx}
                     finding={finding}
                     isReviewerOrAdmin={isReviewerOrAdmin}
-                    onOpenOverride={f => setOverrideModal({ open: true, findingId: f._id, message: f.message, reason: '' })}
+                    onOpenOverride={f => setOverrideModal({ open: true, findingId: f.findingId || f.id || f._id, message: f.message, reason: '' })}
                   />
                 ))
               )}
