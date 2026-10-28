@@ -30,6 +30,30 @@ export async function connectDatabase() {
     });
     isInMemoryMode = false;
     logger.info('Connected to live MongoDB successfully', { uri: env.MONGODB_URI });
+
+    // Self-healing synchronization: ensure any submissions with human decisions have matching statuses
+    setTimeout(async () => {
+      try {
+        const subCol = mongoose.connection.db?.collection('submissions');
+        if (subCol) {
+          await subCol.updateMany(
+            { 'decision.action': { $in: ['reject', 'rejected', 'REJECT', 'REJECTED'] }, status: { $ne: 'rejected' } },
+            { $set: { status: 'rejected' } }
+          );
+          await subCol.updateMany(
+            { 'decision.action': { $in: ['approve', 'approved', 'APPROVE', 'APPROVED'] }, status: { $ne: 'approved' } },
+            { $set: { status: 'approved' } }
+          );
+          await subCol.updateMany(
+            { 'decision.action': { $in: ['request_changes', 'changes_requested', 'REQUEST_CHANGES', 'CHANGES_REQUESTED'] }, status: { $ne: 'changes_requested' } },
+            { $set: { status: 'changes_requested' } }
+          );
+        }
+      } catch (syncErr) {
+        logger.debug('Self-healing sync notice', { error: syncErr?.message });
+      }
+    }, 100);
+
     return mongoose.connection;
   } catch (err) {
     logger.warn('Direct MongoDB connection failed. Falling back to pure in-memory document store', { error: err.message });
