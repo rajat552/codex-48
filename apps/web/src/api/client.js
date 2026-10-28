@@ -245,13 +245,13 @@ export class ApiClient {
   }
 
   // Submissions
-  static getSubmissions(workspaceId, params = {}) {
+  static getSubmissions(workspaceId, params = {}, options = {}) {
     const q = new URLSearchParams(params).toString();
-    return this.request(`/workspaces/${workspaceId}/submissions${q ? `?${q}` : ''}`);
+    return this.request(`/workspaces/${workspaceId}/submissions${q ? `?${q}` : ''}`, options);
   }
 
-  static getSubmission(workspaceId, submissionId) {
-    return this.request(`/workspaces/${workspaceId}/submissions/${submissionId}`);
+  static getSubmission(workspaceId, submissionId, options = {}) {
+    return this.request(`/workspaces/${workspaceId}/submissions/${submissionId}`, options);
   }
 
   static createSubmission(workspaceId, formData) {
@@ -370,8 +370,8 @@ export const api = {
     activate: (wsId, ruleId, payload) => ApiClient.activateRule(wsId, ruleId, payload)
   },
   submissions: {
-    list: (wsId, params) => ApiClient.getSubmissions(wsId, params),
-    getById: (wsId, subId) => ApiClient.getSubmission(wsId, subId),
+    list: (wsId, params, options) => ApiClient.getSubmissions(wsId, params, options),
+    getById: (wsId, subId, options) => ApiClient.getSubmission(wsId, subId, options),
     create: (wsId, formData) => ApiClient.createSubmission(wsId, formData),
     createRevision: (wsId, subId, formData) => ApiClient.createRevision(wsId, subId, formData),
     triggerReview: (wsId, subId) => ApiClient.triggerReviewRun(wsId, subId),
