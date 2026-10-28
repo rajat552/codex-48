@@ -196,7 +196,7 @@ export function Navbar({
                 onClick={onStartTour}
                 data-tour="btn-product-tour"
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider bg-amber-50 hover:bg-amber-100 text-[#0B1E36] border-2 border-[#F59E0B] shadow-[2px_2px_0px_#0B1E36] active:translate-x-[0.5px] active:translate-y-[0.5px] active:shadow-none transition-all cursor-pointer flex-shrink-0"
-                title="Launch Interactive 10-Step Product Tour"
+                title="Launch Interactive Product Tour"
               >
                 <Compass className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
                 <span>Tour</span>
