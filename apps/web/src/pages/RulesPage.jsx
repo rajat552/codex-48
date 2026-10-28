@@ -204,7 +204,7 @@ export function RulesPage({ workspace, userRoles }) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="space-y-6">
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8" data-tour="rules-registry-container">
         <div>
