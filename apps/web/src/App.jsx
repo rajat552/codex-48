@@ -375,6 +375,7 @@ export function App() {
                 workspaceId={workspaceId}
                 userRoles={userRoles}
                 onNavigateTab={setActiveTab}
+                isActive={activeTab === 'submissions'}
               />
             </div>
             <div className={activeTab === 'rules' ? 'block' : 'hidden'}>
@@ -382,6 +383,7 @@ export function App() {
                 workspace={typeof rawWs === 'object' ? rawWs : { _id: workspaceId }}
                 workspaceId={workspaceId}
                 userRoles={userRoles}
+                isActive={activeTab === 'rules'}
               />
             </div>
             <div className={activeTab === 'brief-imports' ? 'block' : 'hidden'}>
@@ -389,11 +391,13 @@ export function App() {
                 workspace={typeof rawWs === 'object' ? rawWs : { _id: workspaceId }}
                 workspaceId={workspaceId}
                 userRoles={userRoles}
+                isActive={activeTab === 'brief-imports'}
               />
             </div>
             <div className={activeTab === 'insights' ? 'block' : 'hidden'}>
               <InsightsPage
                 workspaceId={workspaceId}
+                isActive={activeTab === 'insights'}
               />
             </div>
           </div>
