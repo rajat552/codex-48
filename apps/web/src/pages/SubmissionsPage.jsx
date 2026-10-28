@@ -276,8 +276,30 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab, isActiv
           <p className="text-sm font-mono font-bold text-[#0B1E36]">Loading workspace submissions...</p>
         </div>
       ) : error ? (
-        <div className="p-6 bg-red-50 border-2 border-red-500 text-red-900 rounded-2xl text-sm font-mono">
-          {error}
+        <div className="p-6 bg-red-50 border-2 border-red-500 text-red-900 rounded-2xl text-sm font-mono flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+            <span>{error.toLowerCase().includes('token') || error.toLowerCase().includes('unauthorized') ? 'Your login session has expired or is invalid. Please sign in again.' : error}</span>
+          </div>
+          {error.toLowerCase().includes('token') || error.toLowerCase().includes('unauthorized') ? (
+            <button
+              onClick={() => {
+                api.clearCache();
+                localStorage.removeItem('cohesora_token');
+                window.location.reload();
+              }}
+              className="px-4 py-2 bg-[#0B1E36] text-white rounded-xl text-xs font-mono font-bold uppercase cursor-pointer hover:bg-[#152B4A] transition flex-shrink-0 shadow-[2px_2px_0px_#F59E0B]"
+            >
+              Sign In Again
+            </button>
+          ) : (
+            <button
+              onClick={() => fetchSubmissions(true)}
+              className="px-4 py-2 bg-white text-[#0B1E36] border-2 border-[#0B1E36] rounded-xl text-xs font-mono font-bold uppercase cursor-pointer hover:bg-slate-50 transition flex-shrink-0 shadow-[2px_2px_0px_#0B1E36]"
+            >
+              Retry
+            </button>
+          )}
         </div>
       ) : filteredSubmissions.length === 0 ? (
         <div className="p-16 text-center bg-white border-2 border-[#0B1E36] rounded-2xl shadow-[4px_4px_0px_#0B1E36] space-y-3" data-tour="review-checks-area" data-tour-alias="submissions-list-area">
