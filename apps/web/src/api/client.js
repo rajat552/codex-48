@@ -342,7 +342,10 @@ export class ApiClient {
   // Insights
   static getInsights(workspaceId, params = {}, options = {}) {
     const q = new URLSearchParams(params).toString();
-    return this.request(`/workspaces/${workspaceId}/insights${q ? `?${q}` : ''}`, options);
+    return this.request(`/workspaces/${workspaceId}/insights${q ? `?${q}` : ''}`, {
+      skipCache: true,
+      ...options
+    });
   }
 }
 
