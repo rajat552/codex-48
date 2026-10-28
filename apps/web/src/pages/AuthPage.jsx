@@ -103,8 +103,8 @@ export function AuthPage({ onAuthSuccess, onAuthenticated }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full bg-white border-2 border-[#0B1E36] rounded-2xl p-8 shadow-[6px_6px_0px_#0B1E36] relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center px-3 sm:px-4 py-6 sm:py-12">
+      <div className="max-w-md w-full bg-white border-2 border-[#0B1E36] rounded-2xl p-5 sm:p-8 shadow-[6px_6px_0px_#0B1E36] relative overflow-hidden">
         {/* Brand Header */}
         <div className="text-center mb-8 relative">
           <div className="w-14 h-14 rounded-xl bg-[#0B1E36] border-2 border-[#0B1E36] mx-auto flex items-center justify-center shadow-[3px_3px_0px_#F59E0B] mb-4">
