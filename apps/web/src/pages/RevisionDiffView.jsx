@@ -19,7 +19,7 @@ export function RevisionDiffView({ workspaceId, submission, onBack }) {
     setLoading(true);
     setError(null);
     try {
-      const data = await api.submissions.diffRevisions(workspaceId, submission._id, fromRev, toRev);
+      const data = await api.submissions.diffRevisions(workspaceId, submission._id || submission.id, fromRev, toRev);
       setDiffData(data);
     } catch (err) {
       setError(err.message);
