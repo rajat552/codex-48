@@ -25,7 +25,9 @@ export class ReviewOrchestrator {
       contentType: submission.contentType
     });
 
-    const isDecided = ['approved', 'rejected', 'changes_requested'].includes(submission.status);
+    const decisionAction = String(submission.decision?.action || '').trim().toLowerCase();
+    const isHumanDecided = ['approve', 'reject', 'request_changes', 'approved', 'rejected', 'changes_requested'].includes(decisionAction);
+    const isDecided = ['approved', 'rejected', 'changes_requested'].includes(submission.status) || isHumanDecided;
     if (!isDecided) {
       submission.status = 'processing';
       await submission.save();
@@ -147,9 +149,29 @@ export class ReviewOrchestrator {
     submission.processing = processingData;
 
     // Safe Failure Semantics (Section G5 & Non-negotiable principle 7)
-    // If OCR failed or an AI call was attempted and failed, mark INCOMPLETE
-    // Preserve human reviewer decision if already made (e.g. approved / rejected)
-    if (!isDecided) {
+    // Always check for human reviewer decision (including any decision made concurrently during async scanning)
+    const freshDoc = await Submission.findById(submissionId).select('status decision');
+    const freshAction = String(freshDoc?.decision?.action || submission.decision?.action || '').trim().toLowerCase();
+    const freshStatus = String(freshDoc?.status || submission.status || '').trim().toLowerCase();
+
+    const isFreshDecided = ['approved', 'rejected', 'changes_requested'].includes(freshStatus) ||
+      ['approve', 'reject', 'request_changes', 'approved', 'rejected', 'changes_requested'].includes(freshAction);
+
+    if (freshDoc?.decision) {
+      submission.decision = freshDoc.decision;
+    }
+
+    if (isFreshDecided) {
+      if (freshAction === 'approve' || freshAction === 'approved') {
+        submission.status = 'approved';
+      } else if (freshAction === 'reject' || freshAction === 'rejected') {
+        submission.status = 'rejected';
+      } else if (freshAction === 'request_changes' || freshAction === 'changes_requested') {
+        submission.status = 'changes_requested';
+      } else if (['approved', 'rejected', 'changes_requested'].includes(freshStatus)) {
+        submission.status = freshStatus;
+      }
+    } else {
       if (failedLayers.includes('ocr') || (failedLayers.includes('gemini_semantic') && !aiResult?.skipped)) {
         submission.status = 'incomplete';
       } else {
