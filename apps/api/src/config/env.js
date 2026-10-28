@@ -26,7 +26,7 @@ export const env = {
 
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
   GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
-  GEMINI_TIMEOUT_MS: parseInt(process.env.GEMINI_TIMEOUT_MS || '20000', 10),
+  GEMINI_TIMEOUT_MS: parseInt(process.env.GEMINI_TIMEOUT_MS || '7000', 10),
   GEMINI_MAX_RETRIES: parseInt(process.env.GEMINI_MAX_RETRIES || '1', 10),
 
   UPLOAD_DIR: process.env.UPLOAD_DIR || path.resolve(__dirname, '../../private-uploads'),
