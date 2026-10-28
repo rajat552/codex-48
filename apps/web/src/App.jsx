@@ -94,10 +94,30 @@ export function App() {
       }
 
       setWorkspaces(wsList);
-      const first = wsList[0];
-      setCurrentWorkspace(first);
-      const wsId = first?.workspace?._id || first?.workspace?.id || first?._id;
+      let selectedWs = null;
+      try {
+        const savedWsId = localStorage.getItem('cohesora_active_workspace_id');
+        if (savedWsId) {
+          selectedWs = wsList.find(w => {
+            const id = w?.workspace?._id || w?.workspace?.id || w?._id;
+            return id === savedWsId;
+          });
+        }
+      } catch (e) {}
+
+      if (!selectedWs) {
+        selectedWs = wsList.find(w => {
+          const name = (w?.workspace?.name || w?.name || '').toLowerCase();
+          return name.includes('truecaller');
+        }) || wsList[0];
+      }
+
+      setCurrentWorkspace(selectedWs);
+      const wsId = selectedWs?.workspace?._id || selectedWs?.workspace?.id || selectedWs?._id;
       if (wsId) {
+        try {
+          localStorage.setItem('cohesora_active_workspace_id', wsId);
+        } catch (e) {}
         prefetchWorkspaceData(wsId);
       }
     } catch (err) {
@@ -178,10 +198,30 @@ export function App() {
       }
 
       setWorkspaces(wsList);
-      const first = wsList[0];
-      setCurrentWorkspace(first);
-      const wsId = first?.workspace?._id || first?.workspace?.id || first?._id;
+      let selectedWs = null;
+      try {
+        const savedWsId = localStorage.getItem('cohesora_active_workspace_id');
+        if (savedWsId) {
+          selectedWs = wsList.find(w => {
+            const id = w?.workspace?._id || w?.workspace?.id || w?._id;
+            return id === savedWsId;
+          });
+        }
+      } catch (e) {}
+
+      if (!selectedWs) {
+        selectedWs = wsList.find(w => {
+          const name = (w?.workspace?.name || w?.name || '').toLowerCase();
+          return name.includes('truecaller');
+        }) || wsList[0];
+      }
+
+      setCurrentWorkspace(selectedWs);
+      const wsId = selectedWs?.workspace?._id || selectedWs?.workspace?.id || selectedWs?._id;
       if (wsId) {
+        try {
+          localStorage.setItem('cohesora_active_workspace_id', wsId);
+        } catch (e) {}
         prefetchWorkspaceData(wsId);
       }
     } catch (err) {
@@ -205,7 +245,12 @@ export function App() {
       setWorkspaces(prev => [newEntry, ...(prev || [])]);
       setCurrentWorkspace(newEntry);
       const wsId = wsObj?._id || wsObj?.id;
-      if (wsId) prefetchWorkspaceData(wsId);
+      if (wsId) {
+        try {
+          localStorage.setItem('cohesora_active_workspace_id', wsId);
+        } catch (e) {}
+        prefetchWorkspaceData(wsId);
+      }
     } catch (err) {
       console.warn('Backend workspace creation notice, using instant workspace:', err);
       const fallbackEntry = {
@@ -220,22 +265,19 @@ export function App() {
       };
       setWorkspaces(prev => [fallbackEntry, ...(prev || [])]);
       setCurrentWorkspace(fallbackEntry);
+      try {
+        localStorage.setItem('cohesora_active_workspace_id', fallbackEntry.workspace._id);
+      } catch (e) {}
     } finally {
       setCreatingWs(false);
     }
   };
 
-  // Auto-provision if logged in but workspace is missing or invalid
-  useEffect(() => {
-    const rawWs = currentWorkspace?.workspace || currentWorkspace;
-    const wsId = typeof rawWs === 'object' ? (rawWs?._id || rawWs?.id) : (rawWs || null);
-    if (user && !loading && !wsId && !creatingWs) {
-      handleCreateWorkspace();
-    }
-  }, [user, loading, currentWorkspace, creatingWs]);
-
   const handleLogout = () => {
     ApiClient.setToken(null);
+    try {
+      localStorage.removeItem('cohesora_active_workspace_id');
+    } catch (e) {}
     api.clearCache();
     setUser(null);
     setWorkspaces([]);
@@ -292,7 +334,12 @@ export function App() {
           setCurrentWorkspace(ws);
           setActiveRole('ALL');
           const wsId = ws?.workspace?._id || ws?.workspace?.id || ws?._id;
-          prefetchWorkspaceData(wsId);
+          if (wsId) {
+            try {
+              localStorage.setItem('cohesora_active_workspace_id', wsId);
+            } catch (e) {}
+            prefetchWorkspaceData(wsId);
+          }
         }}
         onLogout={handleLogout}
         activeTab={activeTab}
