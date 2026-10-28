@@ -38,9 +38,9 @@ export function App() {
       return;
     }
 
-    // Set 5-second timeout so cold-starts or network delays don't lock the UI
+    // Set 18-second timeout allowing cloud backend (Render) cold starts
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Auth restore timed out')), 5000)
+      setTimeout(() => reject(new Error('Auth restore timed out')), 18000)
     );
 
     try {
@@ -82,8 +82,8 @@ export function App() {
       if (!wsList || wsList.length === 0) {
         const fallbackWs = {
           workspace: {
-            _id: `ws_${Date.now().toString(36)}`,
-            id: `ws_${Date.now().toString(36)}`,
+            _id: '6ae251b67c49f3ce5ebad8c2',
+            id: '6ae251b67c49f3ce5ebad8c2',
             name: `${resolvedUser?.displayName || 'Brand'}'s Workspace`,
             slug: 'brand-workspace'
           },
@@ -128,6 +128,14 @@ export function App() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      handleLogout();
+    };
+    window.addEventListener('cohesora:session-expired', handleSessionExpired);
+    return () => window.removeEventListener('cohesora:session-expired', handleSessionExpired);
+  }, []);
 
   useEffect(() => {
     const slowTimer = setTimeout(() => {
@@ -186,8 +194,8 @@ export function App() {
       if (!wsList || wsList.length === 0) {
         const fallbackWs = {
           workspace: {
-            _id: `ws_${Date.now().toString(36)}`,
-            id: `ws_${Date.now().toString(36)}`,
+            _id: '6ae251b67c49f3ce5ebad8c2',
+            id: '6ae251b67c49f3ce5ebad8c2',
             name: `${resolvedUser?.displayName || 'Brand'}'s Workspace`,
             slug: 'brand-workspace'
           },
@@ -252,11 +260,15 @@ export function App() {
         prefetchWorkspaceData(wsId);
       }
     } catch (err) {
+      if (err.message?.includes('token') || err.message?.includes('Unauthorized') || err.status === 401) {
+        handleLogout();
+        return;
+      }
       console.warn('Backend workspace creation notice, using instant workspace:', err);
       const fallbackEntry = {
         workspace: {
-          _id: `ws_${Date.now().toString(36)}`,
-          id: `ws_${Date.now().toString(36)}`,
+          _id: '6ae251b67c49f3ce5ebad8c2',
+          id: '6ae251b67c49f3ce5ebad8c2',
           name: `${user.displayName || 'Brand'}'s Workspace`,
           slug: 'brand-workspace'
         },
