@@ -84,6 +84,21 @@ export function ReviewDetailPage({ workspaceId, submissionId, userRoles, onBack 
     }
   }, [workspaceId, activeSubmissionId]);
 
+  // Auto-poll if review is currently processing in background
+  useEffect(() => {
+    let timer = null;
+    const s = String(submission?.status || '').toLowerCase();
+    if (s === 'submitted' || s === 'processing') {
+      timer = setInterval(() => {
+        fetchSubmission();
+        fetchAudit();
+      }, 2000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [submission?.status, workspaceId, activeSubmissionId]);
+
   // Handle Finding Override
   const handleOverrideSubmit = async () => {
     if (!overrideModal.reason || overrideModal.reason.trim().length < 5) {
