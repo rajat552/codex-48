@@ -90,6 +90,7 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
       }
 
       const created = await api.submissions.create(workspaceId, formData);
+      const newId = created?._id || created?.id || created?.data?._id || created?.data?.id;
       setShowCreateModal(false);
       setCreateForm({
         title: '',
@@ -99,9 +100,11 @@ export function SubmissionsPage({ workspaceId, userRoles, onNavigateTab }) {
         assetFile: null,
         assetAltText: ''
       });
-      await fetchSubmissions();
-      // Directly open newly created submission
-      setSelectedSubmissionId(created._id);
+      fetchSubmissions();
+      // Directly open newly created submission in ReviewDetailPage (2nd page)
+      if (newId) {
+        setSelectedSubmissionId(newId);
+      }
     } catch (err) {
       alert(`Submission failed: ${err.message}`);
     } finally {
