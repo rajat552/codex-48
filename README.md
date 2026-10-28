@@ -29,6 +29,33 @@
   <a href="#verification--benchmark-results"><strong>🧪 Benchmark Results</strong></a>
 </p>
 
+> **🏆 We Code Coders Hackathon | Inkloom AI — Brand Governance Platform**  
+> **Team Name**: BroCode &bull; **Participant**: Rajat Aggarwal (*National Institute of Technology, Hamirpur*)  
+> **Role / Contribution**: Sole Designer & Developer across all four engineering workstreams (Backend, AI/Visual Engine, Frontend UI, Evaluation/Deployment)  
+> **Submission Document**: Round 1 Submission | The Plan (8-Page Official Architecture & Execution Benchmark)
+
+---
+
+## 🎯 Hackathon Proposal Alignment & Verification Matrix
+
+Every single principle, architectural layer, named improvement, and concrete walkthrough outlined in the **Round 1 Submission Plan** has been fully implemented, integrated, and verified in this codebase:
+
+| Proposal Section | Specified Requirement | Codebase Implementation & Verification Status |
+| :--- | :--- | :---: |
+| **Sec 1.2: Problem Boundary** | Evidence-based pre-publication quality-control layer; versioned rule grounding. | ✅ **Active** &bull; Rules snapshot at intake; deterministic + AI verification. |
+| **Sec 2.1: Target Personas** | Creator, Reviewer, Admin, Agency, Compliance roles with explicit permissions. | ✅ **Active** &bull; Server-side RBAC; interactive role view switcher in navbar. |
+| **Sec 3.1: 7 Core Capabilities** | (A) Brand Registry, (B) Hybrid Engine, (C) Explainable Findings, (D) 3-State Classification, (E) Human Approval, (F) Governance Insights, (G) WCAG Visual/OCR. | ✅ **Active** &bull; 100% covered across `apps/web` and `apps/api`. |
+| **Sec 3.2: 5 Originality Points** | Evidence-linked claims, time-aware dates, guideline clarity loop, separated deterministic checks, reproducible snapshots. | ✅ **Active** &bull; Independent rule citation checking, append-only `AuditEvent`. |
+| **Sec 4.1: 8-Step Workflow** | Configure Registry ➔ Submit Content ➔ Snapshot Rules ➔ Hybrid Review ➔ Evidence Validation ➔ Revise ➔ Human Decision ➔ Audit Logging. | ✅ **Active** &bull; Complete operational flow in `reviewWorker.js` & `SubmissionsPage.jsx`. |
+| **Sec 4.2: Walkthrough 1** | Social Caption: *"Enjoy free shipping on every order!"* vs **Policy PR-104 (v1.2)** (min INR 999). | ✅ **Verified** &bull; 1-click in `JudgeDemoModal.jsx` (Scenario 1) & test `BM-01`. |
+| **Sec 4.2: Walkthrough 2** | Static Campaign Poster: Pale-yellow (`#FFF3B0`) on white (`#FFFFFF`) (contrast 1.12:1) + missing alt-text. | ✅ **Verified** &bull; 1-click in `JudgeDemoModal.jsx` (Scenario 2) & test `BM-06`. |
+| **Sec 5.1: Named Improvement 1** | **Multi-Format Document Support (PDF & DOCX)**: Extract text/headings, convert to candidate rules. | ✅ **Active** &bull; Native `pdfjs-dist` & `mammoth` parser on `/brief-imports` tab. |
+| **Sec 5.1: Named Improvement 2** | **Automated Rule Conflict Detection on Import**: Detect contradictory terms, date overlaps, duplicate rules. | ✅ **Active** &bull; Live conflict detector in `conflictDetector.js` & `RulesPage.jsx`. |
+| **Sec 5.1: Named Improvement 3** | **Side-by-Side Visual & Text Revision Diffing**: Word-level diff, contrast delta ($+13.10:1$), resolution breakdown. | ✅ **Active** &bull; Implemented in `RevisionDiffView.jsx` with visual contrast delta. |
+| **Sec 5.2: Responsible AI** | API keys on server, zero AI auto-approval, fallback to `INCOMPLETE` if LLM/OCR fails. | ✅ **Enforced** &bull; Human-in-the-loop state machine; failsafe diagnostics. |
+| **Sec 6.1: 3-Layer Architecture** | Layer 1 (Deterministic/WCAG) ➔ Layer 2 (Gemini Flash) ➔ Layer 3 (Server Verification & Human Sign-off). | ✅ **Active** &bull; Documented in system architecture diagram. |
+| **Sec 8.1: 25-Case Benchmark** | Curated 25-case demonstration set ($12$ TP, $5$ TN, $5$ Unverified/Advisory, $3$ Robustness). | ✅ **Passed 100%** &bull; Executed via `npm run test:benchmark` (Target: $\ge 95\%$). |
+
 ---
 
 ## 📑 Table of Contents
@@ -151,13 +178,17 @@ Cohesora Workflow:    Content Intake ──> Frozen Snapshot ──> Determinist
 - **Governance Insights**: Real-time workspace analytics tracking approval rates, first-time-right percentages, review turnaround SLAs, top triggered rules, and policy exception hotspots.
 
 ### 7. Interactive Guided Onboarding Tour
-- **6-Step Interactive Walkthrough**: Built into the frontend via [`OnboardingTour.jsx`](apps/web/src/components/OnboardingTour.jsx), guiding new users through:
-  1. Welcome & Governance Philosophy
-  2. Submissions & Workspace Overview
-  3. Brand Knowledge Registry
-  4. Document Brief Ingestion (NI 1)
-  5. Rule Conflict Resolution (NI 2)
-  6. Revision Diffing & Governance Insights (NI 3)
+- **10-Step Interactive Walkthrough**: Built into the frontend via [`OnboardingTour.jsx`](apps/web/src/components/OnboardingTour.jsx), guiding new users and evaluators through the entire 8-step operational workflow from Section 4.1 of the proposal:
+  1. Welcome & Brand Governance Philosophy
+  2. Workspace Overview & Intake Channels
+  3. Brand Knowledge Registry (Consolidated Rules)
+  4. Rule Sources, Versions & Validity Windows
+  5. Multi-Format Brief Document Ingestion (*Named Improvement 1*)
+  6. Submitting Creative Content (Copy & Visual Assets)
+  7. Campaign & Channel Context Filtering
+  8. 1-Click Judge Demonstration Scenarios
+  9. Automated Rule Checks, Visual WCAG & AI Suggestions
+  10. Governance Insights, SLAs & High-Override Analytics
 
 ### 8. 1-Click Judge Showcase Demo
 - **Evaluator Test Harness**: Integrated modal [`JudgeDemoModal.jsx`](apps/web/src/components/JudgeDemoModal.jsx) allowing evaluators to execute end-to-end hackathon scenarios (PR-104 violation, revision correction, and conflict detection) in a single click with pre-populated test data.
@@ -507,7 +538,7 @@ codex-48/
 │           ├── components/
 │           │   ├── JudgeDemoModal.jsx    # 1-Click interactive evaluator test harness
 │           │   ├── Navbar.jsx            # Navigation bar, workspace switcher & role selector
-│           │   └── OnboardingTour.jsx    # 6-step interactive guided onboarding tour
+│           │   └── OnboardingTour.jsx    # 10-step interactive guided onboarding tour
 │           ├── pages/
 │           │   ├── AuthPage.jsx          # Login, registration & demo account launcher
 │           │   ├── BriefImportPage.jsx   # Multi-format brief parser UI
@@ -805,7 +836,7 @@ Cohesora is deployed across dual cloud providers:
 | **Deterministic Rule PR-104 Enforcement** | Core Compliance | ✅ **Completed** |
 | **WCAG 2.2 Contrast & CIEDE2000 Color Math** | Core Compliance | ✅ **Completed** |
 | **Zero AI Auto-Approval Human Gating** | Responsible AI | ✅ **Completed** |
-| **Interactive 6-Step Onboarding Tour** | User Experience | ✅ **Completed** |
+| **Interactive 10-Step Onboarding Tour** | User Experience | ✅ **Completed** |
 | **1-Click Judge Showcase Demo Harness** | Evaluator Experience | ✅ **Completed** |
 | **Append-Only Audit Trail & SLA Analytics** | Governance | ✅ **Completed** |
 | **Sub-Millisecond SWR Client Caching** | Performance | ✅ **Completed** |
@@ -828,6 +859,9 @@ Cohesora is deployed across dual cloud providers:
 ## 👥 Authorship & License
 
 - **Team**: **BroCode**
-- **Platform**: **Cohesora — Evidence-Led Brand Governance**
-- **Event Context**: We Code Coders Hackathon
+- **Sole Designer & Developer**: **Rajat Aggarwal** (*National Institute of Technology, Hamirpur*)
+- **Email**: `rajataggarwal9646@gmail.com`
+- **Platform**: **Cohesora — Evidence-Led Brand Governance Platform**
+- **Event Context**: **We Code Coders Hackathon | Inkloom AI — Brand Governance Platform**
+- **Submission Stage**: **Round 1 — The Plan (Implementation & Live Deployment)**
 - **License**: **UNLICENSED** &bull; Proprietary to Cohesora. All rights reserved.
